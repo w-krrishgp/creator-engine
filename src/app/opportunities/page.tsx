@@ -6,12 +6,9 @@ import { calculateCompatibility } from "@/utils/compatibility";
 import {
   Briefcase,
   Search,
-  Filter,
-  Sparkles,
   ArrowUpDown,
   CheckCircle2,
   Bookmark,
-  Layers,
 } from "lucide-react";
 import { OpportunityCard } from "@/components/opportunities/OpportunityCard";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
@@ -38,8 +35,6 @@ export default function OpportunitiesPage() {
   ];
 
   const platforms = ["All", "Instagram", "LinkedIn", "Multi-Platform"];
-
-  const statuses = ["All", "Available", "Applied", "Saved"];
 
   // Filter and sort opportunities
   const filteredOpportunities = opportunities
@@ -104,7 +99,7 @@ export default function OpportunitiesPage() {
             </Badge>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Deterministic algorithmic compatibility matched against {activeCreator.name}'s profile and follower reach.
+            Deterministic algorithmic compatibility matched against {activeCreator.name}&apos;s profile and follower reach.
           </p>
         </div>
 

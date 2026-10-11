@@ -3,21 +3,13 @@
 import React, { useState } from "react";
 import { useCreator } from "@/context/CreatorContext";
 import {
-  Workflow,
   Sparkles,
   Copy,
   CheckCircle2,
-  FileText,
   DollarSign,
-  Send,
   ShieldCheck,
   Clock,
-  ArrowRight,
-  Sliders,
   Check,
-  ChevronRight,
-  Layers,
-  Flame,
 } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
@@ -154,7 +146,7 @@ ${activeCreator.name}`;
             </Badge>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Standardized 5-step operational pipeline tailored for {activeCreator.name}'s {activeCreator.primaryPlatform} audience.
+            Standardized 5-step operational pipeline tailored for {activeCreator.name}&apos;s {activeCreator.primaryPlatform} audience.
           </p>
         </div>
 
@@ -373,7 +365,7 @@ ${activeCreator.name}`;
                     </div>
                     <div className="p-3 rounded-xl bg-emerald-50/60 border border-emerald-100">
                       <span className="font-bold text-emerald-900">25s - 45s: Low-Friction Call-to-Action: </span>
-                      <span className="text-slate-700">"Link in bio with code for 15% off" or "Comment GUIDE for the direct PDF link".</span>
+                      <span className="text-slate-700">&ldquo;Link in bio with code for 15% off&rdquo; or &ldquo;Comment GUIDE for the direct PDF link&rdquo;.</span>
                     </div>
                   </div>
                 </div>
@@ -402,8 +394,8 @@ ${activeCreator.name}`;
                 <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 space-y-2">
                   <h4 className="font-bold text-slate-900">Mandatory Disclosure Rules:</h4>
                   <ul className="list-disc pl-4 space-y-1 text-slate-600">
-                    <li>Use Instagram Paid Partnership tag or LinkedIn "#ad #sponsored" in first 2 lines.</li>
-                    <li>Audio disclaimer ("In partnership with [Brand]") on long-form or podcast integrations.</li>
+                    <li>Use Instagram Paid Partnership tag or LinkedIn &quot;#ad #sponsored&quot; in first 2 lines.</li>
+                    <li>Audio disclaimer (&quot;In partnership with [Brand]&quot;) on long-form or podcast integrations.</li>
                     <li>No unsubstantiated health, financial return, or guaranteed outcome claims.</li>
                   </ul>
                 </div>

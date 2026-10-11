@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useCreator } from "@/context/CreatorContext";
 import { CreatorProfile, PlatformType, CreatorStageType } from "@/types/creator";
 import {
@@ -9,15 +9,10 @@ import {
   Save,
   RotateCcw,
   Sparkles,
-  DollarSign,
   Users,
   Target,
-  Layers,
-  FileText,
-  MapPin,
   ExternalLink,
   CheckCircle2,
-  AlertCircle,
 } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
@@ -31,13 +26,14 @@ export default function ProfilePage() {
     profileCompletion,
   } = useCreator();
 
-  // Local form state
+  // Local form state synced with activeCreator without cascading effect renders
+  const [prevId, setPrevId] = useState(activeCreator.id);
   const [formData, setFormData] = useState<CreatorProfile>(activeCreator);
 
-  // Sync form data whenever the active creator changes (e.g. from switcher)
-  useEffect(() => {
+  if (prevId !== activeCreator.id) {
+    setPrevId(activeCreator.id);
     setFormData(activeCreator);
-  }, [activeCreator]);
+  }
 
   const handleChange = (
     field: keyof CreatorProfile,

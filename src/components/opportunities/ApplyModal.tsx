@@ -7,10 +7,8 @@ import {
   X,
   Send,
   Sparkles,
-  DollarSign,
   CheckCircle2,
   FileText,
-  AlertCircle,
 } from "lucide-react";
 import { Badge } from "../common/Badge";
 

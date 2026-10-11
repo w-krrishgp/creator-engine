@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Opportunity, CompatibilityBreakdown } from "@/types/creator";
-import { useCreator } from "@/context/CreatorContext";
 import {
   X,
   Calendar,
@@ -13,7 +12,6 @@ import {
   Award,
   Sparkles,
   ArrowRight,
-  ShieldCheck,
   AlertCircle,
 } from "lucide-react";
 import { Badge } from "../common/Badge";
@@ -33,8 +31,6 @@ export function OpportunityDetailsModal({
   onClose,
   onApplyClick,
 }: OpportunityDetailsModalProps) {
-  const { activeCreator } = useCreator();
-
   if (!isOpen || !opportunity) return null;
 
   const isApplied = opportunity.status === "Applied";

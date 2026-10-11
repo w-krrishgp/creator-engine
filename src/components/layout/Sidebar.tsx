@@ -12,7 +12,6 @@ import {
   Briefcase,
   CheckSquare,
   ArrowRightLeft,
-  ChevronRight,
   Sparkles,
   ShieldCheck,
   Compass,

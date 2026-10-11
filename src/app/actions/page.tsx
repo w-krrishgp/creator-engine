@@ -2,21 +2,14 @@
 
 import React, { useState } from "react";
 import { useCreator } from "@/context/CreatorContext";
-import { ActionItem } from "@/types/creator";
 import {
-  CheckSquare,
   Plus,
   Clock,
   Sparkles,
   Check,
-  AlertCircle,
-  Filter,
-  Layers,
-  ArrowRight,
-  TrendingUp,
   X,
 } from "lucide-react";
-import { Card, CardHeader, CardContent } from "@/components/common/Card";
+import { Card } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
 
@@ -86,7 +79,7 @@ export default function ActionsPage() {
               Action Centre & Execution Tracker
             </h2>
             <Badge variant="indigo" size="sm">
-              {activeCreator.name.split(" ")[0]}';s Queue
+              {activeCreator.name.split(" ")[0]}&apos;s Queue
             </Badge>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">

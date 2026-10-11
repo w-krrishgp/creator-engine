@@ -4,19 +4,14 @@ import React, { useState } from "react";
 import { useCreator } from "@/context/CreatorContext";
 import { MOCK_MONETISATION_CHANNELS } from "@/data/mockMonetisation";
 import {
-  Banknote,
   Sparkles,
   ShieldAlert,
   CheckCircle2,
   ArrowRight,
-  TrendingUp,
-  Layers,
   HelpCircle,
-  Clock,
-  Compass,
   AlertCircle,
 } from "lucide-react";
-import { Card, CardHeader, CardContent } from "@/components/common/Card";
+import { Card } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
 

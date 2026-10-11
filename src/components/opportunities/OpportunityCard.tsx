@@ -10,7 +10,6 @@ import {
   DollarSign,
   Users,
   Sparkles,
-  ExternalLink,
   Bookmark,
   ChevronRight,
   ShieldCheck,
@@ -176,7 +175,7 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
         compatibility={compatibility}
         isOpen={detailsOpen}
         onClose={() => setDetailsOpen(false)}
-        onApplyClick={(opp) => setApplyOpen(true)}
+        onApplyClick={() => setApplyOpen(true)}
       />
 
       <ApplyModal

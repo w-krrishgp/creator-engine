@@ -6,11 +6,7 @@ import { useCreator } from "@/context/CreatorContext";
 import {
   Menu,
   X,
-  Sparkles,
   ArrowRightLeft,
-  Bell,
-  Search,
-  CheckCircle,
 } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { Badge } from "../common/Badge";

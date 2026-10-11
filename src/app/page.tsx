@@ -10,10 +10,7 @@ import {
   Briefcase,
   DollarSign,
   ArrowRight,
-  CheckCircle2,
   Clock,
-  Sparkles,
-  ExternalLink,
   Target,
   Flame,
   ArrowUpRight,
@@ -33,7 +30,6 @@ export default function OverviewPage() {
     opportunities,
     completedActionsCount,
     totalActionsCount,
-    profileCompletion,
   } = useCreator();
 
   // Top prioritized actions (limit to 3 for overview)

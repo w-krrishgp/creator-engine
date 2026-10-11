@@ -3,17 +3,14 @@
 import React, { useState } from "react";
 import { useCreator } from "@/context/CreatorContext";
 import {
-  Calendar,
   CheckCircle2,
   AlertTriangle,
   Lightbulb,
   BookOpen,
   TrendingUp,
   Sparkles,
-  ExternalLink,
   Target,
   Check,
-  Compass,
 } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
@@ -288,7 +285,7 @@ export default function RoadmapPage() {
                   key={idx}
                   className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-800 flex items-center justify-between group hover:bg-white hover:border-slate-300 transition-all"
                 >
-                  <span>"{topic}"</span>
+                  <span>&ldquo;{topic}&rdquo;</span>
                   <Sparkles className="w-3 h-3 text-slate-400 group-hover:text-emerald-600 shrink-0" />
                 </div>
               ))}
