@@ -47,7 +47,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-150">
+      <div className="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="p-6 border-b border-slate-100 flex items-start justify-between bg-slate-50/50">
           <div>
@@ -63,7 +63,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -72,12 +72,12 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5">
           {/* Creator Profile Auto-Attached */}
-          <div className="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-100 flex items-center justify-between">
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/90 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img
                 src={activeCreator.avatar}
                 alt={activeCreator.name}
-                className="w-10 h-10 rounded-full object-cover border border-indigo-200"
+                className="w-10 h-10 rounded-full object-cover border border-slate-200"
               />
               <div>
                 <p className="text-xs font-bold text-slate-900">{activeCreator.name}</p>
@@ -86,7 +86,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
                 </p>
               </div>
             </div>
-            <Badge variant="indigo" size="sm">
+            <Badge variant="blue" size="sm">
               Media Kit Attached
             </Badge>
           </div>
@@ -96,7 +96,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
             <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-slate-400" /> Agreed Deliverables
             </label>
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+            <div className="p-3 rounded-lg bg-slate-50 border border-slate-200/80 space-y-1.5">
               {opportunity.deliverables.map((item, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-xs text-slate-700 font-medium">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
@@ -125,7 +125,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
                 placeholder={suggestedBudget.replace("₹", "")}
                 value={requestedFee}
                 onChange={(e) => setRequestedFee(e.target.value)}
-                className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+                className="w-full pl-8 pr-4 py-2.5 rounded-lg border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
               />
             </div>
           </div>
@@ -134,9 +134,9 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-600" /> Creator Pitch & Angle
+                <Sparkles className="w-3.5 h-3.5 text-blue-600" /> Creator Pitch & Angle
               </label>
-              <span className="text-[11px] text-indigo-600 font-medium">
+              <span className="text-[11px] text-blue-600 font-medium">
                 Auto-personalized
               </span>
             </div>
@@ -144,7 +144,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
               rows={4}
               value={currentPitch}
               onChange={(e) => setPitchNotes(e.target.value)}
-              className="w-full p-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 resize-none font-sans"
+              className="w-full p-3.5 rounded-lg border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 resize-none font-sans"
             />
           </div>
 
@@ -154,7 +154,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
               type="checkbox"
               checked={agreedToDeliverables}
               onChange={(e) => setAgreedToDeliverables(e.target.checked)}
-              className="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              className="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
             />
             <span className="text-xs text-slate-500">
               I commit to adhering to brand quality guidelines, deadline ({opportunity.deadline}), and disclosing sponsorship per ASCI influencer rules.
@@ -166,14 +166,14 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors"
+              className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting || !agreedToDeliverables}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all hover:translate-y-[-1px]"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold text-xs shadow-xs transition-all hover:scale-[1.01]"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{submitting ? "Submitting..." : "Submit Application"}</span>

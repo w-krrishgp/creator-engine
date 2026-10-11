@@ -167,9 +167,9 @@ ${activeCreator.name}`;
             <div
               key={s.stage}
               onClick={() => setActiveStage(s.stage)}
-              className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
+              className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
                 isSelected
-                  ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20"
+                  ? "bg-blue-600 text-white border-blue-600 shadow-xs"
                   : isPassed
                   ? "bg-emerald-50/70 border-emerald-200 text-slate-800"
                   : "bg-white border-slate-200 hover:border-slate-300 text-slate-600"
@@ -179,7 +179,7 @@ ${activeCreator.name}`;
                 <span
                   className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
                     isSelected
-                      ? "bg-white text-indigo-700"
+                      ? "bg-white text-blue-700"
                       : isPassed
                       ? "bg-emerald-600 text-white"
                       : "bg-slate-100 text-slate-600"
@@ -202,7 +202,7 @@ ${activeCreator.name}`;
               <h4 className="text-xs font-bold truncate leading-tight">{s.title}</h4>
               <p
                 className={`text-[11px] truncate mt-0.5 ${
-                  isSelected ? "text-indigo-100" : "text-slate-400"
+                  isSelected ? "text-blue-100" : "text-slate-400"
                 }`}
               >
                 {s.subtitle}
@@ -228,20 +228,20 @@ ${activeCreator.name}`;
                     Target marketing managers with personalized pitches based on your {activeCreator.niche} metrics
                   </p>
                 </div>
-                <Badge variant="indigo" size="sm">
+                <Badge variant="blue" size="sm">
                   Cold Pitch SOP
                 </Badge>
               </CardHeader>
 
               <CardContent className="space-y-4">
-                <div className="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-100 space-y-2">
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/90 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-indigo-950 uppercase tracking-wider flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-indigo-600" /> Auto-Generated Pitch Template
+                    <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-blue-600" /> Auto-Generated Pitch Template
                     </span>
                     <button
                       onClick={() => copyToClipboard(coldPitchTemplate, "Brand Pitch Template")}
-                      className="px-3 py-1.5 rounded-xl bg-white border border-indigo-200 hover:bg-indigo-50 text-xs font-bold text-indigo-700 transition-colors flex items-center gap-1.5 shadow-2xs"
+                      className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors flex items-center gap-1.5 shadow-2xs"
                     >
                       {copiedKey === "Brand Pitch Template" ? (
                         <>
@@ -257,7 +257,7 @@ ${activeCreator.name}`;
                     </button>
                   </div>
 
-                  <pre className="text-xs text-slate-700 font-sans whitespace-pre-wrap leading-relaxed bg-white p-3.5 rounded-xl border border-indigo-100 max-h-72 overflow-y-auto">
+                  <pre className="text-xs text-slate-700 font-sans whitespace-pre-wrap leading-relaxed bg-white p-3.5 rounded-lg border border-slate-200 max-h-72 overflow-y-auto">
                     {coldPitchTemplate}
                   </pre>
                 </div>
@@ -421,14 +421,14 @@ ${activeCreator.name}`;
               </CardHeader>
 
               <CardContent className="space-y-4">
-                <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 space-y-2">
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/90 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-emerald-950 uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                       <DollarSign className="w-3.5 h-3.5 text-emerald-600" /> Automated Invoice Dispatch Email
                     </span>
                     <button
                       onClick={() => copyToClipboard(invoiceEmailTemplate, "Invoice Email")}
-                      className="px-3 py-1.5 rounded-xl bg-white border border-emerald-300 hover:bg-emerald-50 text-xs font-bold text-emerald-800 transition-colors flex items-center gap-1.5 shadow-2xs"
+                      className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors flex items-center gap-1.5 shadow-2xs"
                     >
                       {copiedKey === "Invoice Email" ? (
                         <>
@@ -444,7 +444,7 @@ ${activeCreator.name}`;
                     </button>
                   </div>
 
-                  <pre className="text-xs text-slate-700 font-sans whitespace-pre-wrap leading-relaxed bg-white p-3.5 rounded-xl border border-emerald-100 max-h-60 overflow-y-auto">
+                  <pre className="text-xs text-slate-700 font-sans whitespace-pre-wrap leading-relaxed bg-white p-3.5 rounded-lg border border-slate-200 max-h-60 overflow-y-auto">
                     {invoiceEmailTemplate}
                   </pre>
                 </div>
@@ -481,7 +481,7 @@ ${activeCreator.name}`;
                 </div>
                 <div className="flex items-center justify-between pt-1 border-t border-slate-200">
                   <span className="text-slate-700 font-bold">Suggested Base Fee / Post:</span>
-                  <span className="text-sm font-extrabold text-indigo-700 font-mono">
+                  <span className="text-sm font-extrabold text-blue-600 font-mono">
                     ₹{(activeCreator.followerCount * (activeCreator.primaryPlatform === "LinkedIn" ? 5 : 1.8)).toLocaleString()}
                   </span>
                 </div>
@@ -496,26 +496,26 @@ ${activeCreator.name}`;
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-indigo-600" />
+                <Clock className="w-4 h-4 text-blue-600" />
                 <h3 className="font-bold text-slate-900 text-sm">
                   Workflow Reminders & SLAs
                 </h3>
               </div>
-              <Badge variant="indigo" size="sm">
+              <Badge variant="blue" size="sm">
                 Auto-Alerts
               </Badge>
             </CardHeader>
 
             <CardContent className="space-y-2.5 text-xs">
-              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-indigo-50/50 border border-indigo-100 text-slate-700">
-                <span className="w-2 h-2 rounded-full bg-indigo-600 mt-1 shrink-0" />
+              <div className="flex items-start gap-2.5 p-3 rounded-lg bg-slate-50 border border-slate-200/80 text-slate-700">
+                <span className="w-2 h-2 rounded-full bg-blue-600 mt-1 shrink-0" />
                 <span>Submit creative draft minimum <strong>48 hours</strong> prior to scheduled campaign go-live date.</span>
               </div>
-              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-indigo-50/50 border border-indigo-100 text-slate-700">
+              <div className="flex items-start gap-2.5 p-3 rounded-lg bg-slate-50 border border-slate-200/80 text-slate-700">
                 <span className="w-2 h-2 rounded-full bg-emerald-600 mt-1 shrink-0" />
                 <span>Export 7-day post-launch insights screenshot report to attach with invoice.</span>
               </div>
-              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-indigo-50/50 border border-indigo-100 text-slate-700">
+              <div className="flex items-start gap-2.5 p-3 rounded-lg bg-slate-50 border border-slate-200/80 text-slate-700">
                 <span className="w-2 h-2 rounded-full bg-purple-600 mt-1 shrink-0" />
                 <span>Offer 15% discount if brand converts to a 3-month quarterly retainer commitment.</span>
               </div>

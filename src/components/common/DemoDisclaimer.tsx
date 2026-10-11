@@ -1,5 +1,5 @@
 import React from "react";
-import { Sparkles, Info } from "lucide-react";
+import { Info } from "lucide-react";
 
 interface DemoDisclaimerProps {
   compact?: boolean;
@@ -15,10 +15,10 @@ export function DemoDisclaimer({
   if (compact) {
     return (
       <div
-        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200/80 ${className}`}
+        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200 ${className}`}
         title={text}
       >
-        <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+        <span className="w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0" />
         <span>Demo Data</span>
       </div>
     );
@@ -26,13 +26,13 @@ export function DemoDisclaimer({
 
   return (
     <div
-      className={`flex items-start sm:items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-50/90 border border-slate-200/80 text-xs text-slate-600 shadow-xs ${className}`}
+      className={`flex items-start sm:items-center gap-2.5 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-xs text-slate-600 shadow-[0_1px_2px_rgba(0,0,0,0.03)] ${className}`}
     >
-      <div className="p-1 rounded-lg bg-indigo-50 text-indigo-600 shrink-0 mt-0.5 sm:mt-0">
+      <div className="w-4 h-4 rounded text-blue-600 shrink-0 flex items-center justify-center mt-0.5 sm:mt-0">
         <Info className="w-3.5 h-3.5" />
       </div>
-      <div className="flex-1">
-        <span className="font-semibold text-slate-800 mr-1.5">Illustrative Demo Environment:</span>
+      <div className="flex-1 text-[11px] leading-snug">
+        <span className="font-semibold text-slate-900 mr-1.5">Demo Environment:</span>
         {text}
       </div>
     </div>

@@ -2,75 +2,93 @@
 
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { useCreator } from "@/context/CreatorContext";
 import {
   Menu,
   X,
   ArrowRightLeft,
+  Share2,
+  ExternalLink,
+  SlidersHorizontal,
+  Check,
 } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { Badge } from "../common/Badge";
 
 export function Header() {
   const pathname = usePathname();
-  const { activeCreatorId, activeCreator, switchCreator } = useCreator();
+  const { activeCreatorId, activeCreator, switchCreator, showToast } = useCreator();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const getPageInfo = () => {
     switch (pathname) {
       case "/":
         return {
-          title: "Overview Dashboard",
-          subtitle: "Performance intelligence & recommended growth moves",
+          title: "Executive Overview",
+          subtitle: "Performance intelligence & strategic next steps",
+          tag: "Intelligence",
         };
       case "/profile":
         return {
-          title: "Creator Profile & Media Kit",
-          subtitle: "Fine-tune your niche, metrics, audience, and revenue targets",
+          title: "My Profile & Media Kit",
+          subtitle: "Positioning parameters, platform metrics & verified rates",
+          tag: "Identity",
         };
       case "/roadmap":
         return {
-          title: "30 / 60 / 90-Day Growth Roadmap",
-          subtitle: "Structured milestone roadmap, content gaps & market benchmarks",
+          title: "Growth Roadmap",
+          subtitle: "30 / 60 / 90-day phased execution plan & market benchmarks",
+          tag: "Strategy",
         };
       case "/monetisation":
         return {
           title: "Monetisation Engine",
-          subtitle: "Tailored revenue channels, pitch checklists & reality checks",
+          subtitle: "5 diversified revenue channels & realistic viability models",
+          tag: "Revenue",
         };
       case "/opportunities":
         return {
-          title: "Opportunities Marketplace",
-          subtitle: "Vetted brand campaigns with explainable deterministic matching",
+          title: "Brand Marketplace",
+          subtitle: "Vetted campaign briefs with deterministic compatibility scoring",
+          tag: "Marketplace",
+        };
+      case "/workflow":
+        return {
+          title: "Workflow Engine",
+          subtitle: "Standardized 5-step SOP, pitch templates & ASCI compliance",
+          tag: "Operations",
         };
       case "/actions":
         return {
           title: "Action Centre",
-          subtitle: "High-impact prioritised steps to hit your next milestone",
-        };
-      case "/workflow":
-        return {
-          title: "Creator Workflow & Deal Automation",
-          subtitle: "Standardized 5-step SOP, cold pitch templates & compliance checks",
+          subtitle: "Prioritized execution queue & momentum tracker",
+          tag: "Execution",
         };
       default:
         return {
           title: "Creator Engine",
           subtitle: "Creator Growth & Brand Opportunity Engine",
+          tag: "Dashboard",
         };
     }
   };
 
-  const { title, subtitle } = getPageInfo();
+  const { title, subtitle, tag } = getPageInfo();
+
+  const handleCopyMediaKit = () => {
+    navigator.clipboard.writeText(activeCreator.mediaKitLink || "https://creator-engine.demo");
+    showToast(`Media kit link copied for ${activeCreator.name}!`, "success");
+  };
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 py-3.5 flex items-center justify-between">
-        {/* Left: Mobile hamburger & Page Title */}
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+        {/* Left: Mobile hamburger & Page Breadcrumb / Title */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="md:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            className="md:hidden p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
             aria-label="Open navigation menu"
           >
             <Menu className="w-5 h-5" />
@@ -78,59 +96,59 @@ export function Header() {
 
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight leading-snug">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                {tag}
+              </span>
+              <span className="text-slate-300">•</span>
+              <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-snug">
                 {title}
               </h1>
-              <Badge variant="slate" size="sm" className="hidden sm:inline-flex">
-                Live Prototype
-              </Badge>
             </div>
-            <p className="text-xs text-slate-500 hidden sm:block">{subtitle}</p>
+            <p className="text-[11px] text-slate-500 hidden sm:block leading-tight mt-0.5">
+              {subtitle}
+            </p>
           </div>
         </div>
 
-        {/* Right: Quick Demo Persona Switcher & Badges */}
-        <div className="flex items-center gap-3">
-          {/* Quick Persona Pills */}
-          <div className="hidden lg:flex items-center bg-slate-100/80 p-1 rounded-xl border border-slate-200/80">
-            <span className="text-[11px] font-semibold text-slate-500 px-2.5 flex items-center gap-1.5">
-              <ArrowRightLeft className="w-3 h-3 text-indigo-600" /> Switch Creator:
+        {/* Right: Contextual Actions & Persona Switcher */}
+        <div className="flex items-center gap-2.5">
+          {/* Contextual Action Button */}
+          <button
+            onClick={handleCopyMediaKit}
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-all"
+            title="Share verified media kit link"
+          >
+            <Share2 className="w-3.5 h-3.5 text-slate-500" />
+            <span>Share Media Kit</span>
+          </button>
+
+          {/* Compact Persona Pill Switcher */}
+          <div className="flex items-center bg-slate-100/90 p-0.5 rounded-lg border border-slate-200/70 text-xs">
+            <span className="text-[10px] font-semibold text-slate-400 px-2 hidden lg:inline-flex items-center gap-1">
+              <SlidersHorizontal className="w-2.5 h-2.5" /> Persona:
             </span>
             <button
               onClick={() => switchCreator("rahul")}
-              className={`px-3 py-1 text-xs rounded-lg transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-1 rounded text-xs transition-all flex items-center gap-1 ${
                 activeCreatorId === "rahul"
-                  ? "bg-white text-indigo-950 font-bold shadow-xs border border-slate-200/60"
+                  ? "bg-white text-slate-900 font-bold shadow-xs border border-slate-200/60"
                   : "text-slate-600 hover:text-slate-900 font-medium"
               }`}
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Rahul (Fitness)</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>Rahul (IG)</span>
             </button>
             <button
               onClick={() => switchCreator("priya")}
-              className={`px-3 py-1 text-xs rounded-lg transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-1 rounded text-xs transition-all flex items-center gap-1 ${
                 activeCreatorId === "priya"
-                  ? "bg-white text-indigo-950 font-bold shadow-xs border border-slate-200/60"
+                  ? "bg-white text-slate-900 font-bold shadow-xs border border-slate-200/60"
                   : "text-slate-600 hover:text-slate-900 font-medium"
               }`}
             >
-              <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
-              <span>Priya (Finance)</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+              <span>Priya (LI)</span>
             </button>
-          </div>
-
-          {/* Active Creator Pill for smaller screens */}
-          <div className="flex items-center gap-2 pl-2 border-l border-slate-200 sm:border-0 sm:pl-0">
-            <img
-              src={activeCreator.avatar}
-              alt={activeCreator.name}
-              className="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0"
-            />
-            <div className="hidden sm:block text-right">
-              <p className="text-xs font-bold text-slate-800 leading-tight">{activeCreator.name}</p>
-              <p className="text-[10px] text-slate-400 font-medium">{activeCreator.primaryPlatform}</p>
-            </div>
           </div>
         </div>
       </header>
@@ -139,14 +157,15 @@ export function Header() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div
-            className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           />
           <div className="fixed inset-y-0 left-0 max-w-xs w-full bg-white shadow-2xl z-50 flex flex-col">
             <div className="p-3 flex justify-end border-b border-slate-100">
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                aria-label="Close menu"
               >
                 <X className="w-5 h-5" />
               </button>

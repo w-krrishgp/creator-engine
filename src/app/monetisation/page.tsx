@@ -49,7 +49,7 @@ export default function MonetisationPage() {
             <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
               Monetisation Engine & Revenue Channels
             </h2>
-            <Badge variant="indigo" size="sm">
+            <Badge variant="blue" size="sm">
               Tailored for {activeCreator.name.split(" ")[0]}
             </Badge>
           </div>
@@ -64,10 +64,10 @@ export default function MonetisationPage() {
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 ${
                 selectedCategory === cat.id
-                  ? "bg-indigo-600 text-white shadow-xs"
-                  : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200"
+                  ? "bg-blue-600 text-white shadow-xs"
+                  : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200/80"
               }`}
             >
               {cat.label}
@@ -77,7 +77,7 @@ export default function MonetisationPage() {
       </div>
 
       {/* Important Income Disclosure Notice */}
-      <div className="flex items-start gap-3 p-4 rounded-2xl bg-amber-50/80 border border-amber-200/90 text-amber-900 text-xs shadow-2xs">
+      <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50/80 border border-amber-200/90 text-amber-900 text-xs shadow-2xs">
         <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
         <div className="leading-relaxed">
           <strong className="font-bold">No Guaranteed Revenue Notice: </strong>
@@ -90,20 +90,20 @@ export default function MonetisationPage() {
         {filteredChannels.map((channel) => (
           <Card
             key={channel.id}
-            className="flex flex-col justify-between overflow-hidden border-slate-200/90 hover:border-indigo-300 transition-all duration-200 group"
+            className="flex flex-col justify-between overflow-hidden border-slate-200/90 hover:border-slate-300 transition-all duration-200 group"
           >
             {/* Channel Top Header */}
-            <div className="p-6 pb-4 border-b border-slate-100 flex items-start justify-between gap-3 bg-gradient-to-r from-slate-50/60 to-white">
+            <div className="p-5 pb-4 border-b border-slate-100 flex items-start justify-between gap-3 bg-slate-50/50">
               <div>
                 <div className="flex items-center gap-2 mb-1.5">
-                  <Badge variant="indigo" size="sm">
+                  <Badge variant="blue" size="sm">
                     {channel.badge}
                   </Badge>
                   <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                     {channel.complexity} Complexity
                   </span>
                 </div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-snug">
+                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 leading-snug">
                   {channel.title}
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -114,10 +114,10 @@ export default function MonetisationPage() {
               {/* Suitability Gauge */}
               <div className="shrink-0 text-right">
                 <div
-                  className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black border ${
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${
                     channel.suitabilityScore >= 90
                       ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                      : "bg-indigo-50 text-indigo-800 border-indigo-200"
+                      : "bg-blue-50 text-blue-800 border-blue-200"
                   }`}
                 >
                   <Sparkles className="w-3.5 h-3.5" />
@@ -128,24 +128,24 @@ export default function MonetisationPage() {
             </div>
 
             {/* Channel Body */}
-            <div className="p-6 space-y-4 flex-1">
+            <div className="p-5 space-y-4 flex-1">
               {/* Why It Suits You */}
               <div className="space-y-1.5">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                  <HelpCircle className="w-3.5 h-3.5 text-indigo-600" /> Why this suits you
+                  <HelpCircle className="w-3.5 h-3.5 text-blue-600" /> Why this suits you
                 </h4>
-                <p className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
+                <p className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3.5 rounded-lg border border-slate-200/80">
                   {channel.whyItSuits}
                 </p>
               </div>
 
               {/* Estimated Earning Potential */}
-              <div className="p-3 rounded-xl bg-emerald-50/50 border border-emerald-200/80 flex items-center justify-between">
+              <div className="p-3 rounded-lg bg-emerald-50/50 border border-emerald-200/80 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">
                     Estimated Earning Potential
                   </span>
-                  <p className="text-sm font-black text-emerald-950">
+                  <p className="text-sm font-extrabold text-emerald-950">
                     {channel.estimatedPotential}
                   </p>
                 </div>
@@ -175,7 +175,7 @@ export default function MonetisationPage() {
               </div>
 
               {/* Realistic Caveats */}
-              <div className="p-3 rounded-xl bg-slate-100/70 border border-slate-200 text-xs text-slate-600 space-y-1">
+              <div className="p-3 rounded-lg bg-slate-100/70 border border-slate-200 text-xs text-slate-600 space-y-1">
                 <span className="font-bold text-slate-800 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3 text-slate-500" /> Practical Caveats & Reality Check
                 </span>
@@ -184,16 +184,16 @@ export default function MonetisationPage() {
             </div>
 
             {/* Footer with First Step */}
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-3">
+            <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-3">
               <div className="text-xs">
-                <span className="text-[10px] uppercase font-bold text-indigo-600">Suggested 1st Move: </span>
+                <span className="text-[10px] uppercase font-bold text-blue-600">Suggested 1st Move: </span>
                 <p className="font-semibold text-slate-800 text-xs line-clamp-1">
                   {channel.suggestedFirstStep}
                 </p>
               </div>
               <button
                 onClick={() => alert(`Starting setup for: ${channel.title}\nNext step: ${channel.suggestedFirstStep}`)}
-                className="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-indigo-50 hover:text-indigo-600 text-xs font-bold text-slate-800 transition-colors shadow-2xs shrink-0 flex items-center gap-1"
+                className="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-blue-50 hover:text-blue-600 text-xs font-semibold text-slate-800 transition-colors shadow-2xs shrink-0 flex items-center gap-1"
               >
                 <span>Activate</span>
                 <ArrowRight className="w-3.5 h-3.5" />

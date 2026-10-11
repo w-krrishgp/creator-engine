@@ -89,7 +89,7 @@ export default function ActionsPage() {
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all hover:scale-[1.02] self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs transition-all hover:scale-[1.01] self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Add Custom Action</span>
@@ -97,16 +97,16 @@ export default function ActionsPage() {
       </div>
 
       {/* Visual Execution Progress Banner */}
-      <Card className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white border-0 p-6 sm:p-7 shadow-lg">
+      <Card className="bg-white border border-slate-200/90 shadow-xs p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="space-y-2 max-w-lg">
-            <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" /> Real-time Execution Velocity
+            <span className="text-xs font-bold text-blue-700 uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" /> Real-time Execution Velocity
             </span>
-            <h3 className="text-xl sm:text-2xl font-black text-white">
+            <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
               {completedActionsCount} of {totalActionsCount} Strategic Actions Completed
             </h3>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
               {progressPercent === 100
                 ? "Phenomenal! All high-priority actions for this cycle have been executed. Ready for the next growth roadmap milestone."
                 : progressPercent >= 50
@@ -115,14 +115,14 @@ export default function ActionsPage() {
             </p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 min-w-[200px] text-center space-y-2 shrink-0">
-            <span className="text-xs text-slate-300 font-medium">Completion Rate</span>
-            <div className="text-3xl font-black text-emerald-400 font-mono">
+          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 min-w-[200px] text-center space-y-2 shrink-0">
+            <span className="text-xs text-slate-500 font-medium">Completion Rate</span>
+            <div className="text-3xl font-extrabold text-blue-600 font-mono">
               {progressPercent}%
             </div>
-            <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
               <div
-                className="h-full bg-emerald-400 rounded-full transition-all duration-500"
+                className="h-full bg-blue-600 rounded-full transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -134,40 +134,40 @@ export default function ActionsPage() {
       <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
         <button
           onClick={() => setFilter("all")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
             filter === "all"
-              ? "bg-slate-900 text-white"
-              : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200"
+              ? "bg-slate-900 text-white shadow-xs"
+              : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200/80"
           }`}
         >
           All Actions ({actions.length})
         </button>
         <button
           onClick={() => setFilter("pending")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
             filter === "pending"
-              ? "bg-indigo-600 text-white"
-              : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200"
+              ? "bg-blue-600 text-white shadow-xs"
+              : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200/80"
           }`}
         >
           Pending ({totalActionsCount - completedActionsCount})
         </button>
         <button
           onClick={() => setFilter("high")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
             filter === "high"
-              ? "bg-rose-600 text-white"
-              : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200"
+              ? "bg-rose-600 text-white shadow-xs"
+              : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200/80"
           }`}
         >
           High Priority Only
         </button>
         <button
           onClick={() => setFilter("completed")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
             filter === "completed"
-              ? "bg-emerald-600 text-white"
-              : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200"
+              ? "bg-emerald-600 text-white shadow-xs"
+              : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200/80"
           }`}
         >
           Completed ({completedActionsCount})
@@ -179,20 +179,20 @@ export default function ActionsPage() {
         {filteredActions.map((action) => (
           <div
             key={action.id}
-            className={`p-4 sm:p-5 rounded-2xl border transition-all ${
+            className={`p-4 sm:p-5 rounded-xl border transition-all ${
               action.completed
                 ? "bg-slate-50/60 border-slate-200 opacity-60"
-                : "bg-white border-slate-200/90 hover:border-slate-300 shadow-2xs"
+                : "bg-white border-slate-200/90 hover:border-slate-300 shadow-xs"
             }`}
           >
             <div className="flex items-start gap-4">
               {/* Interactive checkbox */}
               <button
                 onClick={() => toggleAction(action.id)}
-                className={`mt-1 w-5 h-5 rounded-lg border flex items-center justify-center transition-all shrink-0 ${
+                className={`mt-1 w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0 ${
                   action.completed
-                    ? "bg-indigo-600 border-indigo-600 text-white shadow-xs"
-                    : "border-slate-300 hover:border-indigo-600 bg-white"
+                    ? "bg-blue-600 border-blue-600 text-white shadow-xs"
+                    : "border-slate-300 hover:border-blue-600 bg-white"
                 }`}
                 aria-label="Toggle action completed"
               >
@@ -233,13 +233,13 @@ export default function ActionsPage() {
 
                 <h4
                   className={`text-sm sm:text-base font-bold leading-snug ${
-                    action.completed ? "line-through text-slate-500" : "text-slate-900"
+                    action.completed ? "line-through text-slate-400" : "text-slate-900"
                   }`}
                 >
                   {action.title}
                 </h4>
 
-                <p className="text-xs text-slate-600 leading-relaxed bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
+                <p className="text-xs text-slate-600 leading-relaxed bg-slate-50/80 p-3 rounded-lg border border-slate-200/70">
                   <strong className="text-slate-800 font-semibold">Strategic Reason: </strong>
                   {action.reason}
                 </p>
@@ -252,7 +252,7 @@ export default function ActionsPage() {
       {/* Add Custom Action Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-150 space-y-5">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-150 space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
                 <h3 className="text-lg font-bold text-slate-900">Add New Strategic Action</h3>
@@ -260,7 +260,7 @@ export default function ActionsPage() {
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -275,7 +275,7 @@ export default function ActionsPage() {
                   placeholder="e.g. Follow up with Gymshark marketing team on pricing proposal"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                 />
               </div>
 
@@ -285,7 +285,7 @@ export default function ActionsPage() {
                   <select
                     value={newPriority}
                     onChange={(e) => setNewPriority(e.target.value as "High" | "Medium" | "Low")}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                   >
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
@@ -298,7 +298,7 @@ export default function ActionsPage() {
                   <select
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value as "Growth" | "Monetisation" | "Brand Pitch" | "Audience Trust")}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                   >
                     <option value="Brand Pitch">Brand Pitch</option>
                     <option value="Monetisation">Monetisation</option>
@@ -316,7 +316,7 @@ export default function ActionsPage() {
                     value={newDeadline}
                     onChange={(e) => setNewDeadline(e.target.value)}
                     placeholder="e.g. In 2 days"
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                   />
                 </div>
 
@@ -327,7 +327,7 @@ export default function ActionsPage() {
                     value={newEstimatedTime}
                     onChange={(e) => setNewEstimatedTime(e.target.value)}
                     placeholder="e.g. 45 mins"
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                   />
                 </div>
               </div>
@@ -339,7 +339,7 @@ export default function ActionsPage() {
                   value={newReason}
                   onChange={(e) => setNewReason(e.target.value)}
                   placeholder="Explain why taking this action improves conversion or audience retention..."
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 resize-none"
+                  className="w-full px-3.5 py-2 rounded-lg border border-slate-200 text-xs text-slate-800 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                 />
               </div>
 
@@ -347,13 +347,13 @@ export default function ActionsPage() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-900"
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20"
+                  className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs"
                 >
                   Add Action
                 </button>

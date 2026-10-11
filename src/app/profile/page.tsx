@@ -99,7 +99,7 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={resetCreatorProfile}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors shadow-2xs"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset Defaults</span>
@@ -107,7 +107,7 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={handleSave}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-600/20 transition-all hover:scale-[1.02]"
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition-all hover:scale-[1.01]"
           >
             <Save className="w-4 h-4" />
             <span>Save Profile</span>
@@ -123,12 +123,12 @@ export default function ProfilePage() {
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-indigo-600" />
+                  <User className="w-4 h-4 text-blue-600" />
                   <h3 className="font-bold text-slate-900 text-sm sm:text-base">
                     Core Creator Identity
                   </h3>
                 </div>
-                <Badge variant="indigo" size="sm">
+                <Badge variant="blue" size="sm">
                   Public Snapshot
                 </Badge>
               </CardHeader>
@@ -345,7 +345,7 @@ export default function ProfilePage() {
                 <div className="pt-2 flex justify-end">
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all hover:scale-[1.02]"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs transition-all hover:scale-[1.01]"
                   >
                     <Save className="w-4 h-4" />
                     <span>Save All Changes</span>
@@ -365,7 +365,7 @@ export default function ProfilePage() {
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
                 <h3 className="font-bold text-slate-900 text-sm">Profile Completion</h3>
               </div>
-              <span className="text-sm font-black text-indigo-700 font-mono">
+              <span className="text-sm font-black text-blue-600 font-mono">
                 {profileCompletion}%
               </span>
             </CardHeader>
@@ -377,7 +377,7 @@ export default function ProfilePage() {
                     profileCompletion >= 90
                       ? "bg-emerald-500"
                       : profileCompletion >= 70
-                      ? "bg-indigo-600"
+                      ? "bg-blue-600"
                       : "bg-amber-500"
                   }`}
                   style={{ width: `${profileCompletion}%` }}
@@ -417,12 +417,12 @@ export default function ProfilePage() {
           </Card>
 
           {/* Live Media Kit Card Preview */}
-          <Card className="overflow-hidden border-indigo-100 bg-gradient-to-b from-white to-indigo-50/20">
-            <div className="p-5 border-b border-indigo-50 flex items-center justify-between bg-indigo-50/40">
-              <span className="text-xs font-bold text-indigo-950 uppercase tracking-wider flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-600" /> Live Media Kit Preview
+          <Card className="overflow-hidden border-slate-200/90 bg-white shadow-xs">
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/60">
+              <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-blue-600" /> Live Media Kit Preview
               </span>
-              <Badge variant="indigo" size="sm">
+              <Badge variant="blue" size="sm">
                 Shareable
               </Badge>
             </div>
@@ -432,31 +432,31 @@ export default function ProfilePage() {
                 <img
                   src={formData.avatar}
                   alt={formData.name}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-xs"
+                  className="w-12 h-12 rounded-full object-cover border-2 border-slate-200 shadow-2xs"
                 />
                 <div>
                   <h4 className="font-bold text-slate-900 text-sm">{formData.name}</h4>
-                  <p className="text-xs text-indigo-600 font-medium">{formData.handle}</p>
+                  <p className="text-xs text-blue-600 font-medium">{formData.handle}</p>
                   <p className="text-[11px] text-slate-400">{formData.niche}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-center">
-                <div className="p-2.5 rounded-xl bg-white border border-slate-200/80">
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80">
                   <p className="text-[10px] text-slate-400 font-medium">Audience</p>
-                  <p className="text-sm font-black text-slate-900">
+                  <p className="text-sm font-extrabold text-slate-900">
                     {formData.followerCount.toLocaleString()}
                   </p>
                 </div>
-                <div className="p-2.5 rounded-xl bg-white border border-slate-200/80">
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80">
                   <p className="text-[10px] text-slate-400 font-medium">Engagement</p>
-                  <p className="text-sm font-black text-emerald-600">
+                  <p className="text-sm font-extrabold text-emerald-600">
                     {formData.engagementRate}%
                   </p>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-600 space-y-1">
+              <div className="p-3 rounded-lg bg-slate-50 border border-slate-200/80 text-xs text-slate-600 space-y-1">
                 <p>
                   <strong className="text-slate-800">Formats: </strong>
                   {formData.contentFormat}
@@ -470,7 +470,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={() => alert(`Public media kit link copied: https://creator-engine.demo/mediakit/${formData.id}`)}
-                className="w-full py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-800 transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
+                className="w-full py-2.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors flex items-center justify-center gap-1.5 shadow-xs"
               >
                 <span>Copy Verified Media Kit Link</span>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400" />

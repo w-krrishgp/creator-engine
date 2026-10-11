@@ -37,11 +37,11 @@ export function OpportunityDetailsModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-150">
+      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="p-6 border-b border-slate-100 flex items-start justify-between bg-slate-50/50">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-3xl shadow-xs shrink-0">
+            <div className="w-14 h-14 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-3xl shadow-xs shrink-0">
               {opportunity.brandLogo}
             </div>
             <div>
@@ -50,7 +50,7 @@ export function OpportunityDetailsModal({
                 <span className="text-xs text-slate-400">•</span>
                 <span className="text-xs font-medium text-slate-500">{opportunity.brandCategory}</span>
                 {opportunity.sponsoredTag && (
-                  <Badge variant="indigo" size="sm">
+                  <Badge variant="blue" size="sm">
                     Verified Sponsor
                   </Badge>
                 )}
@@ -62,7 +62,7 @@ export function OpportunityDetailsModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -72,35 +72,35 @@ export function OpportunityDetailsModal({
         <div className="p-6 overflow-y-auto space-y-6">
           {/* Compatibility Breakdown Card */}
           {compatibility && (
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-indigo-50/90 via-purple-50/50 to-slate-50 border border-indigo-100/80 space-y-3">
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/90 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-indigo-600" />
-                  <span className="text-xs font-bold text-indigo-950 uppercase tracking-wider">
+                  <Sparkles className="w-4 h-4 text-blue-600" />
+                  <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                     Deterministic Match Score
                   </span>
                 </div>
-                <span className="text-sm font-extrabold text-indigo-700 bg-white px-3 py-1 rounded-full shadow-2xs border border-indigo-200">
+                <span className="text-sm font-extrabold text-blue-700 bg-white px-3 py-1 rounded-full shadow-2xs border border-blue-200">
                   {compatibility.score}% Match
                 </span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-center">
-                <div className="p-2 bg-white/80 rounded-xl border border-indigo-100">
+                <div className="p-2 bg-white rounded-lg border border-slate-200">
                   <p className="text-[10px] text-slate-500 font-medium">Niche Fit</p>
-                  <p className="text-xs font-bold text-indigo-900">+{compatibility.nicheScore}%</p>
+                  <p className="text-xs font-bold text-slate-900">+{compatibility.nicheScore}%</p>
                 </div>
-                <div className="p-2 bg-white/80 rounded-xl border border-indigo-100">
+                <div className="p-2 bg-white rounded-lg border border-slate-200">
                   <p className="text-[10px] text-slate-500 font-medium">Platform</p>
-                  <p className="text-xs font-bold text-indigo-900">+{compatibility.platformScore}%</p>
+                  <p className="text-xs font-bold text-slate-900">+{compatibility.platformScore}%</p>
                 </div>
-                <div className="p-2 bg-white/80 rounded-xl border border-indigo-100">
+                <div className="p-2 bg-white rounded-lg border border-slate-200">
                   <p className="text-[10px] text-slate-500 font-medium">Follower Tier</p>
-                  <p className="text-xs font-bold text-indigo-900">+{compatibility.followerScore}%</p>
+                  <p className="text-xs font-bold text-slate-900">+{compatibility.followerScore}%</p>
                 </div>
-                <div className="p-2 bg-white/80 rounded-xl border border-indigo-100">
+                <div className="p-2 bg-white rounded-lg border border-slate-200">
                   <p className="text-[10px] text-slate-500 font-medium">Goal Alignment</p>
-                  <p className="text-xs font-bold text-indigo-900">+{compatibility.goalScore}%</p>
+                  <p className="text-xs font-bold text-slate-900">+{compatibility.goalScore}%</p>
                 </div>
               </div>
 
@@ -214,7 +214,7 @@ export function OpportunityDetailsModal({
                 onClose();
                 onApplyClick(opportunity);
               }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all hover:translate-y-[-1px]"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs transition-all hover:scale-[1.01]"
             >
               <span>Apply for Campaign</span>
               <ArrowRight className="w-4 h-4" />

@@ -16,8 +16,8 @@ export function Card({
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-2xl border border-slate-200/80 shadow-xs transition-all duration-200 ${
-        hoverable ? "hover:border-slate-300 hover:shadow-sm cursor-pointer" : ""
+      className={`bg-white rounded-xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-all duration-150 ${
+        hoverable ? "hover:border-slate-300 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] cursor-pointer" : ""
       } ${className}`}
     >
       {children}
@@ -33,7 +33,7 @@ export function CardHeader({
   className?: string;
 }) {
   return (
-    <div className={`px-6 py-5 border-b border-slate-100 flex items-center justify-between ${className}`}>
+    <div className={`px-5 py-4 border-b border-slate-100 flex items-center justify-between ${className}`}>
       {children}
     </div>
   );
@@ -46,7 +46,7 @@ export function CardContent({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={`p-6 ${className}`}>{children}</div>;
+  return <div className={`p-5 ${className}`}>{children}</div>;
 }
 
 export function CardFooter({
@@ -57,7 +57,7 @@ export function CardFooter({
   className?: string;
 }) {
   return (
-    <div className={`px-6 py-4 bg-slate-50/50 rounded-b-2xl border-t border-slate-100 ${className}`}>
+    <div className={`px-5 py-3.5 bg-slate-50/60 rounded-b-xl border-t border-slate-100 ${className}`}>
       {children}
     </div>
   );
