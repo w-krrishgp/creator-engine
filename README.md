@@ -42,7 +42,22 @@ The platform includes two fully configured creator profiles demonstrating dynami
 | `/roadmap` | **Growth Roadmap** | Phased 30/60/90-day plan with interactive milestones, content gaps, skills to build & case studies. |
 | `/monetisation` | **Monetisation Engine** | 5 core revenue streams (Collabs, Consulting, Digital Products, Affiliates, Speaking) with caveats. |
 | `/opportunities` | **Opportunities Marketplace** | Vetted brand campaigns with deterministic compatibility scores, brief modals, and 1-click apply. |
+| `/workflow` | **Workflow & Deal Automation** | 5-stage SOP stepper, dynamic cold pitch email generator, ASCI compliance checks & invoice templates. |
 | `/actions` | **Action Centre** | Prioritized execution queue with deadlines, reasons, completion tracker, and custom action creator. |
+
+---
+
+## ⚙️ GitHub Actions Workflows
+
+Automated CI/CD pipelines in `.github/workflows/` track builds and PR quality on GitHub:
+
+1. **`ci.yml` (CI Pipeline)**:
+   - Triggers on every push and pull request to `main`.
+   - Executes automated dependency checks, TypeScript type checking (`tsc --noEmit`), ESLint linting, and production builds (`next build`).
+2. **`pr-check.yml` (Team PR Verification)**:
+   - Automatically validates teammate contributions before merges, ensuring branch stability.
+
+Check the live status under the **[Actions Tab](https://github.com/w-krrishgp/creator-engine/actions)** on GitHub.
 
 ---
 
@@ -50,7 +65,7 @@ The platform includes two fully configured creator profiles demonstrating dynami
 
 ### 1. Clone the repository
 ```bash
-git clone <YOUR_GITHUB_REPO_URL>
+git clone https://github.com/w-krrishgp/creator-engine.git
 cd creator-engine
 ```
 
@@ -73,24 +88,25 @@ npm run build
 
 ---
 
-## 🤝 Team Contribution Guidelines
+## 🤝 Team Contribution Workflow
 
 1. **Branching**:
    - Create a feature branch off `main`:
      ```bash
      git checkout -b feature/your-feature-name
      ```
-2. **Commiting**:
+2. **Committing**:
    - Write clear, concise commit messages:
      ```bash
-     git commit -m "Add: brand filter by minimum budget"
+     git commit -m "feat: add brand filter by minimum budget"
      ```
-3. **Pull Requests**:
+3. **Pull Requests & Automated CI**:
    - Push your branch to GitHub:
      ```bash
-     git push origin feature/your-feature-name
+     git push -u origin feature/your-feature-name
      ```
-   - Open a Pull Request into `main` and request a review from your teammates.
+   - Open a Pull Request into `main`. The automated GitHub Actions workflow will test your code.
+   - Request reviews from teammates before merging.
 
 ---
 

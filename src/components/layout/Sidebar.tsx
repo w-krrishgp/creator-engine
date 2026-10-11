@@ -16,6 +16,7 @@ import {
   Sparkles,
   ShieldCheck,
   Compass,
+  Workflow,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -68,6 +69,13 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
       icon: Briefcase,
       badge: appliedOpportunitiesCount > 0 ? `${appliedOpportunitiesCount} Applied` : "8 Deals",
       badgeColor: appliedOpportunitiesCount > 0 ? "bg-emerald-50 text-emerald-700 font-semibold" : "bg-sky-50 text-sky-700",
+    },
+    {
+      name: "Workflow Engine",
+      href: "/workflow",
+      icon: Workflow,
+      badge: "Automation",
+      badgeColor: "bg-indigo-50 text-indigo-700 font-medium",
     },
     {
       name: "Action Centre",

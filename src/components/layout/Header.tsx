@@ -52,6 +52,11 @@ export function Header() {
           title: "Action Centre",
           subtitle: "High-impact prioritised steps to hit your next milestone",
         };
+      case "/workflow":
+        return {
+          title: "Creator Workflow & Deal Automation",
+          subtitle: "Standardized 5-step SOP, cold pitch templates & compliance checks",
+        };
       default:
         return {
           title: "Creator Engine",
