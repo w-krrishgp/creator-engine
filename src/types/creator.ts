@@ -34,6 +34,7 @@ export interface CreatorProfile {
   mediaKitLink?: string;
   isManuallyReported?: boolean;
   isOnboarded?: boolean;
+  positioningStatement?: string;
 }
 
 export interface OnboardingFormData {
@@ -104,12 +105,34 @@ export interface RoadmapMilestone {
   tag: string;
 }
 
+export interface ContentGapItem {
+  gap: string;
+  reason: string;
+  impactLevel?: "Critical" | "High" | "Medium";
+}
+
+export interface SkillPriorityItem {
+  skill: string;
+  category: "Content Production" | "Commercial & Pitching" | "Audience Retention" | "Legal & Compliance" | "Strategy";
+  priority: "Critical" | "High" | "Medium";
+  actionStep: string;
+}
+
+export interface TopicOpportunityItem {
+  title: string;
+  hookAngle: string;
+  suggestedFormat: string;
+  targetAudience: string;
+}
+
 export interface ReferenceProfile {
   name: string;
   handle: string;
   platform: PlatformType;
   lesson: string;
   statsHighlight: string;
+  url?: string;
+  isVerifiedLink?: boolean;
 }
 
 export interface RoadmapPhase {
@@ -118,9 +141,9 @@ export interface RoadmapPhase {
   phaseTitle: string;
   phaseObjective: string;
   milestones: RoadmapMilestone[];
-  contentGaps: string[];
-  skillsToImprove: string[];
-  topicOpportunities: string[];
+  contentGaps: (string | ContentGapItem)[];
+  skillsToImprove: (string | SkillPriorityItem)[];
+  topicOpportunities: (string | TopicOpportunityItem)[];
   referenceProfiles: ReferenceProfile[];
 }
 

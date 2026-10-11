@@ -31,6 +31,7 @@ export const MOCK_CREATORS: Record<string, CreatorProfile> = {
     mediaKitLink: "https://creator-engine.demo/mediakit/rahul",
     isManuallyReported: true,
     isOnboarded: true,
+    positioningStatement: "Affordable student fitness, calisthenics & hostel budget nutrition — bridging the gap between expensive gym culture and practical daily habits for college beginners.",
   },
   priya: {
     id: "priya",
@@ -62,5 +63,6 @@ export const MOCK_CREATORS: Record<string, CreatorProfile> = {
     mediaKitLink: "https://creator-engine.demo/mediakit/priya",
     isManuallyReported: true,
     isOnboarded: true,
+    positioningStatement: "Ex-Deloitte financial analyst translating complex ESOPs, index funds, and corporate tax strategies into plain English for tech engineers — transitioning from educational creator to high-ticket corporate wealth advisor.",
   },
 };

@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { useCreator } from "@/context/CreatorContext";
+import {
+  ContentGapItem,
+  SkillPriorityItem,
+  TopicOpportunityItem,
+  ReferenceProfile,
+} from "@/types/creator";
 import {
   CheckCircle2,
   AlertTriangle,
@@ -11,286 +18,560 @@ import {
   Sparkles,
   Target,
   Check,
+  ExternalLink,
+  ShieldCheck,
+  Calendar,
+  Layers,
+  Award,
+  ArrowRight,
+  Info,
+  Flame,
+  Zap,
 } from "lucide-react";
-import { Card, CardHeader, CardContent } from "@/components/common/Card";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
 
 export default function RoadmapPage() {
-  const { activeCreator, roadmaps, toggleMilestone } = useCreator();
+  const {
+    activeCreator,
+    activeCreatorId,
+    switchCreator,
+    roadmaps,
+    toggleMilestone,
+  } = useCreator();
+
   const [selectedPhaseIndex, setSelectedPhaseIndex] = useState(0);
 
-  const currentPhase = roadmaps[selectedPhaseIndex] || roadmaps[0];
-  if (!currentPhase) return null;
+  // Fallback if no roadmaps are loaded
+  if (!roadmaps || roadmaps.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto py-16 text-center space-y-4">
+        <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
+          <Calendar className="w-6 h-6" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-900">No Growth Roadmap Generated</h2>
+        <p className="text-sm text-slate-600">
+          Complete the creator onboarding wizard to generate your tailored 30/60/90-day execution blueprint.
+        </p>
+        <Link
+          href="/onboarding"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 text-white font-semibold text-xs shadow-xs"
+        >
+          <span>Launch Onboarding Wizard</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+    );
+  }
 
-  const completedCount = currentPhase.milestones.filter((m) => m.completed).length;
-  const totalCount = currentPhase.milestones.length;
-  const progressPercent = Math.round((completedCount / totalCount) * 100);
+  const currentPhase = roadmaps[selectedPhaseIndex] || roadmaps[0];
+  const phaseCompletedCount = currentPhase.milestones.filter((m) => m.completed).length;
+  const phaseTotalCount = currentPhase.milestones.length;
+  const phaseProgressPercent = phaseTotalCount > 0 ? Math.round((phaseCompletedCount / phaseTotalCount) * 100) : 0;
+
+  // Calculate overall 90-day roadmap progress across all phases
+  const totalAllMilestones = roadmaps.reduce((acc, p) => acc + p.milestones.length, 0);
+  const completedAllMilestones = roadmaps.reduce(
+    (acc, p) => acc + p.milestones.filter((m) => m.completed).length,
+    0
+  );
+  const overallProgressPercent =
+    totalAllMilestones > 0 ? Math.round((completedAllMilestones / totalAllMilestones) * 100) : 0;
 
   return (
-    <div className="space-y-6">
-      {/* Top Disclaimer */}
-      <DemoDisclaimer text="Roadmap phases and milestone timelines are illustrative frameworks structured according to current follower volume, niche benchmarks, and retention dynamics." />
+    <div className="space-y-6 pb-12">
+      {/* 1. TRANSPARENCY & ILLUSTRATIVE DEMO NOTICE */}
+      <DemoDisclaimer text="Illustrative Demo Recommendations: These growth milestones, topic angles, and benchmarking references are synthesized based on self-reported creator positioning and public category benchmarks. Connect verified social accounts to calibrate live algorithmic signals. Never claiming unauthenticated profile access." />
 
-      {/* Header with Title and Phase Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+      {/* 2. TOP STRATEGIC POSITIONING & DEMO SWITCHER BAR */}
+      <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-4 sm:p-5">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-2 max-w-3xl">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge variant="blue" size="sm">
+                Strategic Positioning
+              </Badge>
+              <span className="text-xs text-slate-400 font-medium">•</span>
+              <span className="text-xs text-slate-600 font-medium">
+                {activeCreator.primaryPlatform} • {activeCreator.niche} • {activeCreator.creatorStage}
+              </span>
+            </div>
+
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
               30 / 60 / 90-Day Growth Roadmap
-            </h2>
-            <Badge variant="purple" size="sm">
-              {activeCreator.niche}
-            </Badge>
-          </div>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Tailored growth architecture for {activeCreator.name} to hit {activeCreator.primaryGoal}.
-          </p>
-        </div>
+            </h1>
 
-        {/* Phase Tabs Selector */}
-        <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/90 self-start sm:self-auto">
+            {/* Concise Creator Positioning Statement */}
+            <div className="p-3 rounded-lg bg-slate-50 border border-slate-200/80 text-xs sm:text-sm text-slate-800 leading-relaxed font-sans">
+              <strong className="text-blue-700 font-bold uppercase tracking-wider text-[11px] block mb-0.5">
+                Target Market Thesis:
+              </strong>
+              {activeCreator.positioningStatement || activeCreator.bio}
+            </div>
+          </div>
+
+          {/* Quick Profile Switcher & Overall Progress Meter */}
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+            {/* Hackathon Preset Switcher */}
+            <div className="flex items-center gap-1.5 p-1 rounded-lg bg-slate-100 border border-slate-200/80">
+              <span className="text-[10px] font-bold text-slate-400 px-1.5 uppercase tracking-wider">
+                Switch Demo:
+              </span>
+              <button
+                type="button"
+                onClick={() => switchCreator("rahul")}
+                className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+                  activeCreatorId === "rahul"
+                    ? "bg-white text-blue-700 shadow-2xs font-bold"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                ⚡ Rahul (Fitness)
+              </button>
+              <button
+                type="button"
+                onClick={() => switchCreator("priya")}
+                className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+                  activeCreatorId === "priya"
+                    ? "bg-white text-indigo-700 shadow-2xs font-bold"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                ⚡ Priya (Finance)
+              </button>
+            </div>
+
+            {/* Overall 90-Day Roadmap Progress Widget */}
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5 min-w-[200px]">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-slate-700 flex items-center gap-1">
+                  <Award className="w-3.5 h-3.5 text-blue-600" />
+                  90-Day Execution
+                </span>
+                <span className="font-mono font-bold text-blue-700">{overallProgressPercent}%</span>
+              </div>
+              <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-blue-600 rounded-full transition-all duration-300"
+                  style={{ width: `${overallProgressPercent}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-slate-400">
+                {completedAllMilestones} of {totalAllMilestones} total milestones achieved
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. PHASE SELECTOR TABS */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-2 sm:p-2.5 rounded-xl border border-slate-200/90 shadow-2xs">
+        <div className="flex items-center gap-1.5 overflow-x-auto">
           {roadmaps.map((phase, idx) => {
             const isSelected = selectedPhaseIndex === idx;
-            const phaseCompleted = phase.milestones.filter((m) => m.completed).length;
+            const completedInPhase = phase.milestones.filter((m) => m.completed).length;
 
             return (
               <button
                 key={phase.id}
+                type="button"
                 onClick={() => setSelectedPhaseIndex(idx)}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold transition-all shrink-0 ${
                   isSelected
-                    ? "bg-white text-slate-900 shadow-xs border border-slate-200/60"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "bg-slate-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                 }`}
               >
-                <span>{phase.days}</span>
+                <span>Phase {idx + 1} ({phase.days})</span>
                 <span
-                  className={`px-1.5 py-0.2 rounded text-[10px] font-mono font-medium ${
-                    isSelected ? "bg-blue-50 text-blue-700" : "bg-slate-200 text-slate-600"
+                  className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold ${
+                    isSelected ? "bg-white/20 text-white" : "bg-slate-200 text-slate-700"
                   }`}
                 >
-                  {phaseCompleted}/{phase.milestones.length}
+                  {completedInPhase}/{phase.milestones.length}
                 </span>
               </button>
             );
           })}
         </div>
+
+        <div className="text-xs text-slate-500 font-medium px-2 sm:px-0">
+          Showing: <strong className="text-slate-900">{currentPhase.phaseTitle}</strong>
+        </div>
       </div>
 
-      {/* Phase Overview Editorial Briefing Card */}
-      <Card className="bg-white border border-slate-200/90 shadow-xs p-5 sm:p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200/80">
-                Phase {selectedPhaseIndex + 1} • {currentPhase.days} Focus
-              </span>
-              <span className="text-xs text-slate-400 font-medium">
+      {/* 4. CURRENT PHASE EDITORIAL BRIEFING CARD */}
+      <Card className="border-l-4 border-l-blue-600">
+        <CardContent className="p-5 sm:p-6 space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1.5 max-w-2xl">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/80">
+                  {currentPhase.days} Execution Focus
+                </span>
+                <span className="text-xs text-slate-400 font-medium">•</span>
+                <span className="text-xs text-slate-600 font-medium">{currentPhase.phaseTitle}</span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
                 {currentPhase.phaseTitle}
-              </span>
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                {currentPhase.phaseObjective}
+              </p>
             </div>
-            <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
-              {currentPhase.phaseTitle}
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              {currentPhase.phaseObjective}
-            </p>
-          </div>
 
-          {/* Progress Widget */}
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 min-w-[220px] space-y-2.5 shrink-0">
-            <div className="flex items-center justify-between text-xs font-semibold">
-              <span className="text-slate-600">Phase Completion</span>
-              <span className="text-slate-900 font-mono font-bold">{progressPercent}%</span>
+            {/* Phase completion gauge */}
+            <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 min-w-[210px] space-y-2 shrink-0">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-slate-700">Phase Completion</span>
+                <span className="font-mono font-bold text-blue-700">{phaseProgressPercent}%</span>
+              </div>
+              <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-blue-600 rounded-full transition-all duration-300"
+                  style={{ width: `${phaseProgressPercent}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-slate-500 font-medium">
+                {phaseCompletedCount} of {phaseTotalCount} milestones completed
+              </p>
             </div>
-            <div className="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-blue-600 rounded-full transition-all duration-500"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-            <p className="text-[11px] text-slate-500 font-medium">
-              {completedCount} of {totalCount} milestones completed
-            </p>
           </div>
-        </div>
+        </CardContent>
       </Card>
 
-      {/* Two Column Layout: Milestones & Strategic Audit Insights */}
+      {/* 5. TWO COLUMN MAIN BODY: MILESTONES & STRATEGIC AUDIT */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Interactive Milestones (7 cols) */}
-        <div className="lg:col-span-7 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-blue-600" />
-              <h3 className="font-bold text-slate-900 text-base">
-                Key Actionable Milestones
-              </h3>
-            </div>
-            <span className="text-xs text-slate-500">Click checkmark to toggle status</span>
-          </div>
-
+        {/* LEFT COLUMN: ACTIONABLE MILESTONES (7 COLS) */}
+        <div className="lg:col-span-7 space-y-6">
+          {/* Milestones Card */}
           <div className="space-y-3">
-            {currentPhase.milestones.map((m) => (
-              <div
-                key={m.id}
-                onClick={() => toggleMilestone(currentPhase.id, m.id)}
-                className={`p-4 rounded-xl border transition-all cursor-pointer select-none group ${
-                  m.completed
-                    ? "bg-emerald-50/40 border-emerald-200/80 hover:border-emerald-300"
-                    : "bg-white border-slate-200/90 hover:border-blue-300 hover:shadow-xs"
-                }`}
-              >
-                <div className="flex items-start gap-3.5">
-                  <div
-                    className={`mt-0.5 w-5 h-5 rounded-md flex items-center justify-center transition-all shrink-0 ${
-                      m.completed
-                        ? "bg-emerald-600 text-white shadow-xs shadow-emerald-600/30"
-                        : "border border-slate-300 group-hover:border-blue-500 bg-white"
-                    }`}
-                  >
-                    {m.completed && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                  </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Target className="w-4 h-4 text-blue-600" />
+                <h3 className="font-bold text-slate-900 text-sm sm:text-base">
+                  Actionable Milestones ({currentPhase.days})
+                </h3>
+              </div>
+              <span className="text-[11px] text-slate-400">Click checkmark to toggle status</span>
+            </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <h4
-                        className={`text-sm font-bold leading-tight ${
-                          m.completed ? "line-through text-slate-400" : "text-slate-900"
-                        }`}
-                      >
-                        {m.title}
-                      </h4>
-                      <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md shrink-0 border border-blue-200/60">
-                        {m.tag}
-                      </span>
-                    </div>
-                    <p
-                      className={`text-xs leading-relaxed ${
-                        m.completed ? "text-slate-400" : "text-slate-600"
+            <div className="space-y-3">
+              {currentPhase.milestones.map((m) => (
+                <div
+                  key={m.id}
+                  onClick={() => toggleMilestone(currentPhase.id, m.id)}
+                  className={`p-4 rounded-xl border transition-all cursor-pointer select-none group ${
+                    m.completed
+                      ? "bg-emerald-50/40 border-emerald-200/80 hover:border-emerald-300"
+                      : "bg-white border-slate-200/90 hover:border-blue-300 hover:shadow-xs"
+                  }`}
+                >
+                  <div className="flex items-start gap-3.5">
+                    <div
+                      className={`mt-0.5 w-5 h-5 rounded-md flex items-center justify-center transition-all shrink-0 ${
+                        m.completed
+                          ? "bg-emerald-600 text-white shadow-xs shadow-emerald-600/30"
+                          : "border border-slate-300 group-hover:border-blue-500 bg-white"
                       }`}
                     >
-                      {m.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Reference Case Studies Box */}
-          <div className="pt-2">
-            <h3 className="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-indigo-600" /> Relevant Public-Profile References & Lessons
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {currentPhase.referenceProfiles.map((ref, idx) => (
-                <div
-                  key={idx}
-                  className="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-xs space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-bold text-slate-900 text-xs">{ref.name}</h4>
-                      <p className="text-[11px] text-blue-600 font-medium">{ref.handle}</p>
+                      {m.completed && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                     </div>
-                    <Badge variant="purple" size="sm">
-                      {ref.platform}
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-slate-600 leading-snug">
-                    <strong className="text-slate-800">Tactic: </strong>
-                    {ref.lesson}
-                  </p>
-                  <div className="pt-1 text-[11px] font-semibold text-emerald-700">
-                    {ref.statsHighlight}
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <h4
+                          className={`text-sm font-bold leading-tight ${
+                            m.completed ? "line-through text-slate-400" : "text-slate-900"
+                          }`}
+                        >
+                          {m.title}
+                        </h4>
+                        <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md shrink-0 border border-blue-200/60">
+                          {m.tag}
+                        </span>
+                      </div>
+                      <p
+                        className={`text-xs leading-relaxed ${
+                          m.completed ? "text-slate-400" : "text-slate-600"
+                        }`}
+                      >
+                        {m.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* RELEVANT TOPIC OPPORTUNITIES */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Lightbulb className="w-4 h-4 text-emerald-600" />
+                <h3 className="font-bold text-slate-900 text-sm sm:text-base">
+                  Relevant Topic Opportunities ({activeCreator.niche})
+                </h3>
+              </div>
+              <Badge variant="emerald" size="sm">
+                High-Retention Angles
+              </Badge>
+            </div>
+
+            <div className="space-y-3">
+              {currentPhase.topicOpportunities.map((topic, idx) => {
+                const isItem = typeof topic === "object" && topic !== null;
+                const title = isItem ? (topic as TopicOpportunityItem).title : topic;
+                const hookAngle = isItem ? (topic as TopicOpportunityItem).hookAngle : null;
+                const suggestedFormat = isItem ? (topic as TopicOpportunityItem).suggestedFormat : null;
+                const targetAudience = isItem ? (topic as TopicOpportunityItem).targetAudience : null;
+
+                return (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2 hover:border-slate-300 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
+                        &ldquo;{title}&rdquo;
+                      </h4>
+                      {suggestedFormat && (
+                        <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/80 shrink-0">
+                          {suggestedFormat}
+                        </span>
+                      )}
+                    </div>
+
+                    {hookAngle && (
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        <strong className="text-slate-800">Hook Angle: </strong>
+                        {hookAngle}
+                      </p>
+                    )}
+
+                    {targetAudience && (
+                      <p className="text-[11px] text-slate-400">
+                        Target Audience: {targetAudience}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* PUBLIC-PROFILE REFERENCES FOR LEARNING & BENCHMARKING */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-indigo-600" />
+                <h3 className="font-bold text-slate-900 text-sm sm:text-base">
+                  Public-Profile References for Learning & Benchmarking
+                </h3>
+              </div>
+              <span className="text-[11px] text-slate-400">Verified links only</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              {currentPhase.referenceProfiles.map((ref: ReferenceProfile, idx: number) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5 flex flex-col justify-between"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-xs sm:text-sm">{ref.name}</h4>
+                        <p className="text-[11px] text-blue-600 font-medium">{ref.handle}</p>
+                      </div>
+                      <Badge variant="purple" size="sm">
+                        {ref.platform}
+                      </Badge>
+                    </div>
+
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="text-slate-800">Tactical Lesson: </strong>
+                      {ref.lesson}
+                    </p>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <span className="text-[11px] font-semibold text-emerald-700 truncate">
+                      {ref.statsHighlight}
+                    </span>
+
+                    {/* Verified Link Button (Only rendered when verified) */}
+                    {ref.url && ref.isVerifiedLink ? (
+                      <a
+                        href={ref.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-50 hover:bg-slate-100 text-[11px] font-semibold text-slate-700 border border-slate-200 transition-colors shrink-0"
+                      >
+                        <span>Verified Profile</span>
+                        <ExternalLink className="w-3 h-3 text-slate-400" />
+                      </a>
+                    ) : (
+                      <span className="text-[10px] text-slate-400 font-medium">Public Reference</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-[11px] text-slate-400 leading-tight pt-1">
+              * Note: Public reference profiles are curated benchmark accounts for architectural study. Creator Engine has not analyzed private analytics of unauthenticated third-party accounts.
+            </p>
+          </div>
         </div>
 
-        {/* Right Column: Strategic Content Audit Insights (5 cols) */}
-        <div className="lg:col-span-5 space-y-5">
-          {/* Content Gaps Detected */}
+        {/* RIGHT COLUMN: CONTENT GAPS & SKILL PRIORITIES (5 COLS) */}
+        <div className="lg:col-span-5 space-y-6">
+          {/* CONTENT GAPS AND THE REASONS THEY MATTER */}
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
                 <h3 className="font-bold text-slate-900 text-sm">
-                  Content Gaps Identified
+                  Content Gaps & Why They Matter
                 </h3>
               </div>
               <Badge variant="amber" size="sm">
-                Optimization Area
+                Priority Gaps
               </Badge>
             </CardHeader>
-            <CardContent className="space-y-2.5">
-              {currentPhase.contentGaps.map((gap, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-50/40 border border-amber-200/60 text-xs text-slate-700"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
-                  <span className="leading-relaxed">{gap}</span>
-                </div>
-              ))}
+
+            <CardContent className="space-y-3">
+              {currentPhase.contentGaps.map((gapItem, idx) => {
+                const isObj = typeof gapItem === "object" && gapItem !== null;
+                const gap = isObj ? (gapItem as ContentGapItem).gap : gapItem;
+                const reason = isObj ? (gapItem as ContentGapItem).reason : null;
+                const impact = isObj ? (gapItem as ContentGapItem).impactLevel : "High";
+
+                return (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-xl bg-amber-50/40 border border-amber-200/70 space-y-1.5"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                        <h4 className="text-xs font-bold text-slate-900 leading-snug">{gap}</h4>
+                      </div>
+                      {impact && (
+                        <span
+                          className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border shrink-0 ${
+                            impact === "Critical"
+                              ? "bg-rose-50 text-rose-700 border-rose-200"
+                              : "bg-amber-100/70 text-amber-800 border-amber-300"
+                          }`}
+                        >
+                          {impact}
+                        </span>
+                      )}
+                    </div>
+
+                    {reason && (
+                      <div className="pl-4 text-[11px] text-slate-600 leading-relaxed">
+                        <strong className="text-slate-800">Why it matters: </strong>
+                        {reason}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </CardContent>
           </Card>
 
-          {/* Skills to Improve */}
+          {/* SKILL PRIORITIES */}
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-blue-600" />
                 <h3 className="font-bold text-slate-900 text-sm">
-                  Skills to Improve Next
+                  Skill Priorities
                 </h3>
               </div>
               <Badge variant="blue" size="sm">
                 Capability Building
               </Badge>
             </CardHeader>
-            <CardContent className="space-y-2.5">
-              {currentPhase.skillsToImprove.map((skill, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-start gap-2.5 p-3 rounded-xl bg-blue-50/40 border border-blue-200/60 text-xs text-slate-700"
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
-                  <span className="leading-relaxed">{skill}</span>
-                </div>
-              ))}
+
+            <CardContent className="space-y-3">
+              {currentPhase.skillsToImprove.map((skillItem, idx) => {
+                const isObj = typeof skillItem === "object" && skillItem !== null;
+                const skill = isObj ? (skillItem as SkillPriorityItem).skill : skillItem;
+                const category = isObj ? (skillItem as SkillPriorityItem).category : null;
+                const priority = isObj ? (skillItem as SkillPriorityItem).priority : null;
+                const action = isObj ? (skillItem as SkillPriorityItem).actionStep : null;
+
+                return (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-xl bg-blue-50/30 border border-blue-200/60 space-y-1.5"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                        <h4 className="text-xs font-bold text-slate-900 truncate">{skill}</h4>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {category && (
+                          <span className="text-[10px] text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
+                            {category}
+                          </span>
+                        )}
+                        {priority && (
+                          <span
+                            className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${
+                              priority === "Critical"
+                                ? "bg-rose-100 text-rose-800"
+                                : "bg-blue-100 text-blue-800"
+                            }`}
+                          >
+                            {priority}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {action && (
+                      <p className="text-[11px] text-slate-600 pl-5 leading-relaxed">
+                        <strong className="text-slate-800">Next Action: </strong>
+                        {action}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </CardContent>
           </Card>
 
-          {/* Topic Opportunities */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Lightbulb className="w-4 h-4 text-emerald-600" />
-                <h3 className="font-bold text-slate-900 text-sm">
-                  High-Retention Topic Hooks
-                </h3>
-              </div>
-              <Badge variant="emerald" size="sm">
-                Viral Angles
-              </Badge>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {currentPhase.topicOpportunities.map((topic, idx) => (
-                <div
-                  key={idx}
-                  className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-800 flex items-center justify-between group hover:bg-white hover:border-slate-300 transition-all"
-                >
-                  <span>&ldquo;{topic}&rdquo;</span>
-                  <Sparkles className="w-3 h-3 text-slate-400 group-hover:text-emerald-600 shrink-0" />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+          {/* QUICK LINKS TO WORKFLOW & ACTIONS */}
+          <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-blue-600" /> Execute Next Steps
+            </h4>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Turn these milestones into weekly daily tasks and standardized sponsor deal workflows.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2 pt-1">
+              <Link
+                href="/workflow"
+                className="flex-1 py-2 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold text-center border border-blue-200 transition-colors"
+              >
+                Open Workflow Engine
+              </Link>
+              <Link
+                href="/actions"
+                className="flex-1 py-2 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold text-center border border-slate-200 transition-colors"
+              >
+                Action Centre
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
