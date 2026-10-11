@@ -1,107 +1,289 @@
-import { CreatorProfile, Opportunity, CompatibilityBreakdown } from "@/types/creator";
+import {
+  CreatorProfile,
+  Opportunity,
+  CompatibilityBreakdown,
+  EligibilityCheckItem,
+} from "@/types/creator";
 
+/**
+ * Deterministic compatibility and eligibility evaluation engine.
+ * Computes:
+ * 1. Hard Eligibility checks (follower threshold, platform compatibility, niche alignment, engagement)
+ * 2. Explainable compatibility score (0-100) based on niche, platform, follower tier, and audience fit.
+ *
+ * Enforces hard eligibility separately so high compatibility factors do NOT mask a failed requirement.
+ */
 export function calculateCompatibility(
   opportunity: Opportunity,
   creator: CreatorProfile
 ): CompatibilityBreakdown {
-  // 1. Niche Match (Max 35 points)
-  let nicheScore = 10;
   const creatorNicheLower = creator.niche.toLowerCase();
   const oppNichesLower = opportunity.niche.map((n) => n.toLowerCase());
 
+  // 1. Niche Match (Max 35 points)
+  let nicheScore = 6;
   const exactNicheMatch = oppNichesLower.some(
     (n) => creatorNicheLower.includes(n) || n.includes(creatorNicheLower)
   );
 
-  const relatedFitness =
-    creatorNicheLower.includes("fitness") || creatorNicheLower.includes("health");
-  const relatedFinance =
-    creatorNicheLower.includes("finance") || creatorNicheLower.includes("invest");
+  const isFitnessCreator =
+    creatorNicheLower.includes("fitness") ||
+    creatorNicheLower.includes("health") ||
+    creatorNicheLower.includes("nutrition");
+
+  const isFinanceCreator =
+    creatorNicheLower.includes("finance") ||
+    creatorNicheLower.includes("invest") ||
+    creatorNicheLower.includes("wealth");
+
+  const relatedFitnessOpp = oppNichesLower.some(
+    (n) =>
+      n.includes("wellness") ||
+      n.includes("sports") ||
+      n.includes("nutrition") ||
+      n.includes("lifestyle") ||
+      n.includes("productivity")
+  );
+
+  const relatedFinanceOpp = oppNichesLower.some(
+    (n) =>
+      n.includes("fintech") ||
+      n.includes("business") ||
+      n.includes("career") ||
+      n.includes("invest") ||
+      n.includes("productivity")
+  );
+
+  const isRelatedVertical =
+    (isFitnessCreator && relatedFitnessOpp) ||
+    (isFinanceCreator && relatedFinanceOpp);
 
   if (exactNicheMatch) {
     nicheScore = 35;
-  } else if (
-    (relatedFitness && oppNichesLower.some((n) => n.includes("wellness") || n.includes("sports") || n.includes("nutrition"))) ||
-    (relatedFinance && oppNichesLower.some((n) => n.includes("business") || n.includes("fintech") || n.includes("career")))
-  ) {
-    nicheScore = 26;
+  } else if (isRelatedVertical) {
+    nicheScore = 24;
   } else {
-    nicheScore = 8;
+    nicheScore = 6;
   }
 
   // 2. Platform Match (Max 30 points)
-  let platformScore = 8;
-  if (
+  let platformScore = 6;
+  const oppPlatformLower = opportunity.platform.toLowerCase();
+  const creatorPrimaryLower = creator.primaryPlatform.toLowerCase();
+  const creatorSecondaryLower = creator.secondaryPlatform?.toLowerCase() || "";
+
+  const isNativePlatform =
     opportunity.platform === "Multi-Platform" ||
-    opportunity.platform.toLowerCase() === creator.primaryPlatform.toLowerCase()
-  ) {
+    oppPlatformLower === creatorPrimaryLower;
+
+  const isSecondaryPlatform =
+    !isNativePlatform &&
+    creatorSecondaryLower.length > 0 &&
+    oppPlatformLower === creatorSecondaryLower;
+
+  if (isNativePlatform) {
     platformScore = 30;
+  } else if (isSecondaryPlatform) {
+    platformScore = 20;
   } else {
-    platformScore = 8;
+    platformScore = 6;
   }
 
   // 3. Follower Tier Match (Max 25 points)
-  let followerScore = 5;
-  const qualifies = creator.followerCount >= opportunity.minFollowers;
+  let followerScore = 4;
+  const followerRatio = creator.followerCount / opportunity.minFollowers;
 
-  if (creator.followerCount >= opportunity.minFollowers * 1.5) {
+  if (followerRatio >= 1.4) {
     followerScore = 25; // comfortably exceeds min
-  } else if (creator.followerCount >= opportunity.minFollowers) {
+  } else if (followerRatio >= 1.0) {
     followerScore = 22; // meets threshold
-  } else if (creator.followerCount >= opportunity.minFollowers * 0.8) {
-    followerScore = 14; // near threshold
+  } else if (followerRatio >= 0.8) {
+    followerScore = 12; // near threshold
   } else {
-    followerScore = 5;
+    followerScore = 4; // far below threshold
   }
 
-  // 4. Creator Goal Alignment (Max 10 points)
-  let goalScore = 6;
-  const goalLower = creator.primaryGoal.toLowerCase();
-  if (goalLower.includes("monetis") || goalLower.includes("brand") || goalLower.includes("sponsor")) {
-    goalScore = 10;
-  } else if (goalLower.includes("consult") || goalLower.includes("client")) {
-    // If brand opportunity is B2B or fintech consulting aligned
-    if (opportunity.niche.some((n) => n.toLowerCase().includes("b2b") || n.toLowerCase().includes("finance"))) {
-      goalScore = 10;
-    } else {
-      goalScore = 7;
-    }
+  // 4. Target Audience & Demographic Fit (Max 10 points)
+  let audienceScore = 6;
+  const creatorAudienceLower = creator.audienceDemographic.toLowerCase();
+  const oppAudienceLower = opportunity.targetAudience.toLowerCase();
+
+  const isYouthOrStudentFit =
+    (creatorAudienceLower.includes("student") ||
+      creatorAudienceLower.includes("college") ||
+      creatorAudienceLower.includes("youth") ||
+      creatorAudienceLower.includes("beginner")) &&
+    (oppAudienceLower.includes("student") ||
+      oppAudienceLower.includes("college") ||
+      oppAudienceLower.includes("youth") ||
+      oppAudienceLower.includes("beginner"));
+
+  const isCorporateOrSalariedFit =
+    (creatorAudienceLower.includes("corporate") ||
+      creatorAudienceLower.includes("salaried") ||
+      creatorAudienceLower.includes("professional") ||
+      creatorAudienceLower.includes("engineer")) &&
+    (oppAudienceLower.includes("corporate") ||
+      oppAudienceLower.includes("salaried") ||
+      oppAudienceLower.includes("professional") ||
+      oppAudienceLower.includes("investor"));
+
+  if (isYouthOrStudentFit || isCorporateOrSalariedFit) {
+    audienceScore = 10;
+  } else if (exactNicheMatch) {
+    audienceScore = 8;
+  } else if (isRelatedVertical) {
+    audienceScore = 6;
   } else {
-    goalScore = 8;
+    audienceScore = 4;
   }
 
-  const totalScore = Math.min(100, Math.max(20, nicheScore + platformScore + followerScore + goalScore));
+  // Compute Total Deterministic Score (Bounded 10 to 100)
+  const totalScore = Math.min(
+    100,
+    Math.max(15, nicheScore + platformScore + followerScore + audienceScore)
+  );
 
+  // -------------------------------------------------------------
+  // HARD ELIGIBILITY CHECKS (Evaluated Strictly and Separately)
+  // -------------------------------------------------------------
+  const checks: EligibilityCheckItem[] = [];
+
+  // Check A: Follower Count (Hard)
+  const followerPassed = creator.followerCount >= opportunity.minFollowers;
+  checks.push({
+    id: "check-followers",
+    name: "Audience Scale Requirement",
+    passed: followerPassed,
+    requirement: `Minimum ${opportunity.minFollowers.toLocaleString()} followers`,
+    actual: `${creator.followerCount.toLocaleString()} followers on ${creator.primaryPlatform}`,
+    isHardRequirement: true,
+    failReason: followerPassed
+      ? undefined
+      : `Audience shortfall: ${creator.followerCount.toLocaleString()} current vs ${opportunity.minFollowers.toLocaleString()} required (-${(
+          opportunity.minFollowers - creator.followerCount
+        ).toLocaleString()})`,
+  });
+
+  // Check B: Platform Alignment (Hard)
+  const platformPassed = isNativePlatform || isSecondaryPlatform;
+  checks.push({
+    id: "check-platform",
+    name: "Platform Requirement",
+    passed: platformPassed,
+    requirement: `${opportunity.platform} active distribution`,
+    actual: `${creator.primaryPlatform}${
+      creator.secondaryPlatform ? ` (Secondary: ${creator.secondaryPlatform})` : ""
+    }`,
+    isHardRequirement: true,
+    failReason: platformPassed
+      ? undefined
+      : `Platform mismatch: Campaign requires ${opportunity.platform}; ${creator.name}'s presence is on ${creator.primaryPlatform}`,
+  });
+
+  // Check C: Content Niche Alignment (Hard)
+  const nichePassed = exactNicheMatch || isRelatedVertical;
+  checks.push({
+    id: "check-niche",
+    name: "Content Vertical Alignment",
+    passed: nichePassed,
+    requirement: `Creator focus in ${opportunity.niche.join(" or ")}`,
+    actual: `${creator.niche}`,
+    isHardRequirement: true,
+    failReason: nichePassed
+      ? undefined
+      : `Content vertical divergence: Brief requires ${opportunity.niche.join(
+          " / "
+        )}, but ${creator.name} creates ${creator.niche}`,
+  });
+
+  // Check D: Engagement Rate (Hard, if specified)
+  if (opportunity.minEngagementRate) {
+    const engagementPassed = creator.engagementRate >= opportunity.minEngagementRate;
+    checks.push({
+      id: "check-engagement",
+      name: "Minimum Engagement Benchmark",
+      passed: engagementPassed,
+      requirement: `>= ${opportunity.minEngagementRate}% engagement rate`,
+      actual: `${creator.engagementRate}% engagement rate`,
+      isHardRequirement: true,
+      failReason: engagementPassed
+        ? undefined
+        : `Engagement benchmark unmet: ${creator.engagementRate}% vs required ${opportunity.minEngagementRate}%`,
+    });
+  }
+
+  // Aggregated Hard Qualifications
+  const hardChecks = checks.filter((c) => c.isHardRequirement);
+  const failedHardChecks = hardChecks.filter((c) => !c.passed);
+  const qualifies = failedHardChecks.length === 0;
+
+  const failedHardRequirements = failedHardChecks.map(
+    (c) => c.failReason || `${c.name} unmet`
+  );
+
+  const passedRequirements = checks
+    .filter((c) => c.passed)
+    .map((c) => `${c.name}: ${c.actual}`);
+
+  // Build Explanations & Factor Breakdown
   const reasons: string[] = [];
-  if (nicheScore >= 30) {
+  if (exactNicheMatch) {
     reasons.push(`Direct ${creator.niche} niche match (+${nicheScore}%)`);
-  } else if (nicheScore >= 20) {
-    reasons.push(`Adjacent vertical match (+${nicheScore}%)`);
+  } else if (isRelatedVertical) {
+    reasons.push(`Adjacent vertical synergy (+${nicheScore}%)`);
   } else {
     reasons.push(`Niche divergence (+${nicheScore}%)`);
   }
 
-  if (platformScore === 30) {
-    reasons.push(`Native ${creator.primaryPlatform} focus (+30%)`);
+  if (isNativePlatform) {
+    reasons.push(`Native ${creator.primaryPlatform} campaign channel (+${platformScore}%)`);
+  } else if (isSecondaryPlatform) {
+    reasons.push(`Secondary ${creator.secondaryPlatform} channel (+${platformScore}%)`);
   } else {
-    reasons.push(`Cross-platform requirement (+${platformScore}%)`);
+    reasons.push(`Platform mismatch requirement (+${platformScore}%)`);
   }
 
+  if (followerPassed) {
+    reasons.push(
+      `Meets ${opportunity.minFollowers.toLocaleString()} follower min (+${followerScore}%)`
+    );
+  } else {
+    reasons.push(
+      `Shortfall of ${(
+        opportunity.minFollowers - creator.followerCount
+      ).toLocaleString()} followers (+${followerScore}%)`
+    );
+  }
+
+  if (isYouthOrStudentFit || isCorporateOrSalariedFit) {
+    reasons.push(`High target demographic affinity (+${audienceScore}%)`);
+  } else {
+    reasons.push(`General audience reach (+${audienceScore}%)`);
+  }
+
+  // Master natural-language explanation
+  let masterExplanation = "";
   if (qualifies) {
-    reasons.push(`Meets ${opportunity.minFollowers.toLocaleString()} follower min (+${followerScore}%)`);
+    masterExplanation = reasons.join(" • ");
   } else {
-    reasons.push(`Below target requirement of ${opportunity.minFollowers.toLocaleString()} (+${followerScore}%)`);
+    masterExplanation = `Fails ${failedHardChecks.length} hard requirement${
+      failedHardChecks.length > 1 ? "s" : ""
+    }: ${failedHardRequirements.join("; ")}`;
   }
-
-  reasons.push(`Aligned to "${creator.primaryGoal}" (+${goalScore}%)`);
 
   return {
     score: totalScore,
     nicheScore,
     platformScore,
     followerScore,
-    goalScore,
-    explanation: reasons.join(" • "),
+    audienceScore,
+    goalScore: 0,
+    explanation: masterExplanation,
+    reasons,
     qualifies,
+    eligibilityChecks: checks,
+    failedHardRequirements,
+    passedRequirements,
   };
 }

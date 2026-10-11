@@ -82,9 +82,25 @@ export interface Opportunity {
   deliverables: string[];
   status: "Available" | "Applied" | "Under Review" | "Saved";
   appliedDate?: string;
+  applicationId?: string;
+  appliedFee?: string;
+  appliedNotes?: string;
   perks?: string[];
   targetAudience: string;
+  targetLocation?: string;
+  eligibilityRequirements: string[];
+  minEngagementRate?: number;
   sponsoredTag: boolean;
+}
+
+export interface EligibilityCheckItem {
+  id: string;
+  name: string;
+  passed: boolean;
+  requirement: string;
+  actual: string;
+  isHardRequirement: boolean;
+  failReason?: string;
 }
 
 export interface CompatibilityBreakdown {
@@ -92,9 +108,14 @@ export interface CompatibilityBreakdown {
   nicheScore: number;
   platformScore: number;
   followerScore: number;
+  audienceScore: number;
   goalScore: number;
   explanation: string;
-  qualifies: boolean;
+  reasons: string[];
+  qualifies: boolean; // hard eligibility: passes all hard requirements
+  eligibilityChecks: EligibilityCheckItem[];
+  failedHardRequirements: string[];
+  passedRequirements: string[];
 }
 
 export interface RoadmapMilestone {

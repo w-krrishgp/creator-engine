@@ -39,8 +39,9 @@ interface CreatorContextType {
   toggleAction: (id: string) => void;
   addAction: (item: Omit<ActionItem, "id" | "creatorId">) => void;
   toggleMilestone: (phaseId: string, milestoneId: string) => void;
-  applyOpportunity: (oppId: string, notes?: string) => void;
+  applyOpportunity: (oppId: string, notes?: string, requestedFee?: string) => void;
   saveOpportunity: (oppId: string) => void;
+  withdrawApplication: (oppId: string) => void;
   showToast: (message: string, type?: "success" | "info" | "warning") => void;
   removeToast: (id: string) => void;
 }
@@ -76,12 +77,49 @@ export function calculateProfileCompletion(profile: Partial<CreatorProfile>): nu
   return Math.round((filled / fieldsToCheck.length) * 100);
 }
 
+const INITIAL_OPPS_BY_CREATOR: Record<string, Opportunity[]> = {
+  rahul: MOCK_OPPORTUNITIES.map((opp) => {
+    if (opp.id === "opp-myprotein") {
+      return {
+        ...opp,
+        status: "Applied" as const,
+        appliedDate: "Oct 10, 2026",
+        applicationId: "CE-APP-9041",
+        appliedFee: "₹35,000",
+        appliedNotes: "Pitch sent focusing on affordable college dorm workout routines and recipe hacks.",
+      };
+    }
+    if (opp.id === "opp-decathlon") {
+      return { ...opp, status: "Saved" as const };
+    }
+    return { ...opp, status: "Available" as const };
+  }),
+  priya: MOCK_OPPORTUNITIES.map((opp) => {
+    if (opp.id === "opp-wintwealth") {
+      return {
+        ...opp,
+        status: "Applied" as const,
+        appliedDate: "Oct 9, 2026",
+        applicationId: "CE-APP-8812",
+        appliedFee: "₹65,000",
+        appliedNotes: "Senior secured bonds vs traditional FDs educational slides framework pitch.",
+      };
+    }
+    if (opp.id === "opp-smallcase") {
+      return { ...opp, status: "Saved" as const };
+    }
+    return { ...opp, status: "Available" as const };
+  }),
+};
+
 export function CreatorProvider({ children }: { children: ReactNode }) {
   const [activeCreatorId, setActiveCreatorId] = useState<string>("rahul");
   const [creators, setCreators] = useState<Record<string, CreatorProfile>>(MOCK_CREATORS);
-  const [opportunities, setOpportunities] = useState<Opportunity[]>(MOCK_OPPORTUNITIES);
+  const [oppsByCreator, setOppsByCreator] = useState<Record<string, Opportunity[]>>(INITIAL_OPPS_BY_CREATOR);
   const [roadmapsByCreator, setRoadmapsByCreator] = useState<Record<string, RoadmapPhase[]>>(MOCK_ROADMAPS);
   const [actionsByCreator, setActionsByCreator] = useState<Record<string, ActionItem[]>>(MOCK_ACTIONS);
+
+  const opportunities = oppsByCreator[activeCreatorId] || MOCK_OPPORTUNITIES;
 
   // Sync from localStorage after client hydration to prevent React hydration mismatch
   useEffect(() => {
@@ -96,9 +134,9 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         setCreators(JSON.parse(savedProfiles));
       }
 
-      const savedOpps = localStorage.getItem("creator_engine_opps");
+      const savedOpps = localStorage.getItem("creator_engine_opps_by_creator");
       if (savedOpps) {
-        setOpportunities(JSON.parse(savedOpps));
+        setOppsByCreator(JSON.parse(savedOpps));
       }
 
       const savedRoadmaps = localStorage.getItem("creator_engine_roadmaps");
@@ -242,27 +280,26 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const applyOpportunity = (oppId: string, notes?: string) => {
-    if (notes) {
-      try {
-        localStorage.setItem(`creator_engine_pitch_${oppId}`, notes);
-      } catch {
-        // Ignore
-      }
-    }
-    setOpportunities((prev) => {
-      const next = prev.map((opp) => {
+  const applyOpportunity = (oppId: string, notes?: string, requestedFee?: string) => {
+    const appId = `CE-APP-${Math.floor(1000 + Math.random() * 9000)}`;
+    setOppsByCreator((prev) => {
+      const currentList = prev[activeCreatorId] || MOCK_OPPORTUNITIES;
+      const nextList = currentList.map((opp) => {
         if (opp.id === oppId) {
           return {
             ...opp,
             status: "Applied" as const,
-            appliedDate: "Just now",
+            appliedDate: "Today, Oct 12",
+            applicationId: appId,
+            appliedFee: requestedFee || opp.budgetRange,
+            appliedNotes: notes,
           };
         }
         return opp;
       });
+      const next = { ...prev, [activeCreatorId]: nextList };
       try {
-        localStorage.setItem("creator_engine_opps", JSON.stringify(next));
+        localStorage.setItem("creator_engine_opps_by_creator", JSON.stringify(next));
       } catch {
         // Ignore
       }
@@ -271,17 +308,17 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
 
     const targetOpp = opportunities.find((o) => o.id === oppId);
     showToast(
-      `Application submitted to ${targetOpp?.brand || "Brand"}! Pitch logged locally.`,
+      `Application ${appId} submitted to ${targetOpp?.brand || "Brand"}!`,
       "success"
     );
 
     // Also auto-add a follow-up action to the action centre!
     if (targetOpp) {
       addAction({
-        title: `Follow up on applied deal with ${targetOpp.brand}`,
+        title: `Follow up on applied deal with ${targetOpp.brand} (${appId})`,
         category: "Brand Pitch",
         priority: "Medium",
-        reason: `Application submitted. Professional creators follow up within 4 business days to confirm review.`,
+        reason: `Application submitted for "${targetOpp.title}". Professional creators follow up within 4 business days to confirm review.`,
         deadline: "In 4 days",
         estimatedTime: "15 mins",
         completed: false,
@@ -290,25 +327,56 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   };
 
   const saveOpportunity = (oppId: string) => {
-    setOpportunities((prev) => {
-      const next = prev.map((opp) => {
+    setOppsByCreator((prev) => {
+      const currentList = prev[activeCreatorId] || MOCK_OPPORTUNITIES;
+      const nextList = currentList.map((opp) => {
         if (opp.id === oppId) {
           const nextStatus = opp.status === "Saved" ? ("Available" as const) : ("Saved" as const);
           showToast(
-            nextStatus === "Saved" ? `Saved ${opp.brand} to shortlisted deals` : `Removed from saved deals`,
+            nextStatus === "Saved"
+              ? `Saved ${opp.brand} to shortlisted deals`
+              : `Removed ${opp.brand} from saved deals`,
             "info"
           );
           return { ...opp, status: nextStatus };
         }
         return opp;
       });
+      const next = { ...prev, [activeCreatorId]: nextList };
       try {
-        localStorage.setItem("creator_engine_opps", JSON.stringify(next));
+        localStorage.setItem("creator_engine_opps_by_creator", JSON.stringify(next));
       } catch {
         // Ignore
       }
       return next;
     });
+  };
+
+  const withdrawApplication = (oppId: string) => {
+    setOppsByCreator((prev) => {
+      const currentList = prev[activeCreatorId] || MOCK_OPPORTUNITIES;
+      const nextList = currentList.map((opp) => {
+        if (opp.id === oppId) {
+          return {
+            ...opp,
+            status: "Available" as const,
+            appliedDate: undefined,
+            applicationId: undefined,
+            appliedFee: undefined,
+            appliedNotes: undefined,
+          };
+        }
+        return opp;
+      });
+      const next = { ...prev, [activeCreatorId]: nextList };
+      try {
+        localStorage.setItem("creator_engine_opps_by_creator", JSON.stringify(next));
+      } catch {
+        // Ignore
+      }
+      return next;
+    });
+    showToast("Application withdrawn and returned to Available", "info");
   };
 
   const completeOnboarding = (data: OnboardingFormData) => {
@@ -381,6 +449,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         toggleMilestone,
         applyOpportunity,
         saveOpportunity,
+        withdrawApplication,
         showToast,
         removeToast,
       }}
