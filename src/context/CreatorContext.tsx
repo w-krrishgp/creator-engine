@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import {
   CreatorProfile,
   Opportunity,
@@ -77,65 +77,43 @@ export function calculateProfileCompletion(profile: Partial<CreatorProfile>): nu
 }
 
 export function CreatorProvider({ children }: { children: ReactNode }) {
-  const [activeCreatorId, setActiveCreatorId] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const savedId = localStorage.getItem("creator_engine_active_id");
-        if (savedId && MOCK_CREATORS[savedId]) return savedId;
-      } catch {
-        // Ignore
-      }
-    }
-    return "rahul";
-  });
+  const [activeCreatorId, setActiveCreatorId] = useState<string>("rahul");
+  const [creators, setCreators] = useState<Record<string, CreatorProfile>>(MOCK_CREATORS);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>(MOCK_OPPORTUNITIES);
+  const [roadmapsByCreator, setRoadmapsByCreator] = useState<Record<string, RoadmapPhase[]>>(MOCK_ROADMAPS);
+  const [actionsByCreator, setActionsByCreator] = useState<Record<string, ActionItem[]>>(MOCK_ACTIONS);
 
-  const [creators, setCreators] = useState<Record<string, CreatorProfile>>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("creator_engine_profiles");
-        if (saved) return JSON.parse(saved);
-      } catch {
-        // Ignore
+  // Sync from localStorage after client hydration to prevent React hydration mismatch
+  useEffect(() => {
+    try {
+      const savedId = localStorage.getItem("creator_engine_active_id");
+      if (savedId && MOCK_CREATORS[savedId]) {
+        setActiveCreatorId(savedId);
       }
-    }
-    return MOCK_CREATORS;
-  });
 
-  const [opportunities, setOpportunities] = useState<Opportunity[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("creator_engine_opps");
-        if (saved) return JSON.parse(saved);
-      } catch {
-        // Ignore
+      const savedProfiles = localStorage.getItem("creator_engine_profiles");
+      if (savedProfiles) {
+        setCreators(JSON.parse(savedProfiles));
       }
-    }
-    return MOCK_OPPORTUNITIES;
-  });
 
-  const [roadmapsByCreator, setRoadmapsByCreator] = useState<Record<string, RoadmapPhase[]>>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("creator_engine_roadmaps");
-        if (saved) return JSON.parse(saved);
-      } catch {
-        // Ignore
+      const savedOpps = localStorage.getItem("creator_engine_opps");
+      if (savedOpps) {
+        setOpportunities(JSON.parse(savedOpps));
       }
-    }
-    return MOCK_ROADMAPS;
-  });
 
-  const [actionsByCreator, setActionsByCreator] = useState<Record<string, ActionItem[]>>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("creator_engine_actions");
-        if (saved) return JSON.parse(saved);
-      } catch {
-        // Ignore
+      const savedRoadmaps = localStorage.getItem("creator_engine_roadmaps");
+      if (savedRoadmaps) {
+        setRoadmapsByCreator(JSON.parse(savedRoadmaps));
       }
+
+      const savedActions = localStorage.getItem("creator_engine_actions");
+      if (savedActions) {
+        setActionsByCreator(JSON.parse(savedActions));
+      }
+    } catch {
+      // Ignore
     }
-    return MOCK_ACTIONS;
-  });
+  }, []);
 
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
 
