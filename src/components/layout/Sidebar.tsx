@@ -231,7 +231,14 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
         {/* Profile Readiness Meter */}
         <div className="px-1 space-y-1">
           <div className="flex items-center justify-between text-[10px]">
-            <span className="font-semibold text-slate-500">Profile Readiness</span>
+            <Link
+              href="/onboarding"
+              onClick={onMobileClose}
+              className="font-semibold text-slate-500 hover:text-blue-600 flex items-center gap-1 group transition-colors"
+            >
+              <span>Profile Readiness</span>
+              <Sparkles className="w-2.5 h-2.5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </Link>
             <span className="font-bold text-slate-800 font-mono">{profileCompletion}%</span>
           </div>
           <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
@@ -241,6 +248,16 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
             />
           </div>
         </div>
+
+        {/* Quick Launch Onboarding */}
+        <Link
+          href="/onboarding"
+          onClick={onMobileClose}
+          className="w-full py-1.5 px-2 rounded-lg bg-blue-50/70 hover:bg-blue-100/70 border border-blue-200/60 text-blue-700 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
+        >
+          <Sparkles className="w-3 h-3 text-blue-600" />
+          <span>Launch Onboarding Wizard</span>
+        </Link>
       </div>
     </aside>
   );

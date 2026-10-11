@@ -6,6 +6,7 @@ import {
   Opportunity,
   RoadmapPhase,
   ActionItem,
+  OnboardingFormData,
 } from "@/types/creator";
 import { MOCK_CREATORS } from "@/data/mockCreators";
 import { MOCK_OPPORTUNITIES } from "@/data/mockOpportunities";
@@ -30,9 +31,11 @@ interface CreatorContextType {
   totalActionsCount: number;
   appliedOpportunitiesCount: number;
   toasts: ToastNotification[];
+  isOnboarded: boolean;
   switchCreator: (id: string) => void;
   updateCreatorProfile: (data: Partial<CreatorProfile>) => void;
   resetCreatorProfile: () => void;
+  completeOnboarding: (data: OnboardingFormData) => void;
   toggleAction: (id: string) => void;
   addAction: (item: Omit<ActionItem, "id" | "creatorId">) => void;
   toggleMilestone: (phaseId: string, milestoneId: string) => void;
@@ -44,7 +47,7 @@ interface CreatorContextType {
 
 const CreatorContext = createContext<CreatorContextType | undefined>(undefined);
 
-export function calculateProfileCompletion(profile: CreatorProfile): number {
+export function calculateProfileCompletion(profile: Partial<CreatorProfile>): number {
   const fieldsToCheck: (keyof CreatorProfile)[] = [
     "name",
     "handle",
@@ -53,7 +56,9 @@ export function calculateProfileCompletion(profile: CreatorProfile): number {
     "followerCount",
     "audienceDemographic",
     "contentFormat",
+    "contentFrequency",
     "creatorStage",
+    "experienceLevel",
     "primaryGoal",
     "monthlyIncomeTarget",
     "bio",
@@ -65,6 +70,7 @@ export function calculateProfileCompletion(profile: CreatorProfile): number {
     const val = profile[field];
     if (typeof val === "number" && val > 0) filled++;
     else if (typeof val === "string" && val.trim().length > 0) filled++;
+    else if (Array.isArray(val) && val.length > 0) filled++;
   });
 
   return Math.round((filled / fieldsToCheck.length) * 100);
@@ -327,6 +333,42 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const completeOnboarding = (data: OnboardingFormData) => {
+    setCreators((prev) => {
+      const current = prev[activeCreatorId] || MOCK_CREATORS[activeCreatorId];
+      const updated: CreatorProfile = {
+        ...current,
+        name: data.name,
+        handle: data.handle,
+        niche: data.niche,
+        creatorStage: data.creatorStage,
+        experienceLevel: data.experienceLevel,
+        bio: data.bio || current.bio,
+        primaryPlatform: data.primaryPlatform,
+        followerCount: data.followerCount,
+        secondaryPlatform: data.secondaryPlatform || "",
+        secondaryFollowers: data.secondaryFollowers || 0,
+        audienceDemographic: data.audienceDemographic,
+        location: data.location,
+        contentFormat: data.contentFormat,
+        contentFrequency: data.contentFrequency,
+        primaryGoal: data.primaryGoal,
+        monetisationGoals: data.monetisationGoals,
+        monthlyIncomeTarget: data.monthlyIncomeTarget,
+        isManuallyReported: true,
+        isOnboarded: true,
+      };
+      const next = { ...prev, [activeCreatorId]: updated };
+      try {
+        localStorage.setItem("creator_engine_profiles", JSON.stringify(next));
+      } catch {
+        // Ignore
+      }
+      return next;
+    });
+    showToast("Profile setup complete! Welcome to Creator Engine.", "success");
+  };
+
   const activeCreator = creators[activeCreatorId] || MOCK_CREATORS.rahul;
   const currentActions = actionsByCreator[activeCreatorId] || MOCK_ACTIONS[activeCreatorId] || [];
   const currentRoadmaps = roadmapsByCreator[activeCreatorId] || MOCK_ROADMAPS[activeCreatorId] || [];
@@ -335,6 +377,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   const totalActionsCount = currentActions.length;
   const appliedOpportunitiesCount = opportunities.filter((o) => o.status === "Applied").length;
   const profileCompletion = calculateProfileCompletion(activeCreator);
+  const isOnboarded = Boolean(activeCreator?.isOnboarded);
 
   return (
     <CreatorContext.Provider
@@ -350,9 +393,11 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         totalActionsCount,
         appliedOpportunitiesCount,
         toasts,
+        isOnboarded,
         switchCreator,
         updateCreatorProfile,
         resetCreatorProfile,
+        completeOnboarding,
         toggleAction,
         addAction,
         toggleMilestone,

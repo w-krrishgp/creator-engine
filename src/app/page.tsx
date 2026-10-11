@@ -139,6 +139,13 @@ export default function OverviewPage() {
           {/* Quick Contextual Actions */}
           <div className="flex sm:flex-row lg:flex-col gap-2 shrink-0">
             <Link
+              href="/onboarding"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200/80 font-bold text-xs transition-colors shadow-2xs"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span>Onboarding Setup</span>
+            </Link>
+            <Link
               href="/roadmap"
               className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs transition-colors"
             >

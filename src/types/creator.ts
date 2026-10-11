@@ -2,6 +2,8 @@ export type PlatformType = "Instagram" | "LinkedIn" | "YouTube" | "TikTok" | "X"
 
 export type CreatorStageType = "Nano (1k-10k)" | "Micro (10k-50k)" | "Mid-Tier (50k-200k)" | "Macro (200k+)";
 
+export type ExperienceLevelType = "Emerging (< 1 yr)" | "Growing (1-3 yrs)" | "Established (3+ yrs)";
+
 export interface CreatorProfile {
   id: "rahul" | "priya" | string;
   name: string;
@@ -11,11 +13,16 @@ export interface CreatorProfile {
   niche: string;
   primaryPlatform: PlatformType;
   followerCount: number;
+  secondaryPlatform?: PlatformType | "";
+  secondaryFollowers?: number;
   engagementRate: number; // e.g. 4.8 (%)
   audienceDemographic: string;
   contentFormat: string;
+  contentFrequency?: string;
   creatorStage: CreatorStageType;
+  experienceLevel?: ExperienceLevelType;
   primaryGoal: string;
+  monetisationGoals?: string[];
   monthlyIncomeTarget: number; // in USD or INR equivalent
   bio: string;
   location: string;
@@ -25,6 +32,36 @@ export interface CreatorProfile {
   monthlyGrowthRate: number; // e.g. 12.4 (%)
   avgImpressionsPerPost: number;
   mediaKitLink?: string;
+  isManuallyReported?: boolean;
+  isOnboarded?: boolean;
+}
+
+export interface OnboardingFormData {
+  // Step 1: About you
+  name: string;
+  handle: string;
+  niche: string;
+  creatorStage: CreatorStageType;
+  experienceLevel: ExperienceLevelType;
+  bio?: string;
+
+  // Step 2: Your platforms
+  primaryPlatform: PlatformType;
+  followerCount: number;
+  secondaryPlatform?: PlatformType | "";
+  secondaryFollowers?: number;
+  engagementRate?: number;
+
+  // Step 3: Your audience
+  audienceDemographic: string;
+  location: string;
+  contentFormat: string;
+  contentFrequency: string;
+
+  // Step 4: Your goals
+  primaryGoal: string;
+  monetisationGoals: string[];
+  monthlyIncomeTarget: number;
 }
 
 export interface Opportunity {

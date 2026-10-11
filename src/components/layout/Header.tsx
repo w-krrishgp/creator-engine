@@ -65,6 +65,12 @@ export function Header() {
           subtitle: "Prioritized execution queue & momentum tracker",
           tag: "Execution",
         };
+      case "/onboarding":
+        return {
+          title: "Creator Onboarding Wizard",
+          subtitle: "5-stage guided setup for positioning, audience, channels & revenue targets",
+          tag: "Setup",
+        };
       default:
         return {
           title: "Creator Engine",
