@@ -154,13 +154,17 @@ export interface MonetisationChannel {
   subtitle: string;
   badge: string;
   suitabilityScore: number; // 0-100
+  suitabilityExplanation?: string;
   whyItSuits: string;
+  prerequisites?: string[];
+  suggestedFirstStep: string;
+  potentialRisks?: string;
   estimatedPotential: string;
+  illustrativePriceRange?: string;
   complexity: "Beginner" | "Intermediate" | "Advanced";
   readinessStatus: "Ready to Launch" | "High Opportunity" | "Scale Phase";
   launchChecklist: string[];
   realisticCaveats: string;
-  suggestedFirstStep: string;
 }
 
 export interface ActionItem {
