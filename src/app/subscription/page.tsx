@@ -115,7 +115,7 @@ export default function SubscriptionManagePage() {
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             Manage Your Membership
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 mt-1">
+          <p className="text-sm sm:text-base text-slate-600 mt-1">
             Review active plan, billing cycles, monthly feature quotas, and available subscription actions.
           </p>
         </div>
@@ -123,10 +123,10 @@ export default function SubscriptionManagePage() {
         <div className="flex items-center gap-2">
           <Link
             href="/pricing"
-            className="btn-tactile inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-colors"
+            className="btn-tactile inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-sm transition-colors"
           >
             <span>Compare All Plans</span>
-            <ChevronRight className="w-3.5 h-3.5" />
+            <ChevronRight className="w-4 h-4" />
           </Link>
           <button
             onClick={() => {
@@ -134,7 +134,7 @@ export default function SubscriptionManagePage() {
               refreshSubscriptionUsage();
             }}
             disabled={isSubscriptionLoading}
-            className="btn-tactile p-2 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors"
+            className="btn-tactile p-2.5 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors"
             title="Refresh status"
           >
             <RefreshCw className={`w-4 h-4 ${isSubscriptionLoading ? "animate-spin text-[#0870e8]" : ""}`} />
@@ -144,11 +144,11 @@ export default function SubscriptionManagePage() {
 
       {/* Cancellation Success Feedback */}
       {cancelMessage && (
-        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-3 text-xs animate-in fade-in">
-          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-3 text-sm animate-in fade-in">
+          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div>
             <p className="font-bold">{cancelMessage}</p>
-            <p className="text-[11px] text-amber-800 mt-0.5">
+            <p className="text-xs text-amber-800 mt-0.5">
               You will not be billed on the next renewal date.
             </p>
           </div>
@@ -157,19 +157,19 @@ export default function SubscriptionManagePage() {
 
       {/* Payment Failure / Past Due Alert Banner */}
       {isPastDue && (
-        <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-950 flex items-start justify-between gap-3 text-xs">
+        <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-950 flex items-start justify-between gap-3 text-sm">
           <div className="flex items-start gap-2.5">
             <XCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
             <div>
-              <p className="font-bold text-sm">Action Required: Payment Past Due</p>
-              <p className="text-[11.5px] text-red-800 mt-0.5 leading-relaxed">
+              <p className="font-bold text-base">Action Required: Payment Past Due</p>
+              <p className="text-xs sm:text-sm text-red-800 mt-0.5 leading-relaxed">
                 The recurring charge for your {currentPlan.name} plan could not be processed. Please update your payment method or retry authorization with Razorpay to restore uninterrupted access.
               </p>
             </div>
           </div>
           <button
             onClick={() => handleOpenUpgrade(currentPlanId === "normal" ? "pro" : currentPlanId)}
-            className="btn-tactile px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs shrink-0 transition-colors"
+            className="btn-tactile px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-sm shrink-0 transition-colors"
           >
             Retry Payment
           </button>
@@ -184,7 +184,7 @@ export default function SubscriptionManagePage() {
             <CardHeader className="bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-[#0870e8]" />
-                <h3 className="font-bold text-slate-900 text-sm">Active Subscription Plan</h3>
+                <h3 className="font-bold text-slate-900 text-base">Active Subscription Plan</h3>
               </div>
               <PlanBadge planId={currentPlanId} size="sm" />
             </CardHeader>
@@ -193,18 +193,18 @@ export default function SubscriptionManagePage() {
               {/* Plan Row */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100/60 border border-slate-200/80">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
                     Active Membership
                   </span>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                       {currentPlan.name}
                     </h2>
-                    <span className="text-sm font-bold text-slate-600 font-mono">
+                    <span className="text-sm sm:text-base font-bold text-slate-600 font-mono">
                       {currentPlan.priceFormatted} / month
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">{currentPlan.tagline}</p>
+                  <p className="text-sm text-slate-600 mt-1">{currentPlan.tagline}</p>
                 </div>
 
                 <div className="flex flex-col sm:items-end gap-1.5 shrink-0">
@@ -225,7 +225,7 @@ export default function SubscriptionManagePage() {
                       Active & Verified
                     </span>
                   )}
-                  <p className="text-[11px] text-slate-500 font-mono">
+                  <p className="text-xs text-slate-500 font-mono">
                     {isCanceled ? `Access until ${periodEndFormatted}` : `Renews: ${periodEndFormatted}`}
                   </p>
                 </div>
@@ -237,16 +237,16 @@ export default function SubscriptionManagePage() {
                   <>
                     <button
                       onClick={() => handleOpenUpgrade("pro")}
-                      className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#075fca] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+                      className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#075fca] text-white font-bold text-sm shadow-xs transition-colors cursor-pointer"
                     >
-                      <Zap className="w-3.5 h-3.5" />
+                      <Zap className="w-4 h-4" />
                       <span>Upgrade to Pro (₹500/mo)</span>
                     </button>
                     <button
                       onClick={() => handleOpenUpgrade("pro_plus")}
-                      className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer"
+                      className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition-colors cursor-pointer"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                      <Sparkles className="w-4 h-4 text-purple-400" />
                       <span>Upgrade to Pro+ (₹999/mo)</span>
                     </button>
                   </>
@@ -254,16 +254,16 @@ export default function SubscriptionManagePage() {
                   <>
                     <button
                       onClick={() => handleOpenUpgrade("pro_plus")}
-                      className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-purple-900 hover:bg-purple-800 text-white font-bold text-xs transition-colors cursor-pointer"
+                      className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-purple-900 hover:bg-purple-800 text-white font-bold text-sm transition-colors cursor-pointer"
                     >
-                      <ArrowUpRight className="w-3.5 h-3.5 text-purple-300" />
+                      <ArrowUpRight className="w-4 h-4 text-purple-300" />
                       <span>Upgrade to Pro+ (₹999/mo)</span>
                     </button>
                     {!isCanceled && (
                       <button
                         onClick={handleCancelSubscription}
                         disabled={cancelling}
-                        className="btn-tactile px-4 py-2.5 rounded-full border border-red-200 text-red-700 hover:bg-red-50 font-semibold text-xs transition-colors"
+                        className="btn-tactile px-4 py-2.5 rounded-full border border-red-200 text-red-700 hover:bg-red-50 font-semibold text-sm transition-colors"
                       >
                         {cancelling ? "Processing..." : "Cancel Recurring Subscription"}
                       </button>
@@ -273,16 +273,16 @@ export default function SubscriptionManagePage() {
                   <>
                     <button
                       onClick={() => handleOpenUpgrade("pro")}
-                      className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+                      className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-sm transition-colors cursor-pointer"
                     >
-                      <ArrowDownLeft className="w-3.5 h-3.5" />
+                      <ArrowDownLeft className="w-4 h-4" />
                       <span>Switch to Pro (₹500/mo)</span>
                     </button>
                     {!isCanceled && (
                       <button
                         onClick={handleCancelSubscription}
                         disabled={cancelling}
-                        className="btn-tactile px-4 py-2.5 rounded-full border border-red-200 text-red-700 hover:bg-red-50 font-semibold text-xs transition-colors"
+                        className="btn-tactile px-4 py-2.5 rounded-full border border-red-200 text-red-700 hover:bg-red-50 font-semibold text-sm transition-colors"
                       >
                         {cancelling ? "Processing..." : "Cancel Subscription"}
                       </button>
@@ -296,10 +296,10 @@ export default function SubscriptionManagePage() {
           {/* Features in Current Tier */}
           <Card className="bg-white border-slate-200/80 shadow-xs">
             <CardHeader className="bg-slate-50/70 border-b border-slate-100">
-              <h3 className="font-bold text-slate-900 text-sm">Included Privileges</h3>
+              <h3 className="font-bold text-slate-900 text-base">Included Privileges</h3>
             </CardHeader>
             <CardContent className="p-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 {currentPlan.features.map((feat, idx) => (
                   <div key={idx} className="flex items-start gap-2 text-slate-700">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
@@ -316,13 +316,13 @@ export default function SubscriptionManagePage() {
           {/* Monthly Quotas Meter */}
           <Card className="bg-white border-slate-200/80 shadow-xs">
             <CardHeader className="bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="font-bold text-slate-900 text-sm">Monthly Quotas</h3>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <h3 className="font-bold text-slate-900 text-base">Monthly Quotas</h3>
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                 Usage
               </span>
             </CardHeader>
 
-            <CardContent className="p-5 space-y-4 text-xs">
+            <CardContent className="p-5 space-y-4 text-sm">
               {/* AI Strategic Synthesis */}
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center text-slate-700">
@@ -387,8 +387,8 @@ export default function SubscriptionManagePage() {
               </div>
 
               {/* Reset Date */}
-              <div className="pt-3 border-t border-slate-100 text-[11px] text-slate-500 flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-slate-400" />
+              <div className="pt-3 border-t border-slate-100 text-xs sm:text-[13px] text-slate-500 flex items-center gap-1.5">
+                <Calendar className="w-4 h-4 text-slate-400" />
                 <span>Quotas reset: {periodEndFormatted}</span>
               </div>
             </CardContent>
@@ -399,18 +399,18 @@ export default function SubscriptionManagePage() {
             <CardHeader className="border-b border-slate-200/60 pb-3">
               <div className="flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-slate-600" />
-                <h3 className="font-bold text-slate-900 text-xs">Payment Gateway Status</h3>
+                <h3 className="font-bold text-slate-900 text-sm">Payment Gateway Status</h3>
               </div>
             </CardHeader>
 
-            <CardContent className="p-4 space-y-2.5 text-[11px] text-slate-600">
+            <CardContent className="p-4 space-y-2.5 text-xs sm:text-[13px] text-slate-600">
               <div className="flex items-center justify-between">
                 <span>Provider:</span>
                 <span className="font-bold text-slate-900">Razorpay Subscriptions</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Verification Mode:</span>
-                <span className="font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                <span className="font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 text-xs">
                   HMAC-SHA256 Webhooks
                 </span>
               </div>

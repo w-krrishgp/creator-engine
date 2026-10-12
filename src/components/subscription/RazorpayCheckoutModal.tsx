@@ -211,15 +211,15 @@ RAZORPAY_PLAN_ID_PRO_PLUS="plan_ProPlusMonthlySample"`;
             <span className="p-1.5 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30">
               <CreditCard className="w-4 h-4" />
             </span>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-400">
               Razorpay Subscription Checkout
             </span>
           </div>
 
-          <h3 className="text-xl font-extrabold text-white tracking-tight">
+          <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
             {success ? "Subscription Activated!" : `Upgrade to ${targetPlan.name}`}
           </h3>
-          <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
             {success
               ? "Your payment was authoritatively verified and higher tier quotas are unlocked."
               : `Monthly recurring billing powered by Razorpay Subscriptions.`}
@@ -227,22 +227,22 @@ RAZORPAY_PLAN_ID_PRO_PLUS="plan_ProPlusMonthlySample"`;
         </div>
 
         {/* Modal Body */}
-        <div className="p-5 sm:p-6 space-y-4 text-xs">
+        <div className="p-5 sm:p-6 space-y-4 text-sm">
           {success ? (
             /* Success State */
             <div className="text-center py-6 space-y-4">
-              <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
                 <Check className="w-8 h-8 stroke-[2.5]" />
               </div>
               <div className="space-y-1">
-                <h4 className="text-lg font-extrabold text-slate-900">
+                <h4 className="text-xl font-extrabold text-slate-900">
                   Welcome to {targetPlan.name}!
                 </h4>
-                <p className="text-slate-600 text-xs max-w-sm mx-auto">
+                <p className="text-slate-600 text-sm max-w-sm mx-auto leading-relaxed">
                   Your recurring subscription has been cryptographically confirmed and registered on the server.
                 </p>
               </div>
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-1.5">
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-2 text-sm">
                 <div className="flex justify-between text-slate-600">
                   <span>Plan:</span>
                   <strong className="text-slate-900">{targetPlan.name}</strong>
@@ -264,36 +264,36 @@ RAZORPAY_PLAN_ID_PRO_PLUS="plan_ProPlusMonthlySample"`;
           ) : (
             <>
               {/* Selected Plan Details */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                     Selected Tier
                   </span>
-                  <h4 className="text-base font-extrabold text-slate-900 flex items-center gap-1.5 mt-0.5">
+                  <h4 className="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2 mt-0.5">
                     <span>{targetPlan.name}</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-[#0870e8] border border-blue-200/70 font-bold">
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0870e8] border border-blue-200/70 font-bold">
                       {targetPlan.priceFormatted}/mo
                     </span>
                   </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
+                  <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
                     {targetPlan.tagline}
                   </p>
                 </div>
                 <div className="text-right shrink-0">
-                  <span className="text-xl font-black text-slate-900 font-mono">
+                  <span className="text-2xl sm:text-3xl font-black text-slate-900 font-mono">
                     {targetPlan.priceFormatted}
                   </span>
-                  <span className="text-[10px] text-slate-500 block">INR / month</span>
+                  <span className="text-xs text-slate-500 block">INR / month</span>
                 </div>
               </div>
 
               {/* Security Banner */}
-              <div className="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200/70 text-blue-900 space-y-1">
-                <div className="flex items-center gap-1.5 font-bold text-xs text-blue-950">
+              <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-200/70 text-blue-900 space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-blue-950">
                   <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0" />
                   <span>Authoritative Server-Verified Billing</span>
                 </div>
-                <p className="text-[11px] text-blue-800 leading-relaxed">
+                <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
                   Card details are never processed or stored on our servers. Subscriptions activate only after HMAC signature verification and direct status lookup with Razorpay.
                 </p>
               </div>
@@ -304,14 +304,14 @@ RAZORPAY_PLAN_ID_PRO_PLUS="plan_ProPlusMonthlySample"`;
                   <div className="flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-xs">Razorpay Test Credentials Required</p>
-                      <p className="text-[11px] text-amber-800 mt-0.5 leading-relaxed">
-                        To enable checkout in test mode, configure the following environment variables in <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono text-[10.5px]">.env.local</code>:
+                      <p className="font-bold text-xs sm:text-sm">Razorpay Test Credentials Required</p>
+                      <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
+                        To enable checkout in test mode, configure the following environment variables in <code className="bg-amber-100/80 px-1.5 py-0.5 rounded font-mono text-xs">.env.local</code>:
                       </p>
                     </div>
                   </div>
 
-                  <ul className="text-[10.5px] space-y-1 bg-white/70 p-2.5 rounded-xl border border-amber-200 font-mono text-slate-700">
+                  <ul className="text-xs space-y-1 bg-white/70 p-3 rounded-xl border border-amber-200 font-mono text-slate-700">
                     {missingConfig.map((item, idx) => (
                       <li key={idx} className="flex items-center gap-1.5 text-amber-900">
                         <span className="text-red-500 font-bold">•</span>
@@ -322,7 +322,7 @@ RAZORPAY_PLAN_ID_PRO_PLUS="plan_ProPlusMonthlySample"`;
 
                   <button
                     onClick={handleCopyEnv}
-                    className="btn-tactile inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-200/70 hover:bg-amber-200 text-amber-900 font-bold text-[11px] transition-colors"
+                    className="btn-tactile inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-200/70 hover:bg-amber-200 text-amber-900 font-bold text-xs transition-colors"
                   >
                     {copiedEnv ? <Check className="w-3.5 h-3.5 text-emerald-700" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedEnv ? "Copied template to clipboard" : "Copy .env.local Template"}</span>
@@ -332,7 +332,7 @@ RAZORPAY_PLAN_ID_PRO_PLUS="plan_ProPlusMonthlySample"`;
 
               {/* General Error Banner */}
               {error && !missingConfig && (
-                <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-900 flex items-start gap-2 text-xs">
+                <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-900 flex items-start gap-2 text-xs sm:text-sm">
                   <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
                   <span>{error}</span>
                 </div>
@@ -345,7 +345,7 @@ RAZORPAY_PLAN_ID_PRO_PLUS="plan_ProPlusMonthlySample"`;
         <div className="p-4 sm:p-5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-end gap-2.5">
           <button
             onClick={handleClose}
-            className="btn-tactile px-4 py-2 rounded-full border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-xs transition-colors"
+            className="btn-tactile px-4 py-2 rounded-full border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-xs sm:text-sm transition-colors"
           >
             {success ? "Done" : "Cancel"}
           </button>
@@ -354,7 +354,7 @@ RAZORPAY_PLAN_ID_PRO_PLUS="plan_ProPlusMonthlySample"`;
             <button
               onClick={handleInitiateCheckout}
               disabled={loading || verifying}
-              className="btn-tactile inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#075fca] disabled:opacity-50 text-white font-bold text-xs shadow-xs hover:shadow-sm transition-all cursor-pointer"
+              className="btn-tactile inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#075fca] disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-xs hover:shadow-sm transition-all cursor-pointer"
             >
               {loading || verifying ? (
                 <>
@@ -364,7 +364,7 @@ RAZORPAY_PLAN_ID_PRO_PLUS="plan_ProPlusMonthlySample"`;
               ) : (
                 <>
                   <span>Proceed to Pay {targetPlan.priceFormatted}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>

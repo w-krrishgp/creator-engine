@@ -132,63 +132,63 @@ export function UpgradePromptModal({
             <span className="p-1.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
               <Lock className="w-4 h-4" />
             </span>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
               Plan Limit Reached
             </span>
           </div>
 
-          <h3 className="text-xl font-extrabold text-white tracking-tight">
+          <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
             {details.title}
           </h3>
         </div>
 
         {/* Modal Body */}
-        <div className="p-5 sm:p-6 space-y-4 text-xs">
+        <div className="p-5 sm:p-6 space-y-4 text-sm">
           {/* Explanation Paragraph */}
-          <p className="text-slate-600 leading-relaxed text-[12px]">
+          <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
             {details.message}
           </p>
 
           {/* Usage Counter Box */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2.5">
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                 Current Plan Quota
               </span>
               <PlanBadge size="xs" />
             </div>
 
             <div className="flex items-baseline justify-between text-slate-800">
-              <span className="text-xs text-slate-600">Current Consumption:</span>
-              <span className="text-sm font-extrabold font-mono text-amber-700">
+              <span className="text-xs sm:text-sm text-slate-600">Current Consumption:</span>
+              <span className="text-sm sm:text-base font-extrabold font-mono text-amber-700">
                 {details.usedCount} of {details.totalLimit} {details.unit}
               </span>
             </div>
 
-            <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+            <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
               <div className="h-full bg-amber-500 w-full rounded-full" />
             </div>
 
-            <div className="flex items-center gap-1.5 text-[10.5px] text-slate-500 pt-1 border-t border-slate-200/60 font-mono">
-              <Calendar className="w-3 h-3 text-slate-400" />
-              <span>Quota resets on: <strong>{resetDateStr}</strong></span>
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 pt-1 border-t border-slate-200/60 font-mono">
+              <Calendar className="w-3.5 h-3.5 text-slate-400" />
+              <span>Quota resets on: <strong className="text-slate-700">{resetDateStr}</strong></span>
             </div>
           </div>
 
           {/* Next Tier Upgrade Value Proposition Box */}
-          <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-200/80 text-slate-800 space-y-2">
+          <div className="p-4 sm:p-5 rounded-2xl bg-blue-50/70 border border-blue-200/80 text-slate-800 space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-[#0870e8]" />
-                <h4 className="font-extrabold text-xs text-[#0870e8]">
+                <h4 className="font-extrabold text-sm sm:text-base text-[#0870e8]">
                   Unlock {nextTierName} ({nextTierPrice})
                 </h4>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-[#0870e8]">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-[#0870e8]">
                 Recommended
               </span>
             </div>
-            <p className="text-[11.5px] text-slate-600 leading-snug">
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               Instant access to complete 90-day execution roadmaps, expanded campaign applications,
               and enhanced Gemini AI strategic generation.
             </p>
@@ -199,7 +199,7 @@ export function UpgradePromptModal({
         <div className="p-4 sm:p-5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-3">
           <button
             onClick={onClose}
-            className="btn-tactile px-4 py-2 rounded-full border border-slate-300 hover:bg-slate-100 font-bold text-xs text-slate-600 transition-colors"
+            className="btn-tactile px-4 py-2 rounded-full border border-slate-300 hover:bg-slate-100 font-bold text-xs sm:text-sm text-slate-700 transition-colors"
           >
             Dismiss
           </button>
@@ -207,10 +207,10 @@ export function UpgradePromptModal({
           <Link
             href="/pricing"
             onClick={onClose}
-            className="btn-tactile px-5 py-2 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white font-bold text-xs shadow-xs flex items-center gap-1.5 transition-all"
+            className="btn-tactile px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white font-bold text-xs sm:text-sm shadow-xs flex items-center gap-1.5 transition-all"
           >
             <span>View Pricing & Upgrade Plans</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>

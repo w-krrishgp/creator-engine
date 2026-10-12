@@ -339,10 +339,10 @@ export default function OnboardingPage() {
               <Sparkles className="w-3.5 h-3.5 text-[#0870e8]" />
               Onboarding Complete & Engine Calibrated
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
               Welcome to Creator Engine, {formData.name.split(" ")[0]}!
             </h1>
-            <p className="text-sm text-slate-600 leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-xl mx-auto">
               Your profile parameters have been recorded in local application state. Your personalized 30-60-90 day growth roadmap, brand compatibility scoring, and monetisation benchmarks are now live.
             </p>
           </div>
@@ -350,29 +350,29 @@ export default function OnboardingPage() {
           {/* Snapshot Summary Strip */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 sm:p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 text-left">
             <div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Niche</p>
-              <p className="text-xs sm:text-sm font-bold text-slate-900 truncate mt-0.5">{formData.niche}</p>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Niche</p>
+              <p className="text-sm sm:text-base font-bold text-slate-900 truncate mt-1">{formData.niche}</p>
             </div>
             <div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Primary Channel</p>
-              <p className="text-xs sm:text-sm font-bold text-slate-900 truncate mt-0.5">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Primary Channel</p>
+              <p className="text-sm sm:text-base font-bold text-slate-900 truncate mt-1">
                 {formData.primaryPlatform} ({formData.followerCount.toLocaleString()})
               </p>
             </div>
             <div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Stage & Level</p>
-              <p className="text-xs sm:text-sm font-bold text-slate-900 truncate mt-0.5">{formData.creatorStage}</p>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Stage & Level</p>
+              <p className="text-sm sm:text-base font-bold text-slate-900 truncate mt-1">{formData.creatorStage}</p>
             </div>
             <div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Target Income</p>
-              <p className="text-xs sm:text-sm font-bold text-emerald-700 truncate mt-0.5 font-mono">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Target Income</p>
+              <p className="text-sm sm:text-base font-bold text-emerald-700 truncate mt-1 font-mono">
                 ₹{formData.monthlyIncomeTarget.toLocaleString()} / mo
               </p>
             </div>
           </div>
 
           {/* Self-Reported Metrics Transparency Badge */}
-          <div className="flex items-center justify-center gap-2 text-xs text-slate-500 bg-blue-50/50 p-3 rounded-full border border-blue-100 max-w-lg mx-auto">
+          <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-slate-600 bg-blue-50/50 p-3 sm:p-3.5 rounded-full border border-blue-100 max-w-lg mx-auto">
             <ShieldCheck className="w-4 h-4 text-[#0870e8] shrink-0" />
             <span>Data stored as self-reported metrics. You can edit any parameter anytime from your Profile tab.</span>
           </div>
@@ -400,9 +400,9 @@ export default function OnboardingPage() {
                 setIsSuccess(false);
                 setCurrentStep(1);
               }}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-full text-slate-500 hover:text-slate-800 text-xs font-bold btn-tactile cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-full text-slate-600 hover:text-slate-900 text-sm font-bold btn-tactile cursor-pointer"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
+              <RotateCcw className="w-4 h-4" />
               <span>Edit Again</span>
             </button>
           </div>
@@ -417,72 +417,72 @@ export default function OnboardingPage() {
       <DemoDisclaimer text="Creator Engine multi-stage onboarding calibrates your strategic recommendations based on self-reported data. All entered parameters are saved in local application state." />
 
       {/* TOP BAR: Hackathon Quick Load & Live Readiness Score */}
-      <div className="bg-white rounded-2xl border border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5">
         {/* Left: Heading & Hackathon presets */}
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           <div className="flex items-center gap-2 flex-wrap">
             <Badge variant="blue" size="sm">
               Creator Onboarding
             </Badge>
             <span className="text-xs text-slate-400 font-medium">•</span>
-            <span className="text-xs text-slate-500 font-semibold">Step {currentStep} of 5</span>
+            <span className="text-xs sm:text-sm text-slate-600 font-semibold">Step {currentStep} of 5</span>
           </div>
 
           <div>
-            <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
               {currentStep === 1 && "Stage 1: About Your Creator Identity"}
               {currentStep === 2 && "Stage 2: Your Platforms & Audience Reach"}
               {currentStep === 3 && "Stage 3: Audience Persona & Content Rhythm"}
               {currentStep === 4 && "Stage 4: Strategic Goals & Revenue Focus"}
               {currentStep === 5 && "Stage 5: Review & Confirm Profile"}
             </h1>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-sm sm:text-base text-slate-600 mt-1 leading-relaxed">
               Self-reported data is used to personalize brand match scoring, viability forecasts, and SOP playbooks.
             </p>
           </div>
 
           {/* Hackathon Preset Buttons */}
           <div className="flex items-center gap-2 pt-1 flex-wrap">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Demo Presets:</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Demo Presets:</span>
             <button
               type="button"
               onClick={() => loadDemoProfile("rahul")}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50/80 hover:bg-blue-100/80 text-[#0870e8] text-xs font-bold border border-blue-200/80 transition-all btn-tactile cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50/80 hover:bg-blue-100/80 text-[#0870e8] text-xs sm:text-sm font-bold border border-blue-200/80 transition-all btn-tactile cursor-pointer"
             >
-              <Sparkles className="w-3 h-3 text-[#0870e8]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#0870e8]" />
               <span>⚡ Rahul (IG Fitness)</span>
             </button>
             <button
               type="button"
               onClick={() => loadDemoProfile("priya")}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50/80 hover:bg-indigo-100/80 text-indigo-700 text-xs font-bold border border-indigo-200/80 transition-all btn-tactile cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50/80 hover:bg-indigo-100/80 text-indigo-700 text-xs sm:text-sm font-bold border border-indigo-200/80 transition-all btn-tactile cursor-pointer"
             >
-              <Sparkles className="w-3 h-3 text-indigo-600" />
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
               <span>⚡ Priya (LinkedIn Wealth)</span>
             </button>
             <button
               type="button"
               onClick={() => loadDemoProfile("blank")}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold border border-slate-200 transition-all btn-tactile cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-bold border border-slate-200 transition-all btn-tactile cursor-pointer"
             >
-              <RotateCcw className="w-3 h-3 text-slate-500" />
+              <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
               <span>Start Blank</span>
             </button>
           </div>
         </div>
 
         {/* Right: Live Profile Readiness Meter */}
-        <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/80 min-w-[210px] space-y-2 shrink-0 shadow-2xs">
-          <div className="flex items-center justify-between text-xs">
+        <div className="bg-slate-50/80 p-4 sm:p-5 rounded-2xl border border-slate-200/80 min-w-[220px] space-y-2.5 shrink-0 shadow-2xs">
+          <div className="flex items-center justify-between text-xs sm:text-sm">
             <span className="font-bold text-slate-700 flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#0870e8]" />
+              <ShieldCheck className="w-4 h-4 text-[#0870e8]" />
               Profile Completion
             </span>
-            <span className={`font-mono font-bold ${completionScore >= 80 ? "text-emerald-700" : "text-[#0870e8]"}`}>
+            <span className={`font-mono font-bold text-sm sm:text-base ${completionScore >= 80 ? "text-emerald-700" : "text-[#0870e8]"}`}>
               {completionScore}%
             </span>
           </div>
-          <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+          <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
             <div
               className={`h-full transition-all duration-300 rounded-full ${
                 completionScore >= 85 ? "bg-emerald-500" : "bg-[#0870e8]"
@@ -490,7 +490,7 @@ export default function OnboardingPage() {
               style={{ width: `${completionScore}%` }}
             />
           </div>
-          <p className="text-[10px] text-slate-400 leading-tight">
+          <p className="text-xs text-slate-500 leading-normal">
             Updates in real-time as you fill required parameters.
           </p>
         </div>
@@ -498,7 +498,7 @@ export default function OnboardingPage() {
 
       {/* VISIBLE 5-STAGE STEPPER INDICATOR */}
       <div className="bg-white rounded-2xl border border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-3 sm:p-4 overflow-x-auto">
-        <div className="flex items-center justify-between min-w-[620px]">
+        <div className="flex items-center justify-between min-w-[640px]">
           {steps.map((s, index) => {
             const isCompleted = currentStep > s.number;
             const isCurrent = currentStep === s.number;
@@ -508,7 +508,7 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={() => jumpToStep(s.number)}
-                  className={`flex items-center gap-2.5 p-2 rounded-xl text-left transition-all btn-tactile cursor-pointer ${
+                  className={`flex items-center gap-2.5 p-2 sm:p-2.5 rounded-xl text-left transition-all btn-tactile cursor-pointer ${
                     isCurrent
                       ? "bg-blue-50/80 text-blue-900 font-bold"
                       : isCompleted
@@ -517,21 +517,21 @@ export default function OnboardingPage() {
                   }`}
                 >
                   <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold shrink-0 transition-colors ${
                       isCompleted
                         ? "bg-emerald-500 text-white"
                         : isCurrent
                         ? "bg-[#0870e8] text-white shadow-2xs"
-                        : "bg-slate-100 text-slate-500 border border-slate-200"
+                        : "bg-slate-100 text-slate-600 border border-slate-200"
                     }`}
                   >
                     {isCompleted ? <Check className="w-4 h-4 stroke-[3]" /> : s.number}
                   </div>
                   <div className="min-w-0">
-                    <p className={`text-xs leading-none ${isCurrent ? "font-bold text-blue-900" : "font-semibold"}`}>
+                    <p className={`text-xs sm:text-sm leading-tight ${isCurrent ? "font-bold text-blue-900" : "font-semibold"}`}>
                       {s.title}
                     </p>
-                    <p className="text-[10px] text-slate-400 mt-1 truncate">{s.desc}</p>
+                    <p className="text-xs text-slate-400 mt-0.5 truncate">{s.desc}</p>
                   </div>
                 </button>
 
@@ -555,13 +555,13 @@ export default function OnboardingPage() {
           {/* STAGE 1: ABOUT YOU */}
           {/* ========================================================================= */}
           {currentStep === 1 && (
-            <div className="space-y-6 animate-fadeIn">
+            <div className="space-y-6 sm:space-y-7 animate-fadeIn">
               <div className="border-b border-slate-100 pb-4">
-                <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-                  <User className="w-5 h-5 text-blue-600" />
+                <div className="flex items-center gap-2.5 text-slate-900 font-bold text-lg sm:text-xl">
+                  <User className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                   <span>Who are you and what do you create?</span>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-sm sm:text-base text-slate-600 mt-1 leading-relaxed">
                   Tell us your creator identity, your niche specialization, and where you are in your journey.
                 </p>
               </div>
@@ -569,57 +569,57 @@ export default function OnboardingPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {/* Full Name */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+                  <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                     <span>Full Name *</span>
-                    {errors.name && <span className="text-[11px] text-rose-600 font-medium">{errors.name}</span>}
+                    {errors.name && <span className="text-xs text-rose-600 font-medium">{errors.name}</span>}
                   </label>
                   <input
                     type="text"
                     placeholder="e.g. Rahul Sharma"
                     value={formData.name}
                     onChange={(e) => handleChange("name", e.target.value)}
-                    className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
+                    className={`w-full px-3.5 py-2.5 sm:py-3 rounded-xl border text-sm sm:text-base font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
                       errors.name
                         ? "border-rose-400 bg-rose-50/20 focus:ring-rose-500/20 focus:border-rose-500"
                         : "border-slate-200 focus:ring-blue-500/20 focus:border-blue-600"
                     }`}
                   />
-                  <p className="text-[11px] text-slate-400">Used for media kits and sponsor communication.</p>
+                  <p className="text-xs text-slate-500">Used for media kits and sponsor communication.</p>
                 </div>
 
                 {/* Handle / Channel ID */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+                  <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                     <span>Creator Handle / Identifier *</span>
-                    {errors.handle && <span className="text-[11px] text-rose-600 font-medium">{errors.handle}</span>}
+                    {errors.handle && <span className="text-xs text-rose-600 font-medium">{errors.handle}</span>}
                   </label>
                   <input
                     type="text"
                     placeholder="e.g. @rahulfit.india or priya-finance"
                     value={formData.handle}
                     onChange={(e) => handleChange("handle", e.target.value)}
-                    className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
+                    className={`w-full px-3.5 py-2.5 sm:py-3 rounded-xl border text-sm sm:text-base font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
                       errors.handle
                         ? "border-rose-400 bg-rose-50/20 focus:ring-rose-500/20 focus:border-rose-500"
                         : "border-slate-200 focus:ring-blue-500/20 focus:border-blue-600"
                     }`}
                   />
-                  <p className="text-[11px] text-slate-400">Public profile slug or social handle.</p>
+                  <p className="text-xs text-slate-500">Public profile slug or social handle.</p>
                 </div>
               </div>
 
               {/* Creator Niche */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+                <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                   <span>Primary Creator Niche *</span>
-                  {errors.niche && <span className="text-[11px] text-rose-600 font-medium">{errors.niche}</span>}
+                  {errors.niche && <span className="text-xs text-rose-600 font-medium">{errors.niche}</span>}
                 </label>
                 <input
                   type="text"
                   placeholder="e.g. Fitness & Nutrition, Personal Finance, Tech Tools"
                   value={formData.niche}
                   onChange={(e) => handleChange("niche", e.target.value)}
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
+                  className={`w-full px-3.5 py-2.5 sm:py-3 rounded-xl border text-sm sm:text-base font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
                     errors.niche
                       ? "border-rose-400 bg-rose-50/20 focus:ring-rose-500/20 focus:border-rose-500"
                       : "border-slate-200 focus:ring-blue-500/20 focus:border-blue-600"
@@ -627,15 +627,15 @@ export default function OnboardingPage() {
                 />
 
                 {/* Popular Niche Suggestion Chips */}
-                <div className="space-y-1 pt-1">
-                  <p className="text-[11px] font-semibold text-slate-400">Quick suggestions:</p>
-                  <div className="flex flex-wrap gap-1.5">
+                <div className="space-y-1.5 pt-1">
+                  <p className="text-xs font-semibold text-slate-500">Quick suggestions:</p>
+                  <div className="flex flex-wrap gap-2">
                     {POPULAR_NICHES.map((n) => (
                       <button
                         key={n}
                         type="button"
                         onClick={() => handleChange("niche", n)}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors ${
+                        className={`px-3 py-1 rounded-lg text-xs sm:text-sm font-medium border transition-colors ${
                           formData.niche === n
                             ? "bg-blue-50 text-blue-700 border-blue-300 font-semibold"
                             : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
@@ -649,11 +649,11 @@ export default function OnboardingPage() {
               </div>
 
               {/* Experience Level */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+              <div className="space-y-2.5">
+                <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                   <span>Creator Experience Level *</span>
                   {errors.experienceLevel && (
-                    <span className="text-[11px] text-rose-600 font-medium">{errors.experienceLevel}</span>
+                    <span className="text-xs text-rose-600 font-medium">{errors.experienceLevel}</span>
                   )}
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -680,30 +680,30 @@ export default function OnboardingPage() {
                     <div
                       key={exp.id}
                       onClick={() => handleChange("experienceLevel", exp.id)}
-                      className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                      className={`p-4 rounded-xl border cursor-pointer transition-all ${
                         formData.experienceLevel === exp.id
                           ? "bg-blue-50/70 border-blue-500 shadow-xs"
                           : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-slate-900">{exp.title}</span>
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-600">
+                        <span className="text-sm font-bold text-slate-900">{exp.title}</span>
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-600">
                           {exp.subtitle}
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 mt-2 leading-relaxed">{exp.desc}</p>
+                      <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">{exp.desc}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Growth Stage */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+              <div className="space-y-2.5">
+                <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                   <span>Audience Tier / Growth Stage *</span>
                   {errors.creatorStage && (
-                    <span className="text-[11px] text-rose-600 font-medium">{errors.creatorStage}</span>
+                    <span className="text-xs text-rose-600 font-medium">{errors.creatorStage}</span>
                   )}
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -713,14 +713,14 @@ export default function OnboardingPage() {
                         key={stage}
                         type="button"
                         onClick={() => handleChange("creatorStage", stage)}
-                        className={`p-3 rounded-xl border text-center transition-all ${
+                        className={`p-3.5 rounded-xl border text-center transition-all ${
                           formData.creatorStage === stage
                             ? "bg-blue-600 text-white font-bold border-blue-600 shadow-xs"
                             : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300 font-semibold"
                         }`}
                       >
-                        <p className="text-xs">{stage.split(" ")[0]}</p>
-                        <p className={`text-[10px] mt-0.5 ${formData.creatorStage === stage ? "text-blue-100" : "text-slate-400"}`}>
+                        <p className="text-xs sm:text-sm font-bold">{stage.split(" ")[0]}</p>
+                        <p className={`text-xs mt-0.5 ${formData.creatorStage === stage ? "text-blue-100" : "text-slate-400"}`}>
                           {stage.split(" ")[1]}
                         </p>
                       </button>
@@ -731,7 +731,7 @@ export default function OnboardingPage() {
 
               {/* Bio & Pitch */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-800">
+                <label className="text-sm font-bold text-slate-800">
                   <span>Elevator Pitch / Bio (Optional)</span>
                 </label>
                 <textarea
@@ -739,9 +739,9 @@ export default function OnboardingPage() {
                   placeholder="e.g. Helping college students stay fit on a budget. Daily hostel meal prep & calisthenics tutorials."
                   value={formData.bio}
                   onChange={(e) => handleChange("bio", e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 resize-none"
+                  className="w-full px-3.5 py-2.5 sm:py-3 rounded-xl border border-slate-200 text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 resize-none"
                 />
-                <p className="text-[11px] text-slate-400">
+                <p className="text-xs text-slate-500">
                   Used by our AI Pitch Generator and brand compatibility matchmaker.
                 </p>
               </div>
@@ -752,34 +752,34 @@ export default function OnboardingPage() {
           {/* STAGE 2: YOUR PLATFORMS */}
           {/* ========================================================================= */}
           {currentStep === 2 && (
-            <div className="space-y-6 animate-fadeIn">
+            <div className="space-y-6 sm:space-y-7 animate-fadeIn">
               <div className="border-b border-slate-100 pb-4">
-                <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-                  <Share2 className="w-5 h-5 text-blue-600" />
+                <div className="flex items-center gap-2.5 text-slate-900 font-bold text-lg sm:text-xl">
+                  <Share2 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                   <span>Your Content Platforms & Followers</span>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-sm sm:text-base text-slate-600 mt-1 leading-relaxed">
                   Specify your primary broadcast channel and audience size.
                 </p>
               </div>
 
               {/* CRITICAL TRANSPARENCY NOTICE */}
-              <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200/90 text-amber-900 space-y-1.5">
-                <div className="flex items-center gap-2 font-bold text-xs">
+              <div className="p-4 sm:p-5 rounded-xl bg-amber-50/70 border border-amber-200/90 text-amber-900 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-xs sm:text-sm">
                   <Info className="w-4 h-4 text-amber-700 shrink-0" />
                   <span>Transparency Notice: Self-Reported Channel Data</span>
                 </div>
-                <p className="text-xs text-amber-800 leading-relaxed">
+                <p className="text-xs sm:text-sm text-amber-800 leading-relaxed">
                   Metrics entered here are manually declared by the creator and saved in local state. Creator Engine does <strong>not</strong> claim live OAuth access or verified account connection at this stage. These metrics will be calibrated against public industry benchmarks.
                 </p>
               </div>
 
               {/* Primary Platform Selection */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+              <div className="space-y-2.5">
+                <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                   <span>Primary Content Platform *</span>
                   {errors.primaryPlatform && (
-                    <span className="text-[11px] text-rose-600 font-medium">{errors.primaryPlatform}</span>
+                    <span className="text-xs text-rose-600 font-medium">{errors.primaryPlatform}</span>
                   )}
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
@@ -788,14 +788,14 @@ export default function OnboardingPage() {
                       key={plat}
                       type="button"
                       onClick={() => handleChange("primaryPlatform", plat)}
-                      className={`p-3.5 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${
+                      className={`p-3.5 sm:p-4 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${
                         formData.primaryPlatform === plat
                           ? "bg-blue-50 border-blue-500 text-blue-700 font-bold shadow-xs"
                           : "bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50 font-medium"
                       }`}
                     >
-                      <span className="text-xs font-bold">{plat}</span>
-                      <span className="text-[10px] text-slate-400">
+                      <span className="text-xs sm:text-sm font-bold">{plat}</span>
+                      <span className="text-xs text-slate-400">
                         {plat === "Instagram" ? "Visual / Reels" : plat === "LinkedIn" ? "B2B / Carousels" : plat === "YouTube" ? "Video / Shorts" : plat === "TikTok" ? "Viral Short-form" : "Text / Commentary"}
                       </span>
                     </button>
@@ -805,10 +805,10 @@ export default function OnboardingPage() {
 
               {/* Primary Follower Count */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+                <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                   <span>Primary Channel Follower / Subscriber Count *</span>
                   {errors.followerCount && (
-                    <span className="text-[11px] text-rose-600 font-medium">{errors.followerCount}</span>
+                    <span className="text-xs text-rose-600 font-medium">{errors.followerCount}</span>
                   )}
                 </label>
                 <div className="relative">
@@ -818,26 +818,26 @@ export default function OnboardingPage() {
                     placeholder="e.g. 15000"
                     value={formData.followerCount || ""}
                     onChange={(e) => handleChange("followerCount", Number(e.target.value) || 0)}
-                    className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
+                    className={`w-full px-3.5 py-2.5 sm:py-3 rounded-xl border text-sm sm:text-base font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
                       errors.followerCount
                         ? "border-rose-400 bg-rose-50/20 focus:ring-rose-500/20 focus:border-rose-500"
                         : "border-slate-200 focus:ring-blue-500/20 focus:border-blue-600"
                     }`}
                   />
                   {formData.followerCount > 0 && (
-                    <div className="absolute right-3.5 top-2.5 text-xs font-semibold text-slate-500 pointer-events-none">
+                    <div className="absolute right-3.5 top-2.5 sm:top-3 text-xs sm:text-sm font-semibold text-slate-500 pointer-events-none">
                       {formData.followerCount.toLocaleString()} followers
                     </div>
                   )}
                 </div>
                 <div className="flex gap-2 pt-1 flex-wrap">
-                  <span className="text-[11px] text-slate-400 font-medium">Quick presets:</span>
+                  <span className="text-xs text-slate-500 font-medium">Quick presets:</span>
                   {[5000, 15000, 45000, 120000].map((count) => (
                     <button
                       key={count}
                       type="button"
                       onClick={() => handleChange("followerCount", count)}
-                      className="text-[11px] px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold"
+                      className="text-xs px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold"
                     >
                       {count.toLocaleString()}
                     </button>
@@ -848,13 +848,13 @@ export default function OnboardingPage() {
               {/* Optional Secondary Platform */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-800">
+                  <label className="text-sm font-bold text-slate-800">
                     Secondary Platform (Optional)
                   </label>
                   <select
                     value={formData.secondaryPlatform || ""}
                     onChange={(e) => handleChange("secondaryPlatform", e.target.value as PlatformType | "")}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 bg-white"
+                    className="w-full px-3.5 py-2.5 sm:py-3 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 bg-white"
                   >
                     <option value="">None (Single Platform Focus)</option>
                     <option value="Instagram">Instagram</option>
@@ -867,10 +867,10 @@ export default function OnboardingPage() {
 
                 {Boolean(formData.secondaryPlatform) && (
                   <div className="space-y-1.5 animate-fadeIn">
-                    <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+                    <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                       <span>Secondary Platform Followers *</span>
                       {errors.secondaryFollowers && (
-                        <span className="text-[11px] text-rose-600 font-medium">{errors.secondaryFollowers}</span>
+                        <span className="text-xs text-rose-600 font-medium">{errors.secondaryFollowers}</span>
                       )}
                     </label>
                     <input
@@ -879,17 +879,17 @@ export default function OnboardingPage() {
                       placeholder="e.g. 3200"
                       value={formData.secondaryFollowers || ""}
                       onChange={(e) => handleChange("secondaryFollowers", Number(e.target.value) || 0)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                      className="w-full px-3.5 py-2.5 sm:py-3 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                     />
                   </div>
                 )}
               </div>
 
               {/* Self-reported engagement rate */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-800">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm font-bold text-slate-800">
                   <span>Average Post Engagement Rate (Self-Estimated)</span>
-                  <span className="text-blue-600 font-mono">{formData.engagementRate || 4.5}%</span>
+                  <span className="text-blue-600 font-mono text-sm sm:text-base font-bold">{formData.engagementRate || 4.5}%</span>
                 </div>
                 <input
                   type="range"
@@ -898,9 +898,9 @@ export default function OnboardingPage() {
                   step="0.1"
                   value={formData.engagementRate || 4.5}
                   onChange={(e) => handleChange("engagementRate", parseFloat(e.target.value))}
-                  className="w-full accent-blue-600"
+                  className="w-full accent-blue-600 h-2 bg-slate-200 rounded-lg cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400">
+                <div className="flex justify-between text-xs text-slate-500 font-medium">
                   <span>1.0% (Average Macro)</span>
                   <span>4.5% (Healthy Micro)</span>
                   <span>8.0%+ (High Engagement Nano)</span>
@@ -913,23 +913,23 @@ export default function OnboardingPage() {
           {/* STAGE 3: YOUR AUDIENCE */}
           {/* ========================================================================= */}
           {currentStep === 3 && (
-            <div className="space-y-6 animate-fadeIn">
+            <div className="space-y-6 sm:space-y-7 animate-fadeIn">
               <div className="border-b border-slate-100 pb-4">
-                <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-                  <Users className="w-5 h-5 text-blue-600" />
+                <div className="flex items-center gap-2.5 text-slate-900 font-bold text-lg sm:text-xl">
+                  <Users className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                   <span>Who is listening and how do you reach them?</span>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-sm sm:text-base text-slate-600 mt-1 leading-relaxed">
                   Brand sponsors value demographic clarity and content consistency above raw follower totals.
                 </p>
               </div>
 
               {/* Audience Demographic */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+              <div className="space-y-2.5">
+                <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                   <span>Target Audience Demographic & Profile *</span>
                   {errors.audienceDemographic && (
-                    <span className="text-[11px] text-rose-600 font-medium">{errors.audienceDemographic}</span>
+                    <span className="text-xs text-rose-600 font-medium">{errors.audienceDemographic}</span>
                   )}
                 </label>
                 <input
@@ -937,21 +937,21 @@ export default function OnboardingPage() {
                   placeholder="e.g. College students & young gym beginners (aged 18-24)"
                   value={formData.audienceDemographic}
                   onChange={(e) => handleChange("audienceDemographic", e.target.value)}
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
+                  className={`w-full px-3.5 py-2.5 sm:py-3 rounded-xl border text-sm sm:text-base font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
                     errors.audienceDemographic
                       ? "border-rose-400 bg-rose-50/20 focus:ring-rose-500/20 focus:border-rose-500"
                       : "border-slate-200 focus:ring-blue-500/20 focus:border-blue-600"
                   }`}
                 />
-                <div className="space-y-1 pt-1">
-                  <p className="text-[11px] font-semibold text-slate-400">Suggested personas:</p>
-                  <div className="flex flex-wrap gap-1.5">
+                <div className="space-y-1.5 pt-1">
+                  <p className="text-xs font-semibold text-slate-500">Suggested personas:</p>
+                  <div className="flex flex-wrap gap-2">
                     {POPULAR_AUDIENCES.map((aud) => (
                       <button
                         key={aud}
                         type="button"
                         onClick={() => handleChange("audienceDemographic", aud)}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors ${
+                        className={`px-3 py-1 rounded-lg text-xs sm:text-sm font-medium border transition-colors ${
                           formData.audienceDemographic === aud
                             ? "bg-blue-50 text-blue-700 border-blue-300 font-semibold"
                             : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
@@ -965,31 +965,31 @@ export default function OnboardingPage() {
               </div>
 
               {/* Geographic Location */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                   <span>Primary Location / Geographic Market *</span>
-                  {errors.location && <span className="text-[11px] text-rose-600 font-medium">{errors.location}</span>}
+                  {errors.location && <span className="text-xs text-rose-600 font-medium">{errors.location}</span>}
                 </label>
                 <input
                   type="text"
                   placeholder="e.g. Bengaluru, India or Global / North America"
                   value={formData.location}
                   onChange={(e) => handleChange("location", e.target.value)}
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
+                  className={`w-full px-3.5 py-2.5 sm:py-3 rounded-xl border text-sm sm:text-base font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
                     errors.location
                       ? "border-rose-400 bg-rose-50/20 focus:ring-rose-500/20 focus:border-rose-500"
                       : "border-slate-200 focus:ring-blue-500/20 focus:border-blue-600"
                   }`}
                 />
                 <div className="flex gap-2 pt-1 flex-wrap">
-                  <span className="text-[11px] text-slate-400 font-medium">Quick options:</span>
+                  <span className="text-xs text-slate-500 font-medium">Quick options:</span>
                   {["Bengaluru, India", "Mumbai, India", "Delhi NCR, India", "Pan-India", "Global / Remote"].map(
                     (loc) => (
                       <button
                         key={loc}
                         type="button"
                         onClick={() => handleChange("location", loc)}
-                        className="text-[11px] px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold"
+                        className="text-xs px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold"
                       >
                         {loc}
                       </button>
@@ -1000,10 +1000,10 @@ export default function OnboardingPage() {
 
               {/* Content Formats */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+                <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                   <span>Core Content Formats *</span>
                   {errors.contentFormat && (
-                    <span className="text-[11px] text-rose-600 font-medium">{errors.contentFormat}</span>
+                    <span className="text-xs text-rose-600 font-medium">{errors.contentFormat}</span>
                   )}
                 </label>
                 <input
@@ -1011,19 +1011,19 @@ export default function OnboardingPage() {
                   placeholder="e.g. High-energy Reels, workout carousels, nutrition guides"
                   value={formData.contentFormat}
                   onChange={(e) => handleChange("contentFormat", e.target.value)}
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
+                  className={`w-full px-3.5 py-2.5 sm:py-3 rounded-xl border text-sm sm:text-base font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
                     errors.contentFormat
                       ? "border-rose-400 bg-rose-50/20 focus:ring-rose-500/20 focus:border-rose-500"
                       : "border-slate-200 focus:ring-blue-500/20 focus:border-blue-600"
                   }`}
                 />
-                <div className="flex flex-wrap gap-1.5 pt-1">
+                <div className="flex flex-wrap gap-2 pt-1">
                   {POPULAR_FORMATS.map((fmt) => (
                     <button
                       key={fmt}
                       type="button"
                       onClick={() => handleChange("contentFormat", fmt)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors ${
+                      className={`px-3 py-1 rounded-lg text-xs sm:text-sm font-medium border transition-colors ${
                         formData.contentFormat === fmt
                           ? "bg-blue-50 text-blue-700 border-blue-300 font-semibold"
                           : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
@@ -1036,11 +1036,11 @@ export default function OnboardingPage() {
               </div>
 
               {/* Content Frequency */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+              <div className="space-y-2.5">
+                <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                   <span>Publishing Frequency *</span>
                   {errors.contentFrequency && (
-                    <span className="text-[11px] text-rose-600 font-medium">{errors.contentFrequency}</span>
+                    <span className="text-xs text-rose-600 font-medium">{errors.contentFrequency}</span>
                   )}
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
@@ -1054,16 +1054,16 @@ export default function OnboardingPage() {
                       key={freq.id}
                       type="button"
                       onClick={() => handleChange("contentFrequency", freq.id)}
-                      className={`p-3 rounded-xl border text-left transition-all ${
+                      className={`p-3.5 rounded-xl border text-left transition-all ${
                         formData.contentFrequency === freq.id
                           ? "bg-blue-50 border-blue-500 shadow-xs"
                           : "bg-white border-slate-200 hover:bg-slate-50 hover:border-slate-300"
                       }`}
                     >
-                      <p className={`text-xs font-bold ${formData.contentFrequency === freq.id ? "text-blue-700" : "text-slate-800"}`}>
+                      <p className={`text-xs sm:text-sm font-bold ${formData.contentFrequency === freq.id ? "text-blue-700" : "text-slate-800"}`}>
                         {freq.label}
                       </p>
-                      <p className="text-[10px] text-slate-400 mt-0.5">{freq.sub}</p>
+                      <p className="text-xs text-slate-500 mt-1">{freq.sub}</p>
                     </button>
                   ))}
                 </div>
@@ -1075,23 +1075,23 @@ export default function OnboardingPage() {
           {/* STAGE 4: YOUR GOALS */}
           {/* ========================================================================= */}
           {currentStep === 4 && (
-            <div className="space-y-6 animate-fadeIn">
+            <div className="space-y-6 sm:space-y-7 animate-fadeIn">
               <div className="border-b border-slate-100 pb-4">
-                <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-                  <Target className="w-5 h-5 text-blue-600" />
+                <div className="flex items-center gap-2.5 text-slate-900 font-bold text-lg sm:text-xl">
+                  <Target className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                   <span>Strategic Goals & Monetisation Engine</span>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-sm sm:text-base text-slate-600 mt-1 leading-relaxed">
                   Creator Engine adapts your workflow tasks, outreach briefs, and revenue models to these objectives.
                 </p>
               </div>
 
               {/* Primary Strategic Goal */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+              <div className="space-y-2.5">
+                <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                   <span>Primary Business Goal *</span>
                   {errors.primaryGoal && (
-                    <span className="text-[11px] text-rose-600 font-medium">{errors.primaryGoal}</span>
+                    <span className="text-xs text-rose-600 font-medium">{errors.primaryGoal}</span>
                   )}
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1120,13 +1120,13 @@ export default function OnboardingPage() {
                     <div
                       key={goal.id}
                       onClick={() => handleChange("primaryGoal", goal.id)}
-                      className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                      className={`p-4 rounded-xl border cursor-pointer transition-all ${
                         formData.primaryGoal === goal.id
                           ? "bg-blue-50/70 border-blue-500 shadow-xs"
                           : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                       }`}
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2.5">
                         <div
                           className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
                             formData.primaryGoal === goal.id
@@ -1136,30 +1136,30 @@ export default function OnboardingPage() {
                         >
                           {formData.primaryGoal === goal.id && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                         </div>
-                        <span className="text-xs font-bold text-slate-900">{goal.title}</span>
+                        <span className="text-sm sm:text-base font-bold text-slate-900">{goal.title}</span>
                       </div>
-                      <p className="text-[11px] text-slate-500 mt-2 pl-6 leading-relaxed">{goal.desc}</p>
+                      <p className="text-xs sm:text-sm text-slate-500 mt-2 pl-6 leading-relaxed">{goal.desc}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Monetisation Channels Multi-select */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+              <div className="space-y-2.5">
+                <label className="text-sm font-bold text-slate-800 flex items-center justify-between">
                   <span>Active & Planned Monetisation Channels (Select all that apply) *</span>
                   {errors.monetisationGoals && (
-                    <span className="text-[11px] text-rose-600 font-medium">{errors.monetisationGoals}</span>
+                    <span className="text-xs text-rose-600 font-medium">{errors.monetisationGoals}</span>
                   )}
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {MONETISATION_OPTIONS.map((opt) => {
                     const isSelected = formData.monetisationGoals.includes(opt.id);
                     return (
                       <div
                         key={opt.id}
                         onClick={() => toggleMonetisationGoal(opt.id)}
-                        className={`p-3 rounded-xl border cursor-pointer flex items-start gap-3 transition-all ${
+                        className={`p-3.5 rounded-xl border cursor-pointer flex items-start gap-3 transition-all ${
                           isSelected
                             ? "bg-blue-50/70 border-blue-400"
                             : "bg-white border-slate-200 hover:bg-slate-50"
@@ -1172,8 +1172,8 @@ export default function OnboardingPage() {
                           className="mt-0.5 rounded text-blue-600 focus:ring-blue-500"
                         />
                         <div className="min-w-0">
-                          <p className="text-xs font-bold text-slate-900">{opt.label}</p>
-                          <p className="text-[10px] text-slate-500 mt-0.5 leading-snug">{opt.desc}</p>
+                          <p className="text-xs sm:text-sm font-bold text-slate-900">{opt.label}</p>
+                          <p className="text-xs text-slate-500 mt-0.5 leading-snug">{opt.desc}</p>
                         </div>
                       </div>
                     );
@@ -1182,17 +1182,17 @@ export default function OnboardingPage() {
               </div>
 
               {/* Monthly Income Target */}
-              <div className="space-y-1.5 pt-2 border-t border-slate-100">
+              <div className="space-y-2 pt-2 border-t border-slate-100">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-800">
+                  <label className="text-sm font-bold text-slate-800">
                     Monthly Revenue Target (INR equivalent)
                   </label>
-                  <span className="text-xs font-bold text-emerald-700 font-mono">
+                  <span className="text-sm sm:text-base font-bold text-emerald-700 font-mono">
                     ₹{formData.monthlyIncomeTarget.toLocaleString()} / month
                   </span>
                 </div>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-2.5 text-slate-400 font-bold text-sm">₹</span>
+                  <span className="absolute left-3.5 top-2.5 sm:top-3 text-slate-400 font-bold text-sm">₹</span>
                   <input
                     type="number"
                     min={0}
@@ -1200,17 +1200,17 @@ export default function OnboardingPage() {
                     placeholder="e.g. 50000"
                     value={formData.monthlyIncomeTarget || ""}
                     onChange={(e) => handleChange("monthlyIncomeTarget", Number(e.target.value) || 0)}
-                    className="w-full pl-8 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                    className="w-full pl-8 pr-3.5 py-2.5 sm:py-3 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                   />
                 </div>
                 <div className="flex gap-2 pt-1 flex-wrap">
-                  <span className="text-[11px] text-slate-400 font-medium">Quick targets:</span>
+                  <span className="text-xs text-slate-500 font-medium">Quick targets:</span>
                   {[25000, 50000, 100000, 200000, 500000].map((tgt) => (
                     <button
                       key={tgt}
                       type="button"
                       onClick={() => handleChange("monthlyIncomeTarget", tgt)}
-                      className="text-[11px] px-2.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold"
+                      className="text-xs px-3 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold"
                     >
                       ₹{(tgt / 1000).toFixed(0)}k
                     </button>
@@ -1224,13 +1224,13 @@ export default function OnboardingPage() {
           {/* STAGE 5: REVIEW */}
           {/* ========================================================================= */}
           {currentStep === 5 && (
-            <div className="space-y-6 animate-fadeIn">
+            <div className="space-y-6 sm:space-y-7 animate-fadeIn">
               <div className="border-b border-slate-100 pb-4">
-                <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                <div className="flex items-center gap-2.5 text-slate-900 font-bold text-lg sm:text-xl">
+                  <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
                   <span>Review & Verify Completed Profile</span>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-sm sm:text-base text-slate-600 mt-1 leading-relaxed">
                   Inspect your calibrated creator profile before launching Creator Engine. You can jump directly to any step to make edits.
                 </p>
               </div>
@@ -1238,22 +1238,22 @@ export default function OnboardingPage() {
               {/* Review Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* 1. Identity Review Card */}
-                <div className="p-4 rounded-xl border border-slate-200/90 bg-white shadow-2xs space-y-3">
+                <div className="p-4 sm:p-5 rounded-xl border border-slate-200/90 bg-white shadow-2xs space-y-3.5">
                   <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-blue-600" />
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">1. Identity & Niche</h3>
+                      <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900">1. Identity & Niche</h3>
                     </div>
                     <button
                       type="button"
                       onClick={() => setCurrentStep(1)}
-                      className="text-[11px] text-blue-600 hover:text-blue-700 font-semibold hover:underline"
+                      className="text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-semibold hover:underline"
                     >
                       Edit
                     </button>
                   </div>
 
-                  <div className="space-y-1.5 text-xs">
+                  <div className="space-y-2 text-xs sm:text-sm">
                     <div className="flex justify-between">
                       <span className="text-slate-500">Name:</span>
                       <span className="font-bold text-slate-900">{formData.name || "—"}</span>
@@ -1275,7 +1275,7 @@ export default function OnboardingPage() {
                       <span className="font-semibold text-slate-700">{formData.creatorStage}</span>
                     </div>
                     {formData.bio && (
-                      <p className="text-[11px] text-slate-500 pt-1 italic border-t border-slate-50">
+                      <p className="text-xs text-slate-500 pt-1.5 italic border-t border-slate-100 leading-relaxed">
                         &quot;{formData.bio}&quot;
                       </p>
                     )}
@@ -1283,22 +1283,22 @@ export default function OnboardingPage() {
                 </div>
 
                 {/* 2. Platforms Review Card */}
-                <div className="p-4 rounded-xl border border-slate-200/90 bg-white shadow-2xs space-y-3">
+                <div className="p-4 sm:p-5 rounded-xl border border-slate-200/90 bg-white shadow-2xs space-y-3.5">
                   <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                     <div className="flex items-center gap-2">
                       <Share2 className="w-4 h-4 text-blue-600" />
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">2. Platform Channels</h3>
+                      <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900">2. Platform Channels</h3>
                     </div>
                     <button
                       type="button"
                       onClick={() => setCurrentStep(2)}
-                      className="text-[11px] text-blue-600 hover:text-blue-700 font-semibold hover:underline"
+                      className="text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-semibold hover:underline"
                     >
                       Edit
                     </button>
                   </div>
 
-                  <div className="space-y-1.5 text-xs">
+                  <div className="space-y-2 text-xs sm:text-sm">
                     <div className="flex justify-between items-center">
                       <span className="text-slate-500">Primary Channel:</span>
                       <Badge variant="blue" size="sm">
@@ -1323,9 +1323,9 @@ export default function OnboardingPage() {
                         </span>
                       </div>
                     )}
-                    <div className="pt-1 border-t border-slate-50">
-                      <span className="inline-flex items-center gap-1 text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                        <Info className="w-3 h-3" />
+                    <div className="pt-1.5 border-t border-slate-100">
+                      <span className="inline-flex items-center gap-1.5 text-xs text-amber-700 bg-amber-50 px-2.5 py-1 rounded border border-amber-200">
+                        <Info className="w-3.5 h-3.5 shrink-0" />
                         <span>Self-reported data (no live OAuth)</span>
                       </span>
                     </div>
@@ -1333,24 +1333,24 @@ export default function OnboardingPage() {
                 </div>
 
                 {/* 3. Audience Review Card */}
-                <div className="p-4 rounded-xl border border-slate-200/90 bg-white shadow-2xs space-y-3">
+                <div className="p-4 sm:p-5 rounded-xl border border-slate-200/90 bg-white shadow-2xs space-y-3.5">
                   <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4 text-blue-600" />
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">3. Audience & Strategy</h3>
+                      <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900">3. Audience & Strategy</h3>
                     </div>
                     <button
                       type="button"
                       onClick={() => setCurrentStep(3)}
-                      className="text-[11px] text-blue-600 hover:text-blue-700 font-semibold hover:underline"
+                      className="text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-semibold hover:underline"
                     >
                       Edit
                     </button>
                   </div>
 
-                  <div className="space-y-1.5 text-xs">
+                  <div className="space-y-2 text-xs sm:text-sm">
                     <div>
-                      <p className="text-slate-500 text-[11px]">Audience Persona:</p>
+                      <p className="text-slate-500 text-xs">Audience Persona:</p>
                       <p className="font-semibold text-slate-800 leading-snug mt-0.5">{formData.audienceDemographic}</p>
                     </div>
                     <div className="flex justify-between pt-1">
@@ -1362,31 +1362,31 @@ export default function OnboardingPage() {
                       <span className="font-semibold text-slate-800">{formData.contentFrequency}</span>
                     </div>
                     <div className="pt-1">
-                      <p className="text-slate-500 text-[11px]">Content Format:</p>
+                      <p className="text-slate-500 text-xs">Content Format:</p>
                       <p className="font-medium text-slate-700 mt-0.5">{formData.contentFormat}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* 4. Goals Review Card */}
-                <div className="p-4 rounded-xl border border-slate-200/90 bg-white shadow-2xs space-y-3">
+                <div className="p-4 sm:p-5 rounded-xl border border-slate-200/90 bg-white shadow-2xs space-y-3.5">
                   <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                     <div className="flex items-center gap-2">
                       <Target className="w-4 h-4 text-blue-600" />
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">4. Revenue & Monetisation</h3>
+                      <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900">4. Revenue & Monetisation</h3>
                     </div>
                     <button
                       type="button"
                       onClick={() => setCurrentStep(4)}
-                      className="text-[11px] text-blue-600 hover:text-blue-700 font-semibold hover:underline"
+                      className="text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-semibold hover:underline"
                     >
                       Edit
                     </button>
                   </div>
 
-                  <div className="space-y-1.5 text-xs">
+                  <div className="space-y-2 text-xs sm:text-sm">
                     <div>
-                      <p className="text-slate-500 text-[11px]">Primary Business Goal:</p>
+                      <p className="text-slate-500 text-xs">Primary Business Goal:</p>
                       <p className="font-bold text-slate-900 mt-0.5">{formData.primaryGoal}</p>
                     </div>
                     <div className="flex justify-between pt-1">
@@ -1396,12 +1396,12 @@ export default function OnboardingPage() {
                       </span>
                     </div>
                     <div className="pt-1">
-                      <p className="text-slate-500 text-[11px] mb-1">Active Revenue Focus:</p>
-                      <div className="flex flex-wrap gap-1">
+                      <p className="text-slate-500 text-xs mb-1.5">Active Revenue Focus:</p>
+                      <div className="flex flex-wrap gap-1.5">
                         {formData.monetisationGoals.map((g) => (
                           <span
                             key={g}
-                            className="text-[10px] bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded border border-slate-200"
+                            className="text-xs bg-slate-100 text-slate-700 font-medium px-2.5 py-1 rounded border border-slate-200"
                           >
                             {g}
                           </span>
@@ -1413,7 +1413,7 @@ export default function OnboardingPage() {
               </div>
 
               {/* Confirmation Checkbox */}
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/90 space-y-2">
+              <div className="p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200/90 space-y-2">
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
@@ -1428,15 +1428,15 @@ export default function OnboardingPage() {
                         });
                       }
                     }}
-                    className="mt-0.5 rounded text-blue-600 focus:ring-blue-500"
+                    className="mt-1 rounded text-blue-600 focus:ring-blue-500"
                   />
-                  <div className="text-xs text-slate-700 leading-relaxed">
+                  <div className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                     <span className="font-bold text-slate-900">Accuracy & Transparency Confirmation: </span>
                     I verify that these parameters reflect my current creator positioning and self-reported metrics. I understand that Creator Engine uses this data locally to generate compatibility matches and revenue projections without live account OAuth connections.
                   </div>
                 </label>
                 {errors.declaration && (
-                  <p className="text-xs text-rose-600 font-semibold pl-7">{errors.declaration}</p>
+                  <p className="text-xs sm:text-sm text-rose-600 font-semibold pl-7">{errors.declaration}</p>
                 )}
               </div>
             </div>
@@ -1444,12 +1444,12 @@ export default function OnboardingPage() {
         </CardContent>
 
         {/* BOTTOM CONTROLS: BACK / CONTINUE */}
-        <CardFooter className="flex items-center justify-between gap-4 p-4 sm:p-5 border-t border-slate-100">
+        <CardFooter className="flex items-center justify-between gap-4 p-4 sm:p-6 border-t border-slate-100">
           {currentStep > 1 ? (
             <button
               type="button"
               onClick={handleBack}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold shadow-2xs transition-all btn-tactile cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-sm font-bold shadow-2xs transition-all btn-tactile cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back</span>
@@ -1463,7 +1463,7 @@ export default function OnboardingPage() {
               <button
                 type="button"
                 onClick={handleContinue}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0761c9] text-white text-xs font-bold shadow-[0_4px_14px_rgba(8,112,232,0.25)] transition-all btn-tactile cursor-pointer"
+                className="inline-flex items-center gap-2 px-6 py-2.5 sm:py-3 rounded-full bg-[#0870e8] hover:bg-[#0761c9] text-white text-sm font-bold shadow-[0_4px_14px_rgba(8,112,232,0.25)] transition-all btn-tactile cursor-pointer"
               >
                 <span>Continue to Step {currentStep + 1}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -1472,7 +1472,7 @@ export default function OnboardingPage() {
               <button
                 type="button"
                 onClick={handleSubmit}
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md transition-all btn-tactile cursor-pointer"
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-md transition-all btn-tactile cursor-pointer"
               >
                 <Sparkles className="w-4 h-4 text-emerald-100" />
                 <span>Confirm & Launch Creator Engine</span>

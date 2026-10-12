@@ -46,16 +46,16 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="font-bold text-slate-900 text-sm tracking-tight truncate">
+                <span className="font-bold text-slate-900 text-base tracking-tight truncate">
                   {opportunity.brand}
                 </span>
                 {opportunity.sponsoredTag && (
                   <span title="Verified Campaign Brief Sponsor" className="inline-flex items-center">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#0870e8] shrink-0" />
+                    <ShieldCheck className="w-4 h-4 text-[#0870e8] shrink-0" />
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-slate-400 font-medium truncate mt-0.5">
+              <p className="text-xs text-slate-500 font-medium truncate mt-0.5">
                 {opportunity.brandCategory}
               </p>
             </div>
@@ -66,18 +66,18 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
             {/* Hard Eligibility Indicator */}
             {compatibility.qualifies ? (
               <span
-                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80"
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80"
                 title="All mandatory brand prerequisites passed"
               >
-                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Eligible</span>
               </span>
             ) : (
               <span
-                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/80"
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200/80"
                 title={compatibility.failedHardRequirements.join(", ")}
               >
-                <AlertTriangle className="w-3 h-3 text-rose-500" />
+                <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />
                 <span>Ineligible ({compatibility.failedHardRequirements.length})</span>
               </span>
             )}
@@ -87,7 +87,7 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
               <button
                 type="button"
                 onClick={() => setShowScoreFactors(!showScoreFactors)}
-                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-all ${
+                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border transition-all ${
                   compatibility.score >= 85
                     ? "bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100"
                     : compatibility.score >= 70
@@ -96,7 +96,7 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
                 }`}
                 title="Click to view explainable score breakdown"
               >
-                <Sparkles className="w-3 h-3" />
+                <Sparkles className="w-3.5 h-3.5" />
                 <span>{compatibility.score}% Match</span>
               </button>
             </div>
@@ -105,8 +105,8 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
 
         {/* Score Factor Quick Drawer (toggleable) */}
         {showScoreFactors && (
-          <div className="px-5 py-3 bg-slate-50/80 border-b border-slate-100 text-xs text-slate-700 space-y-2 animate-in slide-in-from-top-1 duration-150">
-            <div className="flex items-center justify-between font-bold text-[10px] text-slate-400 uppercase tracking-wider">
+          <div className="px-5 py-3.5 bg-slate-50/80 border-b border-slate-100 text-xs text-slate-700 space-y-2.5 animate-in slide-in-from-top-1 duration-150">
+            <div className="flex items-center justify-between font-bold text-xs text-slate-400 uppercase tracking-wider">
               <span>Explainable Factors</span>
               <button
                 onClick={() => setShowScoreFactors(false)}
@@ -115,20 +115,20 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
                 ✕
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-1.5 text-[11px]">
-              <div className="p-2 bg-white rounded-xl border border-slate-200/75 flex justify-between shadow-2xs">
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="p-2.5 bg-white rounded-xl border border-slate-200/75 flex justify-between shadow-2xs">
                 <span className="text-slate-500">Niche Fit</span>
                 <span className="font-bold text-slate-900">+{compatibility.nicheScore}%</span>
               </div>
-              <div className="p-2 bg-white rounded-xl border border-slate-200/75 flex justify-between shadow-2xs">
+              <div className="p-2.5 bg-white rounded-xl border border-slate-200/75 flex justify-between shadow-2xs">
                 <span className="text-slate-500">Platform</span>
                 <span className="font-bold text-slate-900">+{compatibility.platformScore}%</span>
               </div>
-              <div className="p-2 bg-white rounded-xl border border-slate-200/75 flex justify-between shadow-2xs">
+              <div className="p-2.5 bg-white rounded-xl border border-slate-200/75 flex justify-between shadow-2xs">
                 <span className="text-slate-500">Follower Tier</span>
                 <span className="font-bold text-slate-900">+{compatibility.followerScore}%</span>
               </div>
-              <div className="p-2 bg-white rounded-xl border border-slate-200/75 flex justify-between shadow-2xs">
+              <div className="p-2.5 bg-white rounded-xl border border-slate-200/75 flex justify-between shadow-2xs">
                 <span className="text-slate-500">Audience Fit</span>
                 <span className="font-bold text-slate-900">+{compatibility.audienceScore}%</span>
               </div>
@@ -139,10 +139,10 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
         {/* Card Body */}
         <div className="p-5 flex-1 flex flex-col justify-between space-y-3.5">
           <div>
-            <h3 className="font-bold text-slate-900 text-sm leading-snug line-clamp-1 mb-1 tracking-tight">
+            <h3 className="font-bold text-slate-900 text-base leading-snug line-clamp-1 mb-1 tracking-tight">
               {opportunity.title}
             </h3>
-            <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+            <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
               {opportunity.description}
             </p>
           </div>
@@ -158,17 +158,17 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
               </Badge>
             ))}
             {opportunity.targetLocation && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100/90 text-slate-600 border border-slate-200/50">
-                <MapPin className="w-2.5 h-2.5 text-slate-400" />
+              <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-medium bg-slate-100/90 text-slate-600 border border-slate-200/50">
+                <MapPin className="w-3 h-3 text-slate-400" />
                 <span className="truncate max-w-[140px]">{opportunity.targetLocation}</span>
               </span>
             )}
           </div>
 
           {/* Deliverables snippet */}
-          <div className="p-3 rounded-xl bg-slate-50/80 border border-slate-200/60 text-[11px] text-slate-600 space-y-1">
-            <span className="font-bold text-slate-500 flex items-center gap-1 text-[10px] uppercase tracking-wider">
-              <Layers className="w-3 h-3 text-slate-400" /> Deliverables Preview
+          <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/60 text-xs text-slate-600 space-y-1">
+            <span className="font-bold text-slate-500 flex items-center gap-1 text-xs uppercase tracking-wider">
+              <Layers className="w-3.5 h-3.5 text-slate-400" /> Deliverables Preview
             </span>
             <p className="line-clamp-1 text-slate-800 font-medium">
               {opportunity.deliverables.join(" • ")}
@@ -178,20 +178,20 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
           {/* Key Deal Stats Grid */}
           <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-xs">
             <div className="space-y-0.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                <DollarSign className="w-3 h-3 text-emerald-600" /> Budget Range
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                <DollarSign className="w-3.5 h-3.5 text-emerald-600" /> Budget Range
               </span>
-              <p className="font-bold text-slate-900 text-xs sm:text-sm">
+              <p className="font-bold text-slate-900 text-sm sm:text-base">
                 {opportunity.budgetRange}
               </p>
             </div>
 
             <div className="space-y-0.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                <Users className="w-3 h-3 text-[#0870e8]" /> Min. Followers
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                <Users className="w-3.5 h-3.5 text-[#0870e8]" /> Min. Followers
               </span>
               <p
-                className={`font-semibold text-xs ${
+                className={`font-semibold text-xs sm:text-sm ${
                   activeCreator.followerCount >= opportunity.minFollowers
                     ? "text-slate-800"
                     : "text-rose-600 font-bold"
@@ -204,12 +204,12 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
 
           {/* Ineligibility Warning Callout (if fails hard requirement) */}
           {!compatibility.qualifies && (
-            <div className="p-3 rounded-xl bg-rose-50/80 border border-rose-200/80 text-[11px] text-rose-800 space-y-0.5">
+            <div className="p-3.5 rounded-xl bg-rose-50/80 border border-rose-200/80 text-xs text-rose-800 space-y-1">
               <div className="flex items-center gap-1 font-bold text-rose-900">
-                <AlertTriangle className="w-3 h-3 text-rose-600 shrink-0" />
+                <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
                 <span>Eligibility Shortfall</span>
               </div>
-              <p className="line-clamp-2 text-rose-700 leading-snug">
+              <p className="line-clamp-2 text-rose-700 leading-relaxed">
                 {compatibility.failedHardRequirements[0]}
               </p>
             </div>
@@ -217,28 +217,28 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
 
           {/* Applied Status Banner */}
           {isApplied && (
-            <div className="p-3 rounded-xl bg-emerald-50/90 border border-emerald-200/90 text-[11px] text-emerald-900 space-y-0.5">
+            <div className="p-3.5 rounded-xl bg-emerald-50/90 border border-emerald-200/90 text-xs text-emerald-900 space-y-1">
               <div className="flex items-center justify-between font-bold">
                 <span className="flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   Application Active
                 </span>
-                <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-mono font-bold">
+                <span className="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-mono font-bold">
                   {opportunity.applicationId || "CE-APP-LOGGED"}
                 </span>
               </div>
-              <p className="text-emerald-700 text-[10px]">
+              <p className="text-emerald-700 text-xs">
                 Applied {opportunity.appliedDate || "Recently"} • Status: Under Review by Brand
               </p>
             </div>
           )}
 
           {/* Deadline bar */}
-          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+          <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
             <span className="flex items-center gap-1">
-              <Calendar className="w-3 h-3 text-amber-500" /> Apply by {opportunity.deadline}
+              <Calendar className="w-3.5 h-3.5 text-amber-500" /> Apply by {opportunity.deadline}
             </span>
-            <span className="text-slate-400 text-[10px] font-medium">Demo Campaign</span>
+            <span className="text-slate-400 text-xs font-medium">Demo Campaign</span>
           </div>
         </div>
 
@@ -246,10 +246,10 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
         <div className="px-5 py-3.5 bg-slate-50/70 border-t border-slate-100 flex items-center justify-between gap-2">
           <button
             onClick={() => setDetailsOpen(true)}
-            className="px-3 py-1.5 rounded-full text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-colors flex items-center gap-1 btn-tactile"
+            className="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 transition-colors flex items-center gap-1 btn-tactile"
           >
             <span>Brief & Fit</span>
-            <ChevronRight className="w-3.5 h-3.5" />
+            <ChevronRight className="w-4 h-4" />
           </button>
 
           <div className="flex items-center gap-2">
@@ -262,20 +262,20 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
               } btn-tactile`}
               title={isSaved ? "Saved to shortlisted deals (click to unsave)" : "Bookmark opportunity"}
             >
-              <Bookmark className={`w-3.5 h-3.5 ${isSaved ? "fill-current" : ""}`} />
+              <Bookmark className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`} />
             </button>
 
             {isApplied ? (
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setDetailsOpen(true)}
-                  className="px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold hover:bg-emerald-200 transition-colors btn-tactile"
+                  className="px-4 py-2 rounded-full bg-emerald-100 text-emerald-800 text-sm font-bold hover:bg-emerald-200 transition-colors btn-tactile"
                 >
                   Tracked
                 </button>
                 <button
                   onClick={() => withdrawApplication(opportunity.id)}
-                  className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
                   title="Withdraw test application"
                 >
                   ✕
@@ -284,17 +284,17 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
             ) : compatibility.qualifies ? (
               <button
                 onClick={() => setApplyOpen(true)}
-                className="px-4 py-1.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white text-xs font-bold shadow-xs hover:shadow-sm transition-all btn-tactile"
+                className="px-5 py-2 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white text-sm font-bold shadow-xs hover:shadow-sm transition-all btn-tactile"
               >
                 Apply Now
               </button>
             ) : (
               <button
                 onClick={() => setDetailsOpen(true)}
-                className="px-3 py-1.5 rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-700 text-xs font-semibold transition-colors flex items-center gap-1 btn-tactile"
+                className="px-4 py-2 rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-700 text-sm font-semibold transition-colors flex items-center gap-1.5 btn-tactile"
                 title="Review failed requirements"
               >
-                <AlertTriangle className="w-3 h-3 text-amber-600" />
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
                 <span>Check Criteria</span>
               </button>
             )}

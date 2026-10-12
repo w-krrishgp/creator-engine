@@ -162,31 +162,31 @@ export default function ActionsPage() {
       {/* Header and Add Action Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div>
-          <div className="flex items-center gap-2.5">
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               Action Centre & Execution Tracker
             </h2>
             <Badge variant="indigo" size="sm">
               {activeCreator.name.split(" ")[0]}&apos;s Priority Queue
             </Badge>
           </div>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-sm sm:text-base text-slate-600 mt-1">
             Prioritized strategic actions linked to growth roadmaps, monetisation pathways, and campaign briefs.
           </p>
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap self-start sm:self-auto">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 text-xs font-mono font-bold">
+          <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 text-xs font-mono font-bold">
             <span>Capacity:</span>
             <span className={actions.length >= currentPlan.limits.maxActiveActions ? "text-amber-600 font-extrabold" : "text-[#0870e8]"}>
               {actions.length}/{currentPlan.limits.maxActiveActions}
             </span>
-            <span className="text-[10px] text-slate-400 font-sans uppercase">({currentPlan.name})</span>
+            <span className="text-xs text-slate-500 font-sans uppercase">({currentPlan.name})</span>
           </div>
           <button
             onClick={refreshAiRecommendations}
             disabled={isAiGenerating}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-indigo-50/80 hover:bg-indigo-100/80 border border-indigo-200/80 text-indigo-700 font-bold text-xs shadow-2xs transition-all disabled:opacity-60 cursor-pointer btn-tactile"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-indigo-50/80 hover:bg-indigo-100/80 border border-indigo-200/80 text-indigo-700 font-bold text-xs sm:text-sm shadow-2xs transition-all disabled:opacity-60 cursor-pointer btn-tactile"
           >
             <Sparkles className={`w-3.5 h-3.5 text-indigo-600 ${isAiGenerating ? "animate-spin" : ""}`} />
             <span>{isAiGenerating ? "Synthesizing AI Actions..." : "AI Prioritize Actions"}</span>
@@ -199,7 +199,7 @@ export default function ActionsPage() {
               }
               setIsModalOpen(true);
             }}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0761c9] text-white font-bold text-xs shadow-[0_4px_14px_rgba(8,112,232,0.25)] transition-all cursor-pointer btn-tactile"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0761c9] text-white font-bold text-sm shadow-[0_4px_14px_rgba(8,112,232,0.25)] transition-all cursor-pointer btn-tactile"
           >
             <Plus className="w-4 h-4" />
             <span>Add Custom Action</span>
@@ -211,13 +211,13 @@ export default function ActionsPage() {
       <Card className="rounded-2xl border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] p-5 sm:p-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2.5 max-w-xl">
-            <span className="text-xs font-bold text-[#0870e8] uppercase tracking-wider flex items-center gap-1.5">
+            <span className="text-xs sm:text-[13px] font-bold text-[#0870e8] uppercase tracking-wider flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-[#0870e8]" /> Real-time Execution Velocity
             </span>
-            <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
               {completedCount} of {totalActionsCount} Strategic Actions Completed
             </h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
               {progressPercent === 100
                 ? "Phenomenal execution! All prioritized actions have been completed. Check your growth roadmap for next phase milestones."
                 : progressPercent >= 50
@@ -226,7 +226,7 @@ export default function ActionsPage() {
             </p>
 
             {/* Quick Status Pill Counters */}
-            <div className="flex items-center gap-2.5 pt-2 flex-wrap text-xs">
+            <div className="flex items-center gap-2.5 pt-2 flex-wrap text-xs sm:text-sm">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80 font-bold">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                 {completedCount} Completed
@@ -242,9 +242,9 @@ export default function ActionsPage() {
             </div>
           </div>
 
-          <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 min-w-[220px] text-center space-y-2.5 shrink-0 shadow-2xs">
+          <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 min-w-[220px] text-center space-y-2 shrink-0 shadow-2xs">
             <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">Completion Velocity</span>
-            <div className="text-3xl font-extrabold text-[#0870e8] font-mono">
+            <div className="text-3xl sm:text-4xl font-black text-[#0870e8] font-mono">
               {progressPercent}%
             </div>
             <div className="w-full h-2.5 bg-slate-200/80 rounded-full overflow-hidden">
@@ -253,7 +253,7 @@ export default function ActionsPage() {
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            <p className="text-[11px] text-slate-400 font-medium">
+            <p className="text-xs text-slate-500 font-medium">
               {totalActionsCount - completedCount} actions remaining
             </p>
           </div>
@@ -271,7 +271,7 @@ export default function ActionsPage() {
               placeholder="Search actions by title, strategic reason, or related briefs..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-full border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8] bg-slate-50/50"
+              className="w-full pl-10 pr-4 py-2.5 rounded-full border border-slate-200 text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8] bg-slate-50/50"
             />
           </div>
 
@@ -279,7 +279,7 @@ export default function ActionsPage() {
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 shrink-0">
             <button
               onClick={() => setStatusFilter("all")}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer btn-tactile ${
+              className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer btn-tactile ${
                 statusFilter === "all"
                   ? "bg-slate-900 text-white shadow-2xs"
                   : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200/80"
@@ -289,7 +289,7 @@ export default function ActionsPage() {
             </button>
             <button
               onClick={() => setStatusFilter("in_progress")}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer btn-tactile ${
+              className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer btn-tactile ${
                 statusFilter === "in_progress"
                   ? "bg-[#0870e8] text-white shadow-2xs"
                   : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200/80"
@@ -299,7 +299,7 @@ export default function ActionsPage() {
             </button>
             <button
               onClick={() => setStatusFilter("not_started")}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer btn-tactile ${
+              className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer btn-tactile ${
                 statusFilter === "not_started"
                   ? "bg-slate-700 text-white shadow-2xs"
                   : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200/80"
@@ -309,7 +309,7 @@ export default function ActionsPage() {
             </button>
             <button
               onClick={() => setStatusFilter("completed")}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer btn-tactile ${
+              className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer btn-tactile ${
                 statusFilter === "completed"
                   ? "bg-emerald-600 text-white shadow-2xs"
                   : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200/80"
@@ -319,7 +319,7 @@ export default function ActionsPage() {
             </button>
             <button
               onClick={() => setStatusFilter("high")}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer btn-tactile ${
+              className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer btn-tactile ${
                 statusFilter === "high"
                   ? "bg-rose-600 text-white shadow-2xs"
                   : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200/80"
@@ -334,13 +334,13 @@ export default function ActionsPage() {
         <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100 flex-wrap">
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1 shrink-0 flex items-center gap-1">
-              <Filter className="w-3 h-3" /> Category:
+              <Filter className="w-3.5 h-3.5" /> Category:
             </span>
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategoryFilter(cat)}
-                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all shrink-0 cursor-pointer btn-tactile ${
+                className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all shrink-0 cursor-pointer btn-tactile ${
                   categoryFilter === cat
                     ? "bg-slate-900 text-white font-bold shadow-2xs"
                     : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200/80"
@@ -358,9 +358,9 @@ export default function ActionsPage() {
                 setStatusFilter("all");
                 setCategoryFilter("all");
               }}
-              className="text-xs text-rose-600 hover:text-rose-800 font-bold flex items-center gap-1 cursor-pointer btn-tactile"
+              className="text-xs sm:text-sm text-rose-600 hover:text-rose-800 font-bold flex items-center gap-1 cursor-pointer btn-tactile"
             >
-              <RotateCcw className="w-3 h-3" />
+              <RotateCcw className="w-3.5 h-3.5" />
               <span>Reset Filters</span>
             </button>
           )}
@@ -426,8 +426,8 @@ export default function ActionsPage() {
 
                         {/* Linked Entity Pill (Roadmap / Opportunity / Monetisation) */}
                         {action.relatedTitle && (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200/80">
-                            <span className="text-slate-400 text-[10px] uppercase font-bold">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200/80">
+                            <span className="text-slate-400 text-xs uppercase font-bold">
                               {action.relatedType || "Linked"}:
                             </span>
                             <span className="truncate max-w-[200px] font-semibold text-slate-800">
@@ -439,7 +439,7 @@ export default function ActionsPage() {
                                 className="text-[#0870e8] hover:text-blue-800 ml-0.5"
                                 title="Open related item"
                               >
-                                <ExternalLink className="w-2.5 h-2.5" />
+                                <ExternalLink className="w-3 h-3" />
                               </Link>
                             )}
                           </span>
@@ -447,8 +447,8 @@ export default function ActionsPage() {
                       </div>
 
                       {/* Deadline & Time */}
-                      <div className="flex items-center gap-2.5 text-xs text-slate-400">
-                        <span className="flex items-center gap-1 font-medium text-slate-500">
+                      <div className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-500">
+                        <span className="flex items-center gap-1 font-medium text-slate-600">
                           <Clock className="w-3.5 h-3.5 text-slate-400" /> {action.estimatedTime}
                         </span>
                         <span>•</span>
@@ -460,7 +460,7 @@ export default function ActionsPage() {
 
                     {/* Action Title */}
                     <h4
-                      className={`text-sm sm:text-base font-bold leading-snug ${
+                      className={`text-base sm:text-lg font-bold leading-snug ${
                         isCompleted ? "line-through text-slate-400" : "text-slate-900"
                       }`}
                     >
@@ -468,8 +468,8 @@ export default function ActionsPage() {
                     </h4>
 
                     {/* Strategic Reason Box */}
-                    <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 text-xs text-slate-700 space-y-1">
-                      <span className="font-bold uppercase tracking-wider text-[10px] text-slate-500">
+                    <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 text-xs sm:text-sm text-slate-700 space-y-1">
+                      <span className="font-bold uppercase tracking-wider text-xs text-slate-500 block">
                         Why this matters:
                       </span>
                       <p className="leading-relaxed font-medium text-slate-700">
@@ -480,7 +480,7 @@ export default function ActionsPage() {
                     {/* Bottom Status Controls Bar */}
                     <div className="flex items-center justify-between gap-3 pt-2 border-t border-slate-100 flex-wrap">
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                           Status:
                         </span>
 
@@ -488,7 +488,7 @@ export default function ActionsPage() {
                         <div className="flex items-center gap-1.5">
                           <button
                             onClick={() => handleCycleStatus(action)}
-                            className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 border shadow-2xs btn-tactile cursor-pointer ${
+                            className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 border shadow-2xs btn-tactile cursor-pointer ${
                               status === "Completed"
                                 ? "bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100"
                                 : status === "In progress"
@@ -507,7 +507,7 @@ export default function ActionsPage() {
                           <select
                             value={status}
                             onChange={(e) => updateActionStatus(action.id, e.target.value as ActionStatus)}
-                            className="text-[11px] font-semibold text-slate-600 bg-transparent border-0 focus:ring-0 cursor-pointer hover:text-slate-900"
+                            className="text-xs font-semibold text-slate-600 bg-transparent border-0 focus:ring-0 cursor-pointer hover:text-slate-900"
                           >
                             <option value="Not started">Not started</option>
                             <option value="In progress">In progress</option>
@@ -520,10 +520,10 @@ export default function ActionsPage() {
                         {action.relatedLink && (
                           <Link
                             href={action.relatedLink}
-                            className="text-xs font-bold text-[#0870e8] hover:text-blue-800 flex items-center gap-1 transition-colors btn-tactile"
+                            className="text-xs sm:text-sm font-bold text-[#0870e8] hover:text-blue-800 flex items-center gap-1 transition-colors btn-tactile"
                           >
                             <span>Open Related Brief</span>
-                            <ArrowRight className="w-3 h-3" />
+                            <ArrowRight className="w-3.5 h-3.5" />
                           </Link>
                         )}
                         <button
@@ -531,7 +531,7 @@ export default function ActionsPage() {
                           className="p-1.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                           title="Delete action"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -546,8 +546,8 @@ export default function ActionsPage() {
           <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
             <AlertCircle className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-bold text-slate-900">No actions match your filters</h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto">
+          <h3 className="text-xl font-bold text-slate-900">No actions match your filters</h3>
+          <p className="text-sm text-slate-600 max-w-sm mx-auto">
             Try resetting your status tab, category selection, or search query to see the active creator&apos;s queue.
           </p>
           <button
@@ -556,7 +556,7 @@ export default function ActionsPage() {
               setCategoryFilter("all");
               setSearchQuery("");
             }}
-            className="px-5 py-2 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-colors btn-tactile cursor-pointer"
+            className="px-5 py-2.5 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-colors btn-tactile cursor-pointer"
           >
             Reset All Filters
           </button>
@@ -569,8 +569,8 @@ export default function ActionsPage() {
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200/80 animate-in zoom-in-95 duration-150 space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Add Strategic Action</h3>
-                <p className="text-xs text-slate-500">Log a targeted execution move for {activeCreator.name}</p>
+                <h3 className="text-xl font-bold text-slate-900">Add Strategic Action</h3>
+                <p className="text-sm text-slate-500">Log a targeted execution move for {activeCreator.name}</p>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -582,24 +582,24 @@ export default function ActionsPage() {
 
             <form onSubmit={handleCreateAction} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Action Title</label>
+                <label className="text-sm font-bold text-slate-700">Action Title</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Follow up on brand deal proposal with sponsor team"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Priority Level</label>
+                  <label className="text-xs sm:text-sm font-bold text-slate-700">Priority Level</label>
                   <select
                     value={newPriority}
                     onChange={(e) => setNewPriority(e.target.value as "High" | "Medium" | "Low")}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-bold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
                   >
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
@@ -608,11 +608,11 @@ export default function ActionsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Category</label>
+                  <label className="text-xs sm:text-sm font-bold text-slate-700">Category</label>
                   <select
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value as "Growth" | "Monetisation" | "Brand Pitch" | "Audience Trust")}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-bold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
                   >
                     <option value="Growth">Growth</option>
                     <option value="Monetisation">Monetisation</option>
@@ -622,11 +622,11 @@ export default function ActionsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Initial Status</label>
+                  <label className="text-xs sm:text-sm font-bold text-slate-700">Initial Status</label>
                   <select
                     value={newStatus}
                     onChange={(e) => setNewStatus(e.target.value as ActionStatus)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-bold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
                   >
                     <option value="Not started">Not started</option>
                     <option value="In progress">In progress</option>
@@ -637,24 +637,24 @@ export default function ActionsPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Suggested Deadline</label>
+                  <label className="text-xs sm:text-sm font-bold text-slate-700">Suggested Deadline</label>
                   <input
                     type="text"
                     value={newDeadline}
                     onChange={(e) => setNewDeadline(e.target.value)}
                     placeholder="e.g. In 2 days"
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Est. Time Required</label>
+                  <label className="text-xs sm:text-sm font-bold text-slate-700">Est. Time Required</label>
                   <input
                     type="text"
                     value={newEstimatedTime}
                     onChange={(e) => setNewEstimatedTime(e.target.value)}
                     placeholder="e.g. 45 mins"
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
                   />
                 </div>
               </div>
@@ -662,7 +662,7 @@ export default function ActionsPage() {
               {/* Related Item Link */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Link to Related Area</label>
+                  <label className="text-xs sm:text-sm font-bold text-slate-700">Link to Related Area</label>
                   <select
                     value={newRelatedType}
                     onChange={(e) =>
@@ -670,7 +670,7 @@ export default function ActionsPage() {
                         e.target.value as "roadmap" | "opportunity" | "monetisation" | "goal" | "none"
                       )
                     }
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white"
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold text-slate-800 bg-white"
                   >
                     <option value="none">None (General Action)</option>
                     <option value="roadmap">Growth Roadmap</option>
@@ -681,25 +681,25 @@ export default function ActionsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Related Title / Milestone</label>
+                  <label className="text-xs sm:text-sm font-bold text-slate-700">Related Title / Milestone</label>
                   <input
                     type="text"
                     value={newRelatedTitle}
                     onChange={(e) => setNewRelatedTitle(e.target.value)}
                     placeholder="e.g. Phase 1 Roadmap or MyProtein"
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium text-slate-900"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Why this matters (Strategic Reason)</label>
+                <label className="text-sm font-bold text-slate-700">Why this matters (Strategic Reason)</label>
                 <textarea
                   rows={2}
                   value={newReason}
                   onChange={(e) => setNewReason(e.target.value)}
                   placeholder="Explain why executing this action accelerates revenue or audience retention..."
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 resize-none focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 resize-none focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8]"
                 />
               </div>
 
@@ -707,13 +707,13 @@ export default function ActionsPage() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 cursor-pointer"
+                  className="px-4 py-2 text-sm font-bold text-slate-600 hover:text-slate-900 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0761c9] text-white font-bold text-xs shadow-2xs btn-tactile cursor-pointer"
+                  className="px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0761c9] text-white font-bold text-sm shadow-2xs btn-tactile cursor-pointer"
                 >
                   Add to Queue
                 </button>

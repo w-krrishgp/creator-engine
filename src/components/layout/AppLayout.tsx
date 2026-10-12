@@ -99,12 +99,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
                   strokeWidth={isActive ? 2.25 : 1.75}
                 />
                 {item.badge && (
-                  <span className="absolute -top-1 -right-2 px-1.5 py-0.2 bg-[#0870e8] text-white text-[9px] font-black rounded-full border border-white">
+                  <span className="absolute -top-1.5 -right-2 px-1.5 py-0.5 bg-[#0870e8] text-white text-xs font-bold rounded-full border border-white leading-none">
                     {item.badge}
                   </span>
                 )}
               </div>
-              <span className="text-[10px] tracking-tight mt-0.5 leading-none">
+              <span className="text-xs tracking-tight mt-0.5 leading-none font-medium">
                 {item.name}
               </span>
               {isActive && (

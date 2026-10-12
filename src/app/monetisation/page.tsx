@@ -145,30 +145,30 @@ export default function MonetisationPage() {
               <Badge variant="emerald" size="sm">
                 Monetisation Engine
               </Badge>
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2.5 py-0.5 rounded-full border border-slate-200/60">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2.5 py-0.5 rounded-full border border-slate-200/60">
                 <span className={`w-1.5 h-1.5 rounded-full ${isGeminiConfigured ? "bg-emerald-500" : "bg-amber-500"}`} />
                 {isGeminiConfigured ? "Gemini Calibrated" : "Deterministic Benchmarks"}
               </span>
               <span className="text-xs text-slate-300">•</span>
-              <span className="text-xs font-semibold text-slate-500">
+              <span className="text-xs sm:text-sm font-semibold text-slate-500">
                 {activeCreator.primaryPlatform} • {activeCreator.niche} • {activeCreator.followerCount.toLocaleString()} followers
               </span>
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               Monetisation Pathways & Viability Evaluation
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
               Evaluated across 5 diversified revenue models for <strong className="text-slate-900 font-semibold">{activeCreator.name}</strong> to scale toward the target of{" "}
               <strong className="text-emerald-700 font-semibold">₹{activeCreator.monthlyIncomeTarget.toLocaleString()} / month</strong>.
             </p>
           </div>
 
           {/* Saved Pathways Counter Pill */}
-          <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-full bg-slate-50/80 border border-slate-200/80 text-xs shrink-0 shadow-2xs">
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-full bg-slate-50/80 border border-slate-200/80 text-xs sm:text-sm shrink-0 shadow-2xs">
             <span className="text-slate-600 font-semibold flex items-center gap-1.5">
-              <Bookmark className="w-3.5 h-3.5 text-[#0870e8]" />
+              <Bookmark className="w-4 h-4 text-[#0870e8]" />
               Saved Pathways:
             </span>
             <span className="font-bold text-slate-900 font-mono">
@@ -185,7 +185,7 @@ export default function MonetisationPage() {
             key={cat.id}
             type="button"
             onClick={() => setSelectedCategory(cat.id)}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-full text-xs sm:text-[13px] font-bold transition-all shrink-0 flex items-center gap-1.5 ${
               selectedCategory === cat.id
                 ? "bg-[#0870e8] text-white shadow-xs font-bold"
                 : "bg-slate-100/80 text-slate-600 hover:text-slate-900 hover:bg-slate-200/70"
@@ -193,7 +193,7 @@ export default function MonetisationPage() {
           >
             <span>{cat.label}</span>
             <span
-              className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+              className={`text-xs px-2 py-0.5 rounded-full font-mono ${
                 selectedCategory === cat.id ? "bg-white/20 text-white" : "bg-slate-200/80 text-slate-700"
               }`}
             >
@@ -204,7 +204,7 @@ export default function MonetisationPage() {
       </div>
 
       {/* 4. IMPORTANT REVENUE NOTICE STRIP */}
-      <div className="flex items-start gap-3 p-4 rounded-[16px] bg-amber-50/70 border border-amber-200/80 text-amber-900 text-xs shadow-2xs">
+      <div className="flex items-start gap-3 p-4 rounded-[16px] bg-amber-50/70 border border-amber-200/80 text-amber-900 text-xs sm:text-sm shadow-2xs">
         <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
         <div className="leading-relaxed">
           <strong className="font-bold">Illustrative Pricing Benchmarks: </strong>
@@ -236,19 +236,19 @@ export default function MonetisationPage() {
                       <Badge variant="blue" size="sm">
                         {channel.badge}
                       </Badge>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                         {channel.complexity} Complexity
                       </span>
                       <span className="text-slate-300">•</span>
-                      <span className="text-[11px] font-semibold text-slate-600">
+                      <span className="text-xs font-semibold text-slate-600">
                         {channel.readinessStatus}
                       </span>
                     </div>
 
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug tracking-tight">
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 leading-snug tracking-tight">
                       {channel.title}
                     </h3>
-                    <p className="text-xs text-slate-500 line-clamp-1">{channel.subtitle}</p>
+                    <p className="text-xs sm:text-sm text-slate-500 line-clamp-1">{channel.subtitle}</p>
                   </div>
 
                   {/* Relative Suitability Gauge & Save Bookmark Button */}
@@ -260,7 +260,7 @@ export default function MonetisationPage() {
                           : "bg-blue-50 text-blue-800 border-blue-200"
                       }`}
                     >
-                      <Sparkles className="w-3 h-3 text-emerald-600" />
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
                       <span>{channel.suitabilityScore}% Match</span>
                     </div>
 
@@ -285,7 +285,7 @@ export default function MonetisationPage() {
 
                 {/* Relative Suitability Explanation */}
                 {channel.suitabilityExplanation && (
-                  <div className="mt-3 p-3 rounded-xl bg-blue-50/60 border border-blue-200/60 text-xs text-blue-900 leading-relaxed">
+                  <div className="mt-3 p-3.5 rounded-xl bg-blue-50/60 border border-blue-200/60 text-xs sm:text-sm text-blue-900 leading-relaxed">
                     <strong className="font-bold text-blue-800">Suitability Assessment: </strong>
                     {channel.suitabilityExplanation}
                   </div>
@@ -299,7 +299,7 @@ export default function MonetisationPage() {
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
                     <HelpCircle className="w-3.5 h-3.5 text-[#0870e8]" /> Why this suits {activeCreator.name.split(" ")[0]}
                   </h4>
-                  <p className="text-xs text-slate-700 leading-relaxed bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/70">
+                  <p className="text-xs sm:text-sm text-slate-700 leading-relaxed bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/70">
                     {channel.whyItSuits}
                   </p>
                 </div>
@@ -307,20 +307,20 @@ export default function MonetisationPage() {
                 {/* 2. ILLUSTRATIVE PRICING & REVENUE BENCHMARK */}
                 <div className="p-3.5 rounded-xl bg-emerald-50/40 border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 block">
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 block">
                       Illustrative Earning Potential
                     </span>
-                    <p className="text-xs sm:text-sm font-extrabold text-emerald-950 font-mono mt-0.5">
+                    <p className="text-sm sm:text-base font-extrabold text-emerald-950 font-mono mt-0.5">
                       {channel.estimatedPotential}
                     </p>
                   </div>
 
                   {channel.illustrativePriceRange && (
                     <div className="sm:text-right">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                      <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
                         Benchmark Range
                       </span>
-                      <p className="text-xs font-bold text-slate-800 mt-0.5">
+                      <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">
                         {channel.illustrativePriceRange}
                       </p>
                     </div>
@@ -337,7 +337,7 @@ export default function MonetisationPage() {
                       {channel.prerequisites.map((prereq, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start gap-2 text-xs text-slate-600 leading-snug bg-slate-50/70 p-2 rounded-xl border border-slate-200/50"
+                          className="flex items-start gap-2 text-xs sm:text-sm text-slate-600 leading-snug bg-slate-50/70 p-2.5 rounded-xl border border-slate-200/50"
                         >
                           <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
                           <span>{prereq}</span>
@@ -349,12 +349,12 @@ export default function MonetisationPage() {
 
                 {/* 4. POTENTIAL RISKS OR LIMITATIONS */}
                 {channel.potentialRisks && (
-                  <div className="p-3.5 rounded-xl bg-amber-50/50 border border-amber-200/70 text-xs text-amber-900 space-y-1">
+                  <div className="p-3.5 rounded-xl bg-amber-50/50 border border-amber-200/70 text-xs sm:text-sm text-amber-900 space-y-1">
                     <span className="font-bold flex items-center gap-1.5 text-amber-800">
-                      <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                      <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
                       Potential Risks & Practical Limitations
                     </span>
-                    <p className="text-[11px] text-amber-800 leading-relaxed pl-5">
+                    <p className="text-xs sm:text-[13px] text-amber-800 leading-relaxed pl-5">
                       {channel.potentialRisks}
                     </p>
                   </div>
@@ -370,9 +370,9 @@ export default function MonetisationPage() {
                       {channel.launchChecklist.map((step, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start gap-2.5 text-xs text-slate-600 p-2 rounded-xl bg-slate-50/80 border border-slate-200/50"
+                          className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-600 p-2.5 rounded-xl bg-slate-50/80 border border-slate-200/50"
                         >
-                          <span className="w-4 h-4 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                          <span className="w-4 h-4 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                             {idx + 1}
                           </span>
                           <span>{step}</span>
@@ -385,12 +385,12 @@ export default function MonetisationPage() {
 
               {/* FOOTER: SUGGESTED FIRST STEP & ACTION CONTROLS */}
               <div className="p-4 bg-slate-50/80 border-t border-slate-100 space-y-3">
-                <div className="flex items-start justify-between gap-3 text-xs">
+                <div className="flex items-start justify-between gap-3 text-xs sm:text-sm">
                   <div className="min-w-0">
-                    <span className="text-[10px] uppercase font-bold text-[#0870e8] block">
+                    <span className="text-xs uppercase font-bold text-[#0870e8] block">
                       Suggested First Step:
                     </span>
-                    <p className="font-semibold text-slate-800 text-xs leading-snug mt-0.5">
+                    <p className="font-semibold text-slate-800 text-xs sm:text-sm leading-snug mt-0.5">
                       {channel.suggestedFirstStep}
                     </p>
                   </div>
@@ -398,7 +398,7 @@ export default function MonetisationPage() {
                   <button
                     type="button"
                     onClick={() => toggleExpand(channel.id)}
-                    className="text-[11px] text-slate-500 hover:text-slate-800 font-semibold flex items-center gap-1 shrink-0 mt-1 btn-tactile"
+                    className="text-xs text-slate-500 hover:text-slate-800 font-semibold flex items-center gap-1 shrink-0 mt-1 btn-tactile"
                   >
                     <span>{isExpanded ? "Hide Steps" : "View Checklist"}</span>
                     {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -410,7 +410,7 @@ export default function MonetisationPage() {
                   <button
                     type="button"
                     onClick={() => handleCreateActionItem(channel)}
-                    className={`flex-1 py-2 px-4 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs btn-tactile ${
+                    className={`flex-1 py-2.5 px-4 rounded-full text-sm font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs btn-tactile ${
                       isQueued
                         ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                         : "bg-[#0870e8] hover:bg-[#0760cb] text-white"
@@ -418,12 +418,12 @@ export default function MonetisationPage() {
                   >
                     {isQueued ? (
                       <>
-                        <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
+                        <Check className="w-4 h-4 text-emerald-600 stroke-[3]" />
                         <span>Queued in Action Centre</span>
                       </>
                     ) : (
                       <>
-                        <PlusCircle className="w-3.5 h-3.5" />
+                        <PlusCircle className="w-4 h-4" />
                         <span>Add to Action Centre</span>
                       </>
                     )}
@@ -432,13 +432,13 @@ export default function MonetisationPage() {
                   <button
                     type="button"
                     onClick={() => toggleSaveChannel(channel.id)}
-                    className={`py-2 px-4 rounded-full text-xs font-semibold border transition-all flex items-center gap-1.5 btn-tactile ${
+                    className={`py-2.5 px-4 rounded-full text-sm font-semibold border transition-all flex items-center gap-1.5 btn-tactile ${
                       isSaved
                         ? "bg-white text-[#0870e8] border-blue-200 font-bold shadow-2xs"
                         : "bg-white text-slate-600 hover:text-slate-900 border-slate-200"
                     }`}
                   >
-                    <Bookmark className="w-3.5 h-3.5" />
+                    <Bookmark className="w-4 h-4" />
                     <span>{isSaved ? "Saved" : "Save"}</span>
                   </button>
                 </div>

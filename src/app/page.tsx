@@ -113,7 +113,7 @@ export default function OverviewPage() {
         <div className="h-24 sm:h-28 w-full story-ring-gradient relative opacity-90">
           <div className="absolute inset-0 bg-black/10 backdrop-blur-[1px]" />
           <div className="absolute top-3 right-4 flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-slate-900 text-[10px] font-bold uppercase tracking-wider shadow-xs">
+            <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-slate-900 text-xs font-bold uppercase tracking-wider shadow-xs">
               Executive Briefing
             </span>
           </div>
@@ -138,20 +138,20 @@ export default function OverviewPage() {
 
               <div className="space-y-1 mb-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+                  <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
                     {activeCreator.name}
                   </h2>
                   <span title="Verified Creator Profile">
                     <ShieldCheck className="w-5 h-5 text-[#0870e8] shrink-0" />
                   </span>
-                  <Badge variant="blue" size="sm">
+                  <Badge variant="blue" size="md">
                     {activeCreator.niche}
                   </Badge>
-                  <span className="text-xs font-semibold text-slate-500">
+                  <span className="text-sm font-semibold text-slate-500">
                     @{activeCreator.handle}
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 font-medium truncate">
+                <p className="text-sm text-slate-600 font-medium truncate">
                   {activeCreator.primaryPlatform} • {activeCreator.creatorStage} • {activeCreator.location || "India"}
                 </p>
               </div>
@@ -161,41 +161,41 @@ export default function OverviewPage() {
             <div className="flex items-center gap-2 flex-wrap shrink-0">
               <Link
                 href="/onboarding"
-                className="btn-tactile inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-blue-50 hover:bg-blue-100 text-[#0870e8] border border-blue-200/80 font-bold text-xs transition-colors shadow-2xs"
+                className="btn-tactile inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-blue-50 hover:bg-blue-100 text-[#0870e8] border border-blue-200/80 font-bold text-sm transition-colors shadow-2xs"
               >
-                <Sparkles className="w-3.5 h-3.5 text-[#0870e8]" />
+                <Sparkles className="w-4 h-4 text-[#0870e8]" />
                 <span>Onboarding Setup</span>
               </Link>
               <Link
                 href="/roadmap"
-                className="btn-tactile inline-flex items-center justify-center gap-1.5 px-4.5 py-2 rounded-full bg-[#0870e8] hover:bg-[#065ec4] text-white font-bold text-xs shadow-xs transition-colors"
+                className="btn-tactile inline-flex items-center justify-center gap-1.5 px-5 py-2 rounded-full bg-[#0870e8] hover:bg-[#065ec4] text-white font-bold text-sm shadow-xs transition-colors"
               >
                 <span>View 30-Day Plan</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/opportunities"
-                className="btn-tactile inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs transition-colors border border-slate-200/80"
+                className="btn-tactile inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-sm transition-colors border border-slate-200/80"
               >
                 <span>Review Deals ({opportunities.length})</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" />
+                <ArrowUpRight className="w-4 h-4 text-slate-500" />
               </Link>
             </div>
           </div>
 
           {/* Strategic Context Strip */}
-          <div className="pt-3 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
-            <p className="text-slate-600 leading-relaxed font-normal max-w-3xl">
+          <div className="pt-3.5 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 text-sm">
+            <p className="text-slate-600 leading-relaxed font-normal max-w-3xl text-sm sm:text-base">
               Your 30-day focus is <strong className="text-slate-900 font-semibold">{activePhase?.phaseTitle || "Growth Acceleration"}</strong>. You have <strong className="text-[#0870e8] font-semibold">{sortedOpportunities.length} high-compatibility sponsor matches</strong> ready for outreach, with an estimated deal pipeline of <strong className="text-emerald-700 font-semibold">₹{activeCreator.estimatedPipelineValue.toLocaleString()}</strong>.
             </p>
-            <div className="flex items-center gap-4 text-xs text-slate-500 shrink-0">
+            <div className="flex items-center gap-4 text-xs sm:text-sm text-slate-500 shrink-0">
               <div className="flex items-center gap-1.5">
-                <Target className="w-3.5 h-3.5 text-[#0870e8]" />
+                <Target className="w-4 h-4 text-[#0870e8]" />
                 <span>Goal: <strong className="text-slate-800">{activeCreator.primaryGoal}</strong></span>
               </div>
               <span className="text-slate-300">•</span>
               <div className="flex items-center gap-1.5">
-                <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
+                <DollarSign className="w-4 h-4 text-emerald-600" />
                 <span>Target: <strong className="text-slate-800">₹{activeCreator.monthlyIncomeTarget.toLocaleString()} / mo</strong></span>
               </div>
             </div>
@@ -208,21 +208,21 @@ export default function OverviewPage() {
         {/* Followers */}
         <Card className="p-4 sm:p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Audience Scale
             </span>
             <Users className="w-4 h-4 text-slate-400" />
           </div>
           <div className="my-2">
-            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-sans">
+            <span className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight font-sans">
               {activeCreator.followerCount.toLocaleString()}
             </span>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <p className="text-xs sm:text-[13px] text-slate-500 mt-1">
               Verified {activeCreator.primaryPlatform} audience
             </p>
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-semibold pt-2 border-t border-slate-100">
-            <TrendingUp className="w-3 h-3" />
+          <div className="flex items-center gap-1.5 text-xs sm:text-[13px] text-emerald-700 font-semibold pt-2.5 border-t border-slate-100">
+            <TrendingUp className="w-3.5 h-3.5" />
             <span>+{activeCreator.monthlyGrowthRate}% monthly growth</span>
           </div>
         </Card>
@@ -230,7 +230,7 @@ export default function OverviewPage() {
         {/* Engagement Rate */}
         <Card className="p-4 sm:p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Engagement Rate
             </span>
             <Badge variant="emerald" size="sm">
@@ -238,14 +238,14 @@ export default function OverviewPage() {
             </Badge>
           </div>
           <div className="my-2">
-            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-sans">
+            <span className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight font-sans">
               {activeCreator.engagementRate}%
             </span>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <p className="text-xs sm:text-[13px] text-slate-500 mt-1">
               vs. 2.2% platform baseline
             </p>
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-slate-500 pt-2 border-t border-slate-100">
+          <div className="flex items-center gap-1 text-xs sm:text-[13px] text-slate-500 pt-2.5 border-t border-slate-100">
             <span>High comment-to-view ratio</span>
           </div>
         </Card>
@@ -253,7 +253,7 @@ export default function OverviewPage() {
         {/* Growth Rate */}
         <Card className="p-4 sm:p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Average Reach
             </span>
             <Badge variant="blue" size="sm">
@@ -261,14 +261,14 @@ export default function OverviewPage() {
             </Badge>
           </div>
           <div className="my-2">
-            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-sans">
+            <span className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight font-sans">
               {activeCreator.avgImpressionsPerPost.toLocaleString()}
             </span>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <p className="text-xs sm:text-[13px] text-slate-500 mt-1">
               Average impressions / post
             </p>
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-slate-500 pt-2 border-t border-slate-100">
+          <div className="flex items-center gap-1 text-xs sm:text-[13px] text-slate-500 pt-2.5 border-t border-slate-100">
             <span>Consistent 30-day posting</span>
           </div>
         </Card>
@@ -276,7 +276,7 @@ export default function OverviewPage() {
         {/* Deal Pipeline Value */}
         <Card className="p-4 sm:p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Deal Pipeline
             </span>
             <Badge variant="emerald" size="sm">
@@ -284,14 +284,14 @@ export default function OverviewPage() {
             </Badge>
           </div>
           <div className="my-2">
-            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-sans">
+            <span className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight font-sans">
               ₹{activeCreator.estimatedPipelineValue.toLocaleString()}
             </span>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <p className="text-xs sm:text-[13px] text-slate-500 mt-1">
               Estimated active potential
             </p>
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-slate-500 pt-2 border-t border-slate-100">
+          <div className="flex items-center gap-1 text-xs sm:text-[13px] text-slate-500 pt-2.5 border-t border-slate-100">
             <span>{Math.round((activeCreator.estimatedPipelineValue / activeCreator.monthlyIncomeTarget) * 100)}% of monthly target</span>
           </div>
         </Card>
@@ -304,29 +304,29 @@ export default function OverviewPage() {
           <CardHeader>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-slate-900 text-sm">
+                <h3 className="font-bold text-slate-900 text-base">
                   Impression & Reach Trajectory
                 </h3>
                 <Badge variant="blue" size="sm">
                   +{activeCreator.monthlyGrowthRate}% MoM
                 </Badge>
               </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">
+              <p className="text-xs sm:text-[13px] text-slate-500 mt-0.5">
                 4-week verified content impressions on {activeCreator.primaryPlatform}
               </p>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black text-slate-900 font-sans tracking-tight">
+              <span className="text-xl sm:text-2xl font-black text-slate-900 font-sans tracking-tight">
                 {activeCreator.avgImpressionsPerPost.toLocaleString()}
               </span>
-              <p className="text-[10px] text-slate-400 font-medium">Avg. Reach / Post</p>
+              <p className="text-xs text-slate-500 font-medium">Avg. Reach / Post</p>
             </div>
           </CardHeader>
 
           <CardContent className="space-y-4">
             {/* Functional SVG Sparkline with Blue Gradient Fill */}
             <div className="p-4 bg-slate-50/70 rounded-2xl border border-slate-200/60">
-              <div className="flex items-center justify-between text-[11px] text-slate-500 mb-2">
+              <div className="flex items-center justify-between text-xs text-slate-500 mb-2 font-medium">
                 <span>30-Day Velocity Curve</span>
                 <span className="text-emerald-700 font-semibold">Exceeds platform baseline by +38%</span>
               </div>
@@ -377,8 +377,8 @@ export default function OverviewPage() {
                       <text
                         x={pt.x}
                         y={chartHeight + 14}
-                        fontSize="9"
-                        fill="#94a3b8"
+                        fontSize="11"
+                        fill="#64748b"
                         textAnchor="middle"
                         fontWeight="600"
                       >
@@ -390,11 +390,11 @@ export default function OverviewPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-center">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1 text-center">
               {impressionTrend.map((t, idx) => (
-                <div key={idx} className="p-2 rounded-xl bg-white border border-slate-200/60 shadow-2xs">
-                  <span className="text-[10px] text-slate-400 font-semibold">{t.label} Impressions</span>
-                  <p className="text-xs font-bold text-slate-800">{t.val.toLocaleString()}</p>
+                <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200/60 shadow-2xs">
+                  <span className="text-xs text-slate-500 font-semibold">{t.label} Impressions</span>
+                  <p className="text-sm font-bold text-slate-900 mt-0.5">{t.val.toLocaleString()}</p>
                 </div>
               ))}
             </div>
@@ -407,10 +407,10 @@ export default function OverviewPage() {
           <Card className="p-5 flex-1 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
                   Audience Retention
                 </span>
-                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                   Top 15% Tier
                 </span>
               </div>
@@ -420,11 +420,11 @@ export default function OverviewPage() {
                   <span className="text-3xl font-black text-slate-900 tracking-tight font-sans">
                     {activeCreator.engagementRate}%
                   </span>
-                  <span className="text-xs text-slate-500 font-medium">
+                  <span className="text-xs sm:text-sm text-slate-500 font-medium">
                     vs 2.2% category avg
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-xs sm:text-[13px] text-slate-500 mt-1">
                   High-intent comment-to-view ratio on {activeCreator.primaryPlatform}.
                 </p>
               </div>
@@ -432,9 +432,9 @@ export default function OverviewPage() {
 
             {/* Visual benchmark bar */}
             <div className="space-y-1.5 pt-2 border-t border-slate-100">
-              <div className="flex items-center justify-between text-[10px] text-slate-400">
+              <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
                 <span>Baseline (2.2%)</span>
-                <span className="font-bold text-slate-700">Your Rate ({activeCreator.engagementRate}%)</span>
+                <span className="font-bold text-slate-800">Your Rate ({activeCreator.engagementRate}%)</span>
               </div>
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div
@@ -449,7 +449,7 @@ export default function OverviewPage() {
           <Card className="p-5 flex-1 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
                   Monthly Goal Progress
                 </span>
                 <Badge variant="blue" size="sm">
@@ -462,11 +462,11 @@ export default function OverviewPage() {
                   <span className="text-3xl font-black text-slate-900 tracking-tight font-sans">
                     ₹{activeCreator.estimatedPipelineValue.toLocaleString()}
                   </span>
-                  <span className="text-xs text-slate-500 font-medium">
+                  <span className="text-xs sm:text-sm text-slate-500 font-medium">
                     of ₹{activeCreator.monthlyIncomeTarget.toLocaleString()} / mo
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-xs sm:text-[13px] text-slate-500 mt-1">
                   Calculated from verified brands matching your minimum follower threshold.
                 </p>
               </div>
@@ -474,9 +474,9 @@ export default function OverviewPage() {
 
             {/* Income progress bar */}
             <div className="space-y-1.5 pt-2 border-t border-slate-100">
-              <div className="flex items-center justify-between text-[10px] text-slate-400">
+              <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
                 <span>Pipeline Potential</span>
-                <span className="font-bold text-slate-700">Goal: ₹{activeCreator.monthlyIncomeTarget.toLocaleString()}</span>
+                <span className="font-bold text-slate-800">Goal: ₹{activeCreator.monthlyIncomeTarget.toLocaleString()}</span>
               </div>
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div
@@ -496,28 +496,28 @@ export default function OverviewPage() {
           <CardHeader>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-slate-900 text-sm">Roadmap Milestones</h3>
+                <h3 className="font-bold text-slate-900 text-base">Roadmap Milestones</h3>
                 <Badge variant="violet" size="sm">
                   {activePhase?.days || "Phase 1"}
                 </Badge>
               </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">
+              <p className="text-xs sm:text-[13px] text-slate-500 mt-0.5">
                 {activePhase?.phaseTitle}
               </p>
             </div>
             <Link
               href="/roadmap"
-              className="text-xs font-bold text-[#0870e8] hover:text-blue-700 flex items-center gap-1"
+              className="text-sm font-bold text-[#0870e8] hover:text-blue-700 flex items-center gap-1"
             >
               <span>Full Roadmap</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </CardHeader>
 
           <CardContent className="space-y-3.5">
             {/* Progress Bar */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-600 font-medium">
                   {completedMilestones} of {totalMilestones} Completed
                 </span>
@@ -537,7 +537,7 @@ export default function OverviewPage() {
                 <div
                   key={m.id}
                   onClick={() => activePhase && toggleMilestone(activePhase.id, m.id)}
-                  className={`flex items-start gap-3 p-3 rounded-xl border transition-all cursor-pointer ${
+                  className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${
                     m.completed
                       ? "bg-slate-50/70 border-slate-200/80 text-slate-500"
                       : "bg-white border-slate-200/80 hover:border-slate-300 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
@@ -552,17 +552,17 @@ export default function OverviewPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p
-                      className={`text-xs font-semibold leading-tight ${
+                      className={`text-sm font-semibold leading-tight ${
                         m.completed ? "line-through text-slate-400" : "text-slate-800"
                       }`}
                     >
                       {m.title}
                     </p>
-                    <p className="text-[11px] text-slate-400 line-clamp-1 mt-0.5">
+                    <p className="text-xs sm:text-[13px] text-slate-500 line-clamp-1 mt-0.5">
                       {m.description}
                     </p>
                   </div>
-                  <span className="text-[9px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full shrink-0">
+                  <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full shrink-0">
                     {m.tag}
                   </span>
                 </div>
@@ -576,19 +576,19 @@ export default function OverviewPage() {
           <CardHeader>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-slate-900 text-sm">Prioritised Actions</h3>
+                <h3 className="font-bold text-slate-900 text-base">Prioritised Actions</h3>
                 <span className="text-xs font-mono font-bold text-[#0870e8] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/70">
                   {completedActionsCount}/{totalActionsCount} Done
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">Ranked by revenue and outreach leverage</p>
+              <p className="text-xs sm:text-[13px] text-slate-500 mt-0.5">Ranked by revenue and outreach leverage</p>
             </div>
             <Link
               href="/actions"
-              className="text-xs font-bold text-[#0870e8] hover:text-blue-700 flex items-center gap-1"
+              className="text-sm font-bold text-[#0870e8] hover:text-blue-700 flex items-center gap-1"
             >
               <span>Action Centre</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </CardHeader>
 
@@ -601,7 +601,7 @@ export default function OverviewPage() {
               return (
                 <div
                   key={action.id}
-                  className={`p-3 rounded-xl border transition-all ${
+                  className={`p-3.5 rounded-xl border transition-all ${
                     isCompleted
                       ? "bg-slate-50/70 border-slate-200 text-slate-400"
                       : isInProgress
@@ -644,13 +644,13 @@ export default function OverviewPage() {
                             onClick={() => {
                               const nextStatus: ActionStatus =
                                 status === "Not started"
-                                  ? "In progress"
-                                  : status === "In progress"
-                                  ? "Completed"
-                                  : "Not started";
+                                ? "In progress"
+                                : status === "In progress"
+                                ? "Completed"
+                                : "Not started";
                               updateActionStatus(action.id, nextStatus);
                             }}
-                            className={`btn-tactile px-2 py-0.5 rounded-full text-[10px] font-bold border transition-colors ${
+                            className={`btn-tactile px-2.5 py-0.5 rounded-full text-xs font-bold border transition-colors ${
                               status === "Completed"
                                 ? "bg-emerald-50 text-emerald-800 border-emerald-200"
                                 : status === "In progress"
@@ -663,26 +663,26 @@ export default function OverviewPage() {
                           </button>
 
                           {action.relatedTitle && (
-                            <span className="text-[10px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full font-medium truncate max-w-[150px]">
+                            <span className="text-xs text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full font-medium truncate max-w-[150px]">
                               {action.relatedTitle}
                             </span>
                           )}
                         </div>
 
-                        <span className="text-[10px] text-slate-400 flex items-center gap-1 shrink-0">
-                          <Clock className="w-2.5 h-2.5" /> {action.deadline}
+                        <span className="text-xs text-slate-500 flex items-center gap-1 shrink-0">
+                          <Clock className="w-3 h-3" /> {action.deadline}
                         </span>
                       </div>
 
                       <p
-                        className={`text-xs font-bold leading-tight ${
+                        className={`text-sm font-bold leading-tight ${
                           isCompleted ? "line-through text-slate-400" : "text-slate-900"
                         }`}
                       >
                         {action.title}
                       </p>
 
-                      <p className="text-[11px] text-slate-500 mt-1 line-clamp-1 leading-snug">
+                      <p className="text-xs sm:text-[13px] text-slate-500 mt-1 line-clamp-1 leading-snug">
                         <strong className="text-slate-700 font-semibold">Reason: </strong>
                         {action.reason}
                       </p>
@@ -699,19 +699,19 @@ export default function OverviewPage() {
       <div className="space-y-3.5">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-slate-900 text-base">
+            <h3 className="font-bold text-slate-900 text-lg sm:text-xl">
               Recommended Brand Opportunities
             </h3>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-xs sm:text-[13px] text-slate-500 mt-0.5">
               Deterministic matches calculated for {activeCreator.niche} and {activeCreator.primaryPlatform} audience
             </p>
           </div>
           <Link
             href="/opportunities"
-            className="btn-tactile inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 text-xs font-bold text-slate-800 hover:bg-slate-50 shadow-2xs transition-colors"
+            className="btn-tactile inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-slate-200/80 text-sm font-bold text-slate-800 hover:bg-slate-50 shadow-2xs transition-colors"
           >
             <span>Marketplace ({opportunities.length})</span>
-            <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+            <ArrowRight className="w-4 h-4 text-slate-500" />
           </Link>
         </div>
 
@@ -728,26 +728,26 @@ export default function OverviewPage() {
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-3.5">
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl p-2 bg-slate-50 rounded-xl border border-slate-200/60 shadow-2xs group-hover:scale-105 transition-transform">
+                      <span className="text-2xl p-2.5 bg-slate-50 rounded-xl border border-slate-200/60 shadow-2xs group-hover:scale-105 transition-transform">
                         {opp.brandLogo}
                       </span>
                       <div>
-                        <h4 className="font-bold text-slate-900 text-xs leading-snug">
+                        <h4 className="font-bold text-slate-900 text-sm leading-snug">
                           {opp.brand}
                         </h4>
-                        <p className="text-[10px] text-slate-400 font-medium">
+                        <p className="text-xs text-slate-500 font-medium mt-0.5">
                           {opp.brandCategory}
                         </p>
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-1 shrink-0">
                       {compatibility.qualifies ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-                          <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                           Eligible
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200/80">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200/80">
                           Ineligible
                         </span>
                       )}
@@ -757,17 +757,17 @@ export default function OverviewPage() {
                     </div>
                   </div>
 
-                  <h5 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1 mb-1">
+                  <h5 className="font-bold text-slate-900 text-sm leading-tight line-clamp-1 mb-1.5">
                     {opp.title}
                   </h5>
 
-                  <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mb-3">
+                  <p className="text-xs sm:text-[13px] text-slate-600 line-clamp-2 leading-relaxed mb-3">
                     {opp.description}
                   </p>
 
-                  <div className="flex items-center justify-between text-xs py-2 border-t border-slate-100">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Budget</span>
-                    <span className="font-bold text-emerald-700 text-xs">{opp.budgetRange}</span>
+                  <div className="flex items-center justify-between text-sm py-2.5 border-t border-slate-100">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Budget</span>
+                    <span className="font-bold text-emerald-700 text-sm sm:text-base">{opp.budgetRange}</span>
                   </div>
                 </div>
 
@@ -777,13 +777,13 @@ export default function OverviewPage() {
                       setSelectedOpp(opp);
                       setDetailsOpen(true);
                     }}
-                    className="text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+                    className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
                   >
                     View Brief
                   </button>
 
                   {isApplied ? (
-                    <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
                       Applied ✓
                     </span>
                   ) : (
@@ -792,7 +792,7 @@ export default function OverviewPage() {
                         setSelectedOpp(opp);
                         setApplyOpen(true);
                       }}
-                      className="btn-tactile px-3.5 py-1.5 rounded-full bg-[#0870e8] hover:bg-[#065ec4] text-white text-xs font-semibold shadow-2xs transition-colors"
+                      className="btn-tactile px-4 py-2 rounded-full bg-[#0870e8] hover:bg-[#065ec4] text-white text-sm font-semibold shadow-2xs transition-colors"
                     >
                       Apply Now
                     </button>

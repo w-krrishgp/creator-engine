@@ -11,14 +11,100 @@
   --instagram-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
   --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.03), 0 4px 12px rgba(0, 0, 0, 0.02);
   --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.04), 0 12px 28px rgba(0, 0, 0, 0.03);
+
+  /* Linear/Stripe SaaS Type Scale Tokens */
+  --type-display: 2rem;       /* 32px */
+  --type-h1: 1.75rem;         /* 28px */
+  --type-h2: 1.375rem;        /* 22px */
+  --type-h3: 1.125rem;        /* 18px */
+  --type-body: 1rem;          /* 16px */
+  --type-body-sm: 0.9375rem;  /* 15px */
+  --type-ui: 0.875rem;        /* 14px */
+  --type-meta: 0.8125rem;     /* 13px */
+  --type-badge: 0.75rem;      /* 12px */
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Linear & Stripe Inspired SaaS Typography Classes */
+.text-display-metric {
+  font-size: 1.875rem; /* 30px */
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #0f172a;
+}
+@media (min-width: 640px) {
+  .text-display-metric {
+    font-size: 2.125rem; /* 34px */
+  }
+}
+
+.text-page-title {
+  font-size: 1.625rem; /* 26px */
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #0f172a;
+}
+@media (min-width: 640px) {
+  .text-page-title {
+    font-size: 1.875rem; /* 30px */
+  }
+}
+
+.text-section-title {
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+@media (min-width: 640px) {
+  .text-section-title {
+    font-size: 1.375rem; /* 22px */
+  }
+}
+
+.text-card-title {
+  font-size: 1.0625rem; /* 17px */
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  color: #0f172a;
+}
+@media (min-width: 640px) {
+  .text-card-title {
+    font-size: 1.125rem; /* 18px */
+  }
+}
+
+.text-body-lead {
+  font-size: 1rem; /* 16px */
+  line-height: 1.6;
+  color: #475569;
+}
+
+.text-body-base {
+  font-size: 0.9375rem; /* 15px */
+  line-height: 1.55;
+  color: #334155;
+}
+
+.text-meta-label {
+  font-size: 0.8125rem; /* 13px */
+  line-height: 1.4;
+  font-weight: 500;
+  color: #64748b;
 }
 
 /* Instagram Story Avatar Ring */
@@ -49,9 +135,8 @@ body {
 }
 
 .text-subtle-caption {
-  font-size: 0.6875rem; /* 11px */
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-size: 0.75rem; /* 12px comfortable metadata */
+  letter-spacing: 0.03em;
   font-weight: 600;
   color: #64748b;
 }

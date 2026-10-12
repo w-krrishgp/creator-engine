@@ -41,8 +41,8 @@ export function Badge({
   };
 
   const sizeStyles = {
-    sm: "px-2.5 py-0.5 text-[10.5px] leading-tight",
-    md: "px-3 py-1 text-xs leading-tight",
+    sm: "px-2.5 py-0.5 text-xs font-semibold leading-tight",
+    md: "px-3 py-1 text-[13px] font-semibold leading-tight",
   };
 
   return (

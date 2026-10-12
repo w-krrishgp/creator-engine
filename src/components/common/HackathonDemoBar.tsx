@@ -128,21 +128,21 @@ export function HackathonDemoBar() {
             <Sparkles className="w-3.5 h-3.5" />
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-extrabold text-white text-xs tracking-tight">
+            <span className="font-extrabold text-white text-xs sm:text-sm tracking-tight">
               Hackathon Demo Tour
             </span>
             {isDemoMode ? (
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-amber-400 bg-amber-950/70 border border-amber-800/80 px-2.5 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-400 bg-amber-950/70 border border-amber-800/80 px-2.5 py-0.5 rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                 Demo Mode (Offline)
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-800/80 px-2.5 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-800/80 px-2.5 py-0.5 rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                 Live Cloud
               </span>
             )}
-            <span className="text-slate-400 text-[11px] hidden sm:inline">
+            <span className="text-slate-400 text-xs hidden sm:inline">
               Step {currentStep.step} of 7: <strong className="text-slate-200">{currentStep.label}</strong>
             </span>
           </div>
@@ -152,7 +152,7 @@ export function HackathonDemoBar() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleRunStep(activeStepIndex)}
-            className="btn-tactile px-3 py-1.5 rounded-full bg-[#0870e8] hover:bg-[#065ec4] text-white font-bold text-[11px] flex items-center gap-1.5 shadow-xs"
+            className="btn-tactile px-3.5 py-1.5 rounded-full bg-[#0870e8] hover:bg-[#065ec4] text-white font-bold text-xs flex items-center gap-1.5 shadow-xs"
             title="Execute current step"
           >
             <Play className="w-3 h-3 fill-current" />
@@ -161,7 +161,7 @@ export function HackathonDemoBar() {
 
           <button
             onClick={handleNextStep}
-            className="btn-tactile px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-[11px] flex items-center gap-1 border border-slate-700"
+            className="btn-tactile px-3.5 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center gap-1 border border-slate-700"
             title="Advance to next demo step"
           >
             <span>Next</span>
@@ -178,7 +178,7 @@ export function HackathonDemoBar() {
 
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="p-1.5 px-2.5 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition-colors flex items-center gap-1 text-[11px] font-medium"
+            className="p-1.5 px-2.5 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition-colors flex items-center gap-1 text-xs font-medium"
           >
             <span>{isOpen ? "Hide Steps" : "View All 7 Steps"}</span>
             {isOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
@@ -189,7 +189,7 @@ export function HackathonDemoBar() {
       {/* Expanded 7-Step Navigation Drawer */}
       {isOpen && (
         <div className="px-4 sm:px-5 py-3.5 bg-slate-950/90 border-t border-slate-800 space-y-2.5">
-          <p className="text-[11px] text-slate-400">
+          <p className="text-xs text-slate-400">
             Click any step below to instantly jump to that point in the hackathon presentation:
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 pt-1">
@@ -207,11 +207,11 @@ export function HackathonDemoBar() {
                 >
                   <div className="flex items-center justify-between font-bold text-xs">
                     <span>{s.label}</span>
-                    <span className="text-[10px] text-slate-400 uppercase font-mono px-1.5 py-0.5 rounded bg-slate-800">
+                    <span className="text-xs text-slate-400 uppercase font-mono px-2 py-0.5 rounded bg-slate-800">
                       {s.creatorId}
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-1 line-clamp-1">
+                  <p className="text-xs text-slate-400 mt-1 line-clamp-1">
                     {s.highlight}
                   </p>
                 </button>

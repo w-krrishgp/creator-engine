@@ -27,9 +27,9 @@ export function PlanBadge({
   const plan = SUBSCRIPTION_PLANS[targetId] || SUBSCRIPTION_PLANS.normal;
 
   const sizeClasses = {
-    xs: "px-2 py-0.5 text-[9.5px]",
-    sm: "px-2.5 py-0.5 text-[10.5px]",
-    md: "px-3 py-1 text-xs",
+    xs: "px-2.5 py-0.5 text-xs font-semibold",
+    sm: "px-3 py-0.5 text-xs font-bold",
+    md: "px-3.5 py-1 text-[13px] font-bold",
   };
 
   const styleConfigs: Record<
@@ -40,21 +40,21 @@ export function PlanBadge({
       badgeBg: "bg-slate-100",
       text: "text-slate-700",
       border: "border-slate-200/90",
-      icon: <Shield className="w-3 h-3 text-slate-500" />,
+      icon: <Shield className="w-3.5 h-3.5 text-slate-500" />,
       dotColor: "bg-slate-400",
     },
     pro: {
       badgeBg: "bg-blue-50/90",
       text: "text-[#0870e8]",
       border: "border-blue-200/90",
-      icon: <Sparkles className="w-3 h-3 text-[#0870e8]" />,
+      icon: <Sparkles className="w-3.5 h-3.5 text-[#0870e8]" />,
       dotColor: "bg-[#0870e8]",
     },
     pro_plus: {
       badgeBg: "bg-purple-50",
       text: "text-purple-700 font-extrabold",
       border: "border-purple-200/90",
-      icon: <Crown className="w-3 h-3 text-purple-600" />,
+      icon: <Crown className="w-3.5 h-3.5 text-purple-600" />,
       dotColor: "bg-purple-600",
     },
   };
@@ -69,7 +69,7 @@ export function PlanBadge({
       {cfg.icon}
       <span>{plan.name}</span>
       {showPrice && (
-        <span className="opacity-75 font-normal text-[10px]">
+        <span className="opacity-85 font-normal text-xs">
           ({plan.priceFormatted}/mo)
         </span>
       )}

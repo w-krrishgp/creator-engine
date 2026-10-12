@@ -58,13 +58,13 @@ export default function RoadmapPage() {
         <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#0870e8] flex items-center justify-center mx-auto shadow-xs">
           <Calendar className="w-6 h-6" />
         </div>
-        <h2 className="text-xl font-bold text-slate-900 tracking-tight">No Growth Roadmap Generated</h2>
-        <p className="text-sm text-slate-600 leading-relaxed">
+        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">No Growth Roadmap Generated</h2>
+        <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
           Complete the creator onboarding wizard to generate your tailored 30/60/90-day execution blueprint.
         </p>
         <Link
           href="/onboarding"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white font-bold text-xs shadow-xs btn-tactile"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white font-bold text-sm shadow-xs btn-tactile"
         >
           <span>Launch Onboarding Wizard</span>
           <ArrowRight className="w-4 h-4" />
@@ -107,18 +107,18 @@ export default function RoadmapPage() {
                 Strategic Positioning
               </Badge>
               <span className="text-xs text-slate-300">•</span>
-              <span className="text-xs font-semibold text-slate-500">
+              <span className="text-xs sm:text-[13px] font-semibold text-slate-500">
                 {activeCreator.primaryPlatform} • {activeCreator.niche} • {activeCreator.creatorStage}
               </span>
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               30 / 60 / 90-Day Growth Roadmap
             </h1>
 
             {/* Concise Creator Positioning Statement */}
-            <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/70 text-xs sm:text-sm text-slate-800 leading-relaxed font-sans">
-              <strong className="text-[#0870e8] font-bold uppercase tracking-wider text-[11px] block mb-0.5">
+            <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/70 text-sm sm:text-base text-slate-700 leading-relaxed font-sans">
+              <strong className="text-[#0870e8] font-bold uppercase tracking-wider text-xs block mb-1">
                 Target Market Thesis:
               </strong>
               {activeCreator.positioningStatement || activeCreator.bio}
@@ -136,33 +136,33 @@ export default function RoadmapPage() {
                   }
                 }}
                 disabled={isAiGenerating}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-60 cursor-pointer btn-tactile"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white text-xs sm:text-sm font-bold transition-all shadow-xs disabled:opacity-60 cursor-pointer btn-tactile"
               >
-                <Sparkles className={`w-3.5 h-3.5 ${isAiGenerating ? "animate-spin" : ""}`} />
+                <Sparkles className={`w-4 h-4 ${isAiGenerating ? "animate-spin" : ""}`} />
                 <span>{isAiGenerating ? "Synthesizing with Gemini..." : "Refresh Recommendations (Gemini AI)"}</span>
               </button>
               <div className="flex items-center gap-2 text-xs flex-wrap">
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 bg-slate-100/90 px-3 py-1 rounded-full border border-slate-200/60 font-mono">
-                  <Sparkles className="w-3 h-3 text-[#0870e8]" />
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-100/90 px-3 py-1 rounded-full border border-slate-200/60 font-mono">
+                  <Sparkles className="w-3.5 h-3.5 text-[#0870e8]" />
                   <span>
                     AI Quota: {subscriptionUsage?.aiUsage ?? 0}/{subscriptionUsage?.aiLimit ?? currentPlan.limits.aiRecommendationsPerMonth} used
                   </span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 bg-slate-100/90 px-3 py-1 rounded-full border border-slate-200/60">
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-slate-100/90 px-3 py-1 rounded-full border border-slate-200/60">
                   {isGeminiConfigured ? (
                     <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
                       Gemini 3.8 Flash (Live)
                     </>
                   ) : (
                     <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                      <span className="w-2 h-2 rounded-full bg-amber-500" />
                       Demo Mode (Deterministic Fallback)
                     </>
                   )}
                 </span>
                 {lastAiGeneratedAt && (
-                  <span className="text-[10px] text-slate-400 font-medium">
+                  <span className="text-xs text-slate-400 font-medium">
                     Generated at {lastAiGeneratedAt}
                   </span>
                 )}
@@ -171,10 +171,10 @@ export default function RoadmapPage() {
           </div>
 
           {/* Overall 90-Day Roadmap Progress Widget */}
-          <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2 min-w-[210px] shrink-0 shadow-2xs">
-            <div className="flex items-center justify-between text-xs">
+          <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-2 min-w-[220px] shrink-0 shadow-2xs">
+            <div className="flex items-center justify-between text-xs sm:text-sm">
               <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                <Award className="w-3.5 h-3.5 text-[#0870e8]" />
+                <Award className="w-4 h-4 text-[#0870e8]" />
                 90-Day Execution
               </span>
               <span className="font-mono font-bold text-[#0870e8]">{overallProgressPercent}%</span>
@@ -185,7 +185,7 @@ export default function RoadmapPage() {
                 style={{ width: `${overallProgressPercent}%` }}
               />
             </div>
-            <p className="text-[10px] text-slate-400 font-medium">
+            <p className="text-xs text-slate-500 font-medium">
               {completedAllMilestones} of {totalAllMilestones} total milestones achieved
             </p>
           </div>
@@ -193,8 +193,8 @@ export default function RoadmapPage() {
       </div>
 
       {/* 3. PHASE SELECTOR TABS WITH PLAN FEATURE GATING */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-2 sm:p-2.5 rounded-full border border-slate-200/75 shadow-xs">
-        <div className="flex items-center gap-1.5 overflow-x-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-2.5 sm:p-3 rounded-full border border-slate-200/75 shadow-xs">
+        <div className="flex items-center gap-2 overflow-x-auto">
           {roadmaps.map((phase, idx) => {
             const isSelected = selectedPhaseIndex === idx;
             const isLocked = idx >= currentPlan.limits.roadmapPhasesAllowed;
@@ -217,7 +217,7 @@ export default function RoadmapPage() {
                 key={phase.id}
                 type="button"
                 onClick={handlePhaseClick}
-                className={`flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 ${
+                className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
                   isSelected
                     ? "bg-[#0870e8] text-white shadow-xs"
                     : isLocked
@@ -225,15 +225,15 @@ export default function RoadmapPage() {
                     : "bg-slate-100/80 text-slate-600 hover:text-slate-900 hover:bg-slate-200/70"
                 } btn-tactile`}
               >
-                {isLocked && <Lock className="w-3 h-3 text-amber-600 shrink-0" />}
+                {isLocked && <Lock className="w-3.5 h-3.5 text-amber-600 shrink-0" />}
                 <span>Phase {idx + 1} ({phase.days})</span>
                 {isLocked ? (
-                  <span className="px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wider font-extrabold bg-amber-200 text-amber-900">
+                  <span className="px-2 py-0.5 rounded-full text-xs uppercase tracking-wider font-extrabold bg-amber-200 text-amber-900">
                     Pro
                   </span>
                 ) : (
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold ${
+                    className={`px-2 py-0.5 rounded-full text-xs font-mono font-semibold ${
                       isSelected ? "bg-white/20 text-white" : "bg-slate-200/80 text-slate-700"
                     }`}
                   >
@@ -245,7 +245,7 @@ export default function RoadmapPage() {
           })}
         </div>
 
-        <div className="text-xs text-slate-500 font-medium px-3 sm:px-2">
+        <div className="text-xs sm:text-sm text-slate-600 font-medium px-3 sm:px-2">
           Current focus: <strong className="text-slate-900">{currentPhase.phaseTitle}</strong>
         </div>
       </div>
@@ -253,25 +253,25 @@ export default function RoadmapPage() {
       {/* 4. CURRENT PHASE EDITORIAL BRIEFING CARD */}
       <div className="bg-white rounded-[20px] border border-slate-200/75 border-l-4 border-l-[#0870e8] shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] p-5 sm:p-6 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1.5 max-w-2xl">
+          <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#0870e8] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/80">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#0870e8] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/80">
                 {currentPhase.days} Execution Focus
               </span>
               <span className="text-xs text-slate-300">•</span>
-              <span className="text-xs font-semibold text-slate-500">{currentPhase.phaseTitle}</span>
+              <span className="text-xs sm:text-[13px] font-semibold text-slate-500">{currentPhase.phaseTitle}</span>
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
               {currentPhase.phaseTitle}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
               {currentPhase.phaseObjective}
             </p>
           </div>
 
           {/* Phase completion gauge */}
-          <div className="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200/80 min-w-[210px] space-y-2 shrink-0 shadow-2xs">
-            <div className="flex items-center justify-between text-xs">
+          <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/80 min-w-[220px] space-y-2 shrink-0 shadow-2xs">
+            <div className="flex items-center justify-between text-xs sm:text-sm">
               <span className="font-bold text-slate-700">Phase Completion</span>
               <span className="font-mono font-bold text-[#0870e8]">{phaseProgressPercent}%</span>
             </div>
@@ -281,7 +281,7 @@ export default function RoadmapPage() {
                 style={{ width: `${phaseProgressPercent}%` }}
               />
             </div>
-            <p className="text-[10px] text-slate-400 font-medium">
+            <p className="text-xs text-slate-500 font-medium">
               {phaseCompletedCount} of {phaseTotalCount} milestones completed
             </p>
           </div>
@@ -296,12 +296,12 @@ export default function RoadmapPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Target className="w-4 h-4 text-[#0870e8]" />
-                <h3 className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">
+                <Target className="w-4.5 h-4.5 text-[#0870e8]" />
+                <h3 className="font-bold text-slate-900 text-base sm:text-lg tracking-tight">
                   Actionable Milestones ({currentPhase.days})
                 </h3>
               </div>
-              <span className="text-[11px] text-slate-400">Click to toggle status</span>
+              <span className="text-xs text-slate-400 font-medium">Click to toggle status</span>
             </div>
 
             <div className="space-y-3">
@@ -329,18 +329,18 @@ export default function RoadmapPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-1">
                         <h4
-                          className={`text-sm font-bold leading-tight ${
+                          className={`text-sm sm:text-base font-bold leading-tight ${
                             m.completed ? "line-through text-slate-400" : "text-slate-900"
                           }`}
                         >
                           {m.title}
                         </h4>
-                        <span className="text-[10px] font-semibold text-[#0870e8] bg-blue-50 px-2.5 py-0.5 rounded-full shrink-0 border border-blue-200/60">
+                        <span className="text-xs font-semibold text-[#0870e8] bg-blue-50 px-2.5 py-0.5 rounded-full shrink-0 border border-blue-200/60">
                           {m.tag}
                         </span>
                       </div>
                       <p
-                        className={`text-xs leading-relaxed ${
+                        className={`text-xs sm:text-sm leading-relaxed ${
                           m.completed ? "text-slate-400" : "text-slate-600"
                         }`}
                       >
@@ -357,8 +357,8 @@ export default function RoadmapPage() {
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Lightbulb className="w-4 h-4 text-emerald-600" />
-                <h3 className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">
+                <Lightbulb className="w-4.5 h-4.5 text-emerald-600" />
+                <h3 className="font-bold text-slate-900 text-base sm:text-lg tracking-tight">
                   Relevant Topic Opportunities ({activeCreator.niche})
                 </h3>
               </div>
@@ -381,25 +381,25 @@ export default function RoadmapPage() {
                     className="p-4 rounded-[16px] bg-white border border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-2 hover:border-slate-300 transition-colors"
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
+                      <h4 className="text-sm sm:text-base font-bold text-slate-900 leading-snug">
                         &ldquo;{title}&rdquo;
                       </h4>
                       {suggestedFormat && (
-                        <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/80 shrink-0">
+                        <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/80 shrink-0">
                           {suggestedFormat}
                         </span>
                       )}
                     </div>
 
                     {hookAngle && (
-                      <p className="text-xs text-slate-600 leading-relaxed">
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                         <strong className="text-slate-800">Hook Angle: </strong>
                         {hookAngle}
                       </p>
                     )}
 
                     {targetAudience && (
-                      <p className="text-[11px] text-slate-400">
+                      <p className="text-xs text-slate-500 font-medium">
                         Target Audience: {targetAudience}
                       </p>
                     )}
@@ -413,12 +413,12 @@ export default function RoadmapPage() {
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-indigo-600" />
-                <h3 className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">
+                <BookOpen className="w-4.5 h-4.5 text-indigo-600" />
+                <h3 className="font-bold text-slate-900 text-base sm:text-lg tracking-tight">
                   Public-Profile References for Learning & Benchmarking
                 </h3>
               </div>
-              <span className="text-[11px] text-slate-400">Verified links only</span>
+              <span className="text-xs text-slate-400 font-medium">Verified links only</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -430,22 +430,22 @@ export default function RoadmapPage() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between gap-2">
                       <div>
-                        <h4 className="font-bold text-slate-900 text-xs sm:text-sm tracking-tight">{ref.name}</h4>
-                        <p className="text-[11px] text-[#0870e8] font-semibold">{ref.handle}</p>
+                        <h4 className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">{ref.name}</h4>
+                        <p className="text-xs text-[#0870e8] font-semibold">{ref.handle}</p>
                       </div>
                       <Badge variant="purple" size="sm">
                         {ref.platform}
                       </Badge>
                     </div>
 
-                    <p className="text-xs text-slate-600 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                       <strong className="text-slate-800">Tactical Lesson: </strong>
                       {ref.lesson}
                     </p>
                   </div>
 
                   <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                    <span className="text-[11px] font-semibold text-emerald-700 truncate">
+                    <span className="text-xs font-semibold text-emerald-700 truncate">
                       {ref.statsHighlight}
                     </span>
 
@@ -455,20 +455,20 @@ export default function RoadmapPage() {
                         href={ref.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-50 hover:bg-slate-100 text-[11px] font-semibold text-slate-700 border border-slate-200 transition-colors shrink-0 btn-tactile"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-semibold text-slate-700 border border-slate-200 transition-colors shrink-0 btn-tactile"
                       >
                         <span>Verified Profile</span>
-                        <ExternalLink className="w-3 h-3 text-slate-400" />
+                        <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
                       </a>
                     ) : (
-                      <span className="text-[10px] text-slate-400 font-medium">Public Reference</span>
+                      <span className="text-xs text-slate-400 font-medium">Public Reference</span>
                     )}
                   </div>
                 </div>
               ))}
             </div>
 
-            <p className="text-[11px] text-slate-400 leading-tight pt-1">
+            <p className="text-xs text-slate-400 leading-relaxed pt-1">
               * Note: Public reference profiles are curated benchmark accounts for architectural study. Creator Engine has not analyzed private analytics of unauthenticated third-party accounts.
             </p>
           </div>
@@ -481,7 +481,7 @@ export default function RoadmapPage() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
-                <h3 className="font-bold text-slate-900 text-sm tracking-tight">
+                <h3 className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">
                   Content Gaps & Why They Matter
                 </h3>
               </div>
@@ -505,11 +505,11 @@ export default function RoadmapPage() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
-                        <h4 className="text-xs font-bold text-slate-900 leading-snug">{gap}</h4>
+                        <h4 className="text-sm font-bold text-slate-900 leading-snug">{gap}</h4>
                       </div>
                       {impact && (
                         <span
-                          className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${
+                          className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${
                             impact === "Critical"
                               ? "bg-rose-50 text-rose-700 border-rose-200"
                               : "bg-amber-100/70 text-amber-800 border-amber-300"
@@ -521,7 +521,7 @@ export default function RoadmapPage() {
                     </div>
 
                     {reason && (
-                      <div className="pl-4 text-[11px] text-slate-600 leading-relaxed">
+                      <div className="pl-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
                         <strong className="text-slate-800">Why it matters: </strong>
                         {reason}
                       </div>
@@ -537,7 +537,7 @@ export default function RoadmapPage() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-[#0870e8]" />
-                <h3 className="font-bold text-slate-900 text-sm tracking-tight">
+                <h3 className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">
                   Skill Priorities
                 </h3>
               </div>
@@ -562,17 +562,17 @@ export default function RoadmapPage() {
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
                         <CheckCircle2 className="w-3.5 h-3.5 text-[#0870e8] shrink-0" />
-                        <h4 className="text-xs font-bold text-slate-900 truncate">{skill}</h4>
+                        <h4 className="text-sm font-bold text-slate-900 truncate">{skill}</h4>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
                         {category && (
-                          <span className="text-[10px] text-slate-500 bg-white px-2.5 py-0.5 rounded-full border border-slate-200 font-medium">
+                          <span className="text-xs text-slate-500 bg-white px-2.5 py-0.5 rounded-full border border-slate-200 font-medium">
                             {category}
                           </span>
                         )}
                         {priority && (
                           <span
-                            className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${
+                            className={`text-xs font-bold uppercase px-2 py-0.5 rounded-full ${
                               priority === "Critical"
                                 ? "bg-rose-100 text-rose-800"
                                 : "bg-blue-100 text-blue-800"
@@ -585,7 +585,7 @@ export default function RoadmapPage() {
                     </div>
 
                     {action && (
-                      <p className="text-[11px] text-slate-600 pl-5 leading-relaxed">
+                      <p className="text-xs sm:text-sm text-slate-600 pl-5 leading-relaxed">
                         <strong className="text-slate-800">Next Action: </strong>
                         {action}
                       </p>
@@ -598,22 +598,22 @@ export default function RoadmapPage() {
 
           {/* QUICK LINKS TO WORKFLOW & ACTIONS */}
           <div className="p-5 rounded-[20px] bg-white border border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-[#0870e8]" /> Execute Next Steps
+            <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <Zap className="w-4 h-4 text-[#0870e8]" /> Execute Next Steps
             </h4>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               Turn these milestones into weekly daily tasks and standardized sponsor deal workflows.
             </p>
             <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
               <Link
                 href="/workflow"
-                className="flex-1 py-2.5 px-3 rounded-full bg-blue-50 hover:bg-blue-100 text-[#0870e8] text-xs font-bold text-center border border-blue-200/70 transition-colors btn-tactile"
+                className="flex-1 py-2.5 px-3 rounded-full bg-blue-50 hover:bg-blue-100 text-[#0870e8] text-sm font-bold text-center border border-blue-200/70 transition-colors btn-tactile"
               >
                 Open Workflow Engine
               </Link>
               <Link
                 href="/actions"
-                className="flex-1 py-2.5 px-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold text-center border border-slate-200/70 transition-colors btn-tactile"
+                className="flex-1 py-2.5 px-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-bold text-center border border-slate-200/70 transition-colors btn-tactile"
               >
                 Action Centre
               </Link>
