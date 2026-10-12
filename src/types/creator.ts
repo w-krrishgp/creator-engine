@@ -188,6 +188,8 @@ export interface MonetisationChannel {
   realisticCaveats: string;
 }
 
+export type ActionStatus = "Not started" | "In progress" | "Completed";
+
 export interface ActionItem {
   id: string;
   creatorId: string;
@@ -197,5 +199,10 @@ export interface ActionItem {
   reason: string;
   deadline: string;
   estimatedTime: string;
+  status: ActionStatus;
   completed: boolean;
+  relatedType?: "roadmap" | "opportunity" | "monetisation" | "goal";
+  relatedId?: string;
+  relatedTitle?: string;
+  relatedLink?: string;
 }

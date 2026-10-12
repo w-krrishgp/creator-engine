@@ -338,17 +338,17 @@ export default function OnboardingPage() {
     return (
       <div className="max-w-3xl mx-auto py-8 sm:py-12 space-y-8 animate-fadeIn">
         {/* Success Banner */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-6 sm:p-10 text-center space-y-6 relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-500" />
+        <div className="bg-white rounded-2xl border border-slate-200/75 shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-6 sm:p-10 text-center space-y-6 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#0870e8] via-indigo-600 to-emerald-500" />
 
           {/* Celebration Icon */}
-          <div className="mx-auto w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shadow-xs">
+          <div className="mx-auto w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shadow-2xs">
             <CheckCircle2 className="w-9 h-9" />
           </div>
 
           <div className="space-y-2 max-w-xl mx-auto">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-bold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-[#0870e8] text-xs font-bold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-[#0870e8]" />
               Onboarding Complete & Engine Calibrated
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
@@ -360,7 +360,7 @@ export default function OnboardingPage() {
           </div>
 
           {/* Snapshot Summary Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-left">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 sm:p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 text-left">
             <div>
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Niche</p>
               <p className="text-xs sm:text-sm font-bold text-slate-900 truncate mt-0.5">{formData.niche}</p>
@@ -377,15 +377,15 @@ export default function OnboardingPage() {
             </div>
             <div>
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Target Income</p>
-              <p className="text-xs sm:text-sm font-bold text-emerald-700 truncate mt-0.5">
+              <p className="text-xs sm:text-sm font-bold text-emerald-700 truncate mt-0.5 font-mono">
                 ₹{formData.monthlyIncomeTarget.toLocaleString()} / mo
               </p>
             </div>
           </div>
 
           {/* Self-Reported Metrics Transparency Badge */}
-          <div className="flex items-center justify-center gap-2 text-xs text-slate-500 bg-blue-50/50 p-3 rounded-lg border border-blue-100 max-w-lg mx-auto">
-            <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0" />
+          <div className="flex items-center justify-center gap-2 text-xs text-slate-500 bg-blue-50/50 p-3 rounded-full border border-blue-100 max-w-lg mx-auto">
+            <ShieldCheck className="w-4 h-4 text-[#0870e8] shrink-0" />
             <span>Data stored as self-reported metrics. You can edit any parameter anytime from your Profile tab.</span>
           </div>
 
@@ -393,7 +393,7 @@ export default function OnboardingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <Link
               href="/"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-sm transition-all hover:scale-[1.01]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#0870e8] hover:bg-[#0761c9] text-white font-bold text-sm shadow-[0_4px_14px_rgba(8,112,232,0.25)] transition-all btn-tactile cursor-pointer"
             >
               <span>Go to Executive Overview</span>
               <ArrowRight className="w-4 h-4" />
@@ -401,7 +401,7 @@ export default function OnboardingPage() {
 
             <Link
               href="/profile"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 font-semibold text-sm shadow-2xs transition-all"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 font-bold text-sm shadow-2xs transition-all btn-tactile cursor-pointer"
             >
               <span>View Media Kit Profile</span>
             </Link>
@@ -412,7 +412,7 @@ export default function OnboardingPage() {
                 setIsSuccess(false);
                 setCurrentStep(1);
               }}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl text-slate-500 hover:text-slate-800 text-xs font-semibold"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-full text-slate-500 hover:text-slate-800 text-xs font-bold btn-tactile cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Edit Again</span>
@@ -429,7 +429,7 @@ export default function OnboardingPage() {
       <DemoDisclaimer text="Creator Engine multi-stage onboarding calibrates your strategic recommendations based on self-reported data. All entered parameters are saved in local application state." />
 
       {/* TOP BAR: Hackathon Quick Load & Live Readiness Score */}
-      <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Left: Heading & Hackathon presets */}
         <div className="space-y-2">
           <div className="flex items-center gap-2 flex-wrap">
@@ -437,7 +437,7 @@ export default function OnboardingPage() {
               Creator Onboarding
             </Badge>
             <span className="text-xs text-slate-400 font-medium">•</span>
-            <span className="text-xs text-slate-500">Step {currentStep} of 5</span>
+            <span className="text-xs text-slate-500 font-semibold">Step {currentStep} of 5</span>
           </div>
 
           <div>
@@ -459,15 +459,15 @@ export default function OnboardingPage() {
             <button
               type="button"
               onClick={() => loadDemoProfile("rahul")}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold border border-blue-200 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50/80 hover:bg-blue-100/80 text-[#0870e8] text-xs font-bold border border-blue-200/80 transition-all btn-tactile cursor-pointer"
             >
-              <Sparkles className="w-3 h-3 text-blue-600" />
+              <Sparkles className="w-3 h-3 text-[#0870e8]" />
               <span>⚡ Rahul (IG Fitness)</span>
             </button>
             <button
               type="button"
               onClick={() => loadDemoProfile("priya")}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50/80 hover:bg-indigo-100/80 text-indigo-700 text-xs font-bold border border-indigo-200/80 transition-all btn-tactile cursor-pointer"
             >
               <Sparkles className="w-3 h-3 text-indigo-600" />
               <span>⚡ Priya (LinkedIn Wealth)</span>
@@ -475,7 +475,7 @@ export default function OnboardingPage() {
             <button
               type="button"
               onClick={() => loadDemoProfile("blank")}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold border border-slate-200 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold border border-slate-200 transition-all btn-tactile cursor-pointer"
             >
               <RotateCcw className="w-3 h-3 text-slate-500" />
               <span>Start Blank</span>
@@ -484,20 +484,20 @@ export default function OnboardingPage() {
         </div>
 
         {/* Right: Live Profile Readiness Meter */}
-        <div className="bg-slate-50 p-3 sm:p-3.5 rounded-xl border border-slate-200/80 min-w-[210px] space-y-2 shrink-0">
+        <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/80 min-w-[210px] space-y-2 shrink-0 shadow-2xs">
           <div className="flex items-center justify-between text-xs">
             <span className="font-bold text-slate-700 flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+              <ShieldCheck className="w-3.5 h-3.5 text-[#0870e8]" />
               Profile Completion
             </span>
-            <span className={`font-mono font-bold ${completionScore >= 80 ? "text-emerald-700" : "text-blue-700"}`}>
+            <span className={`font-mono font-bold ${completionScore >= 80 ? "text-emerald-700" : "text-[#0870e8]"}`}>
               {completionScore}%
             </span>
           </div>
           <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
             <div
               className={`h-full transition-all duration-300 rounded-full ${
-                completionScore >= 85 ? "bg-emerald-500" : "bg-blue-600"
+                completionScore >= 85 ? "bg-emerald-500" : "bg-[#0870e8]"
               }`}
               style={{ width: `${completionScore}%` }}
             />
@@ -509,7 +509,7 @@ export default function OnboardingPage() {
       </div>
 
       {/* VISIBLE 5-STAGE STEPPER INDICATOR */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.03)] p-3 sm:p-4 overflow-x-auto">
+      <div className="bg-white rounded-2xl border border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-3 sm:p-4 overflow-x-auto">
         <div className="flex items-center justify-between min-w-[620px]">
           {steps.map((s, index) => {
             const isCompleted = currentStep > s.number;
@@ -520,11 +520,11 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={() => jumpToStep(s.number)}
-                  className={`flex items-center gap-2.5 p-2 rounded-lg text-left transition-all ${
+                  className={`flex items-center gap-2.5 p-2 rounded-xl text-left transition-all btn-tactile cursor-pointer ${
                     isCurrent
                       ? "bg-blue-50/80 text-blue-900 font-bold"
                       : isCompleted
-                      ? "text-slate-700 hover:bg-slate-50 cursor-pointer"
+                      ? "text-slate-700 hover:bg-slate-50"
                       : "text-slate-400 hover:text-slate-600"
                   }`}
                 >
@@ -533,7 +533,7 @@ export default function OnboardingPage() {
                       isCompleted
                         ? "bg-emerald-500 text-white"
                         : isCurrent
-                        ? "bg-blue-600 text-white shadow-xs"
+                        ? "bg-[#0870e8] text-white shadow-2xs"
                         : "bg-slate-100 text-slate-500 border border-slate-200"
                     }`}
                   >
@@ -561,7 +561,7 @@ export default function OnboardingPage() {
       </div>
 
       {/* STAGE FORM CONTAINER */}
-      <Card>
+      <Card className="rounded-2xl border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)]">
         <CardContent className="p-5 sm:p-8 space-y-6">
           {/* ========================================================================= */}
           {/* STAGE 1: ABOUT YOU */}
@@ -1456,12 +1456,12 @@ export default function OnboardingPage() {
         </CardContent>
 
         {/* BOTTOM CONTROLS: BACK / CONTINUE */}
-        <CardFooter className="flex items-center justify-between gap-4 p-4 sm:p-5">
+        <CardFooter className="flex items-center justify-between gap-4 p-4 sm:p-5 border-t border-slate-100">
           {currentStep > 1 ? (
             <button
               type="button"
               onClick={handleBack}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold shadow-2xs transition-all btn-tactile cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back</span>
@@ -1475,7 +1475,7 @@ export default function OnboardingPage() {
               <button
                 type="button"
                 onClick={handleContinue}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-all hover:scale-[1.01]"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0761c9] text-white text-xs font-bold shadow-[0_4px_14px_rgba(8,112,232,0.25)] transition-all btn-tactile cursor-pointer"
               >
                 <span>Continue to Step {currentStep + 1}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -1484,7 +1484,7 @@ export default function OnboardingPage() {
               <button
                 type="button"
                 onClick={handleSubmit}
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-all hover:scale-[1.01]"
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md transition-all btn-tactile cursor-pointer"
               >
                 <Sparkles className="w-4 h-4 text-emerald-100" />
                 <span>Confirm & Launch Creator Engine</span>

@@ -5,8 +5,6 @@ import Link from "next/link";
 import { useCreator } from "@/context/CreatorContext";
 import { calculateCompatibility } from "@/utils/compatibility";
 import {
-  Users,
-  TrendingUp,
   DollarSign,
   ArrowRight,
   Clock,
@@ -14,23 +12,26 @@ import {
   ArrowUpRight,
   Check,
   Sparkles,
-  ExternalLink,
   ShieldCheck,
   CheckCircle2,
-  Calendar,
+  TrendingUp,
+  Users,
 } from "lucide-react";
 import { Badge } from "@/components/common/Badge";
 import { Card, CardHeader, CardContent } from "@/components/common/Card";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
+import { PersonaSwitcherBar } from "@/components/common/PersonaSwitcherBar";
+import { HackathonDemoBar } from "@/components/common/HackathonDemoBar";
 import { OpportunityDetailsModal } from "@/components/opportunities/OpportunityDetailsModal";
 import { ApplyModal } from "@/components/opportunities/ApplyModal";
-import { Opportunity } from "@/types/creator";
+import { Opportunity, ActionStatus } from "@/types/creator";
 
 export default function OverviewPage() {
   const {
     activeCreator,
     actions,
     toggleAction,
+    updateActionStatus,
     roadmaps,
     toggleMilestone,
     opportunities,
@@ -100,70 +101,203 @@ export default function OverviewPage() {
       {/* Editorial Demo Notice */}
       <DemoDisclaimer text="Metrics, revenue models, and campaign matches adapt dynamically to the selected creator profile." />
 
-      {/* 1. EDITORIAL EXECUTIVE BRIEFING STRIP */}
-      <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border-l-4 border-l-blue-600 p-5 sm:p-6 transition-all">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-          <div className="space-y-2 max-w-3xl">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/80">
-                Executive Briefing
-              </span>
-              <span className="text-xs text-slate-400 font-medium">•</span>
-              <span className="text-xs text-slate-600 font-medium">
-                {activeCreator.primaryPlatform} • {activeCreator.niche}
-              </span>
+      {/* Repeatable Hackathon Demo Tour */}
+      <HackathonDemoBar />
+
+      {/* Consistent Persona Switcher Bar */}
+      <PersonaSwitcherBar subtitle="Switch active creator to dynamically update executive briefing, analytics, priorities, and deal eligibility." />
+
+      {/* 1. CREATOR PROFILE HERO CARD (24px radius with cover banner) */}
+      <div className="bg-white rounded-3xl border border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] overflow-hidden transition-all">
+        {/* Subtle Instagram Gradient Cover Header */}
+        <div className="h-24 sm:h-28 w-full story-ring-gradient relative opacity-90">
+          <div className="absolute inset-0 bg-black/10 backdrop-blur-[1px]" />
+          <div className="absolute top-3 right-4 flex items-center gap-2">
+            <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-slate-900 text-[10px] font-bold uppercase tracking-wider shadow-xs">
+              Executive Briefing
+            </span>
+          </div>
+        </div>
+
+        {/* Profile Details Container */}
+        <div className="px-5 sm:px-8 pb-6 sm:pb-8 pt-0 relative">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 -mt-12 sm:-mt-14 mb-4">
+            {/* Creator Identity with Story Ring */}
+            <div className="flex items-end gap-4 min-w-0">
+              <div className="p-1 rounded-full bg-white shadow-md shrink-0">
+                <div className="p-[2.5px] rounded-full story-ring-gradient">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full p-[2px] bg-white overflow-hidden">
+                    <img
+                      src={activeCreator.avatar}
+                      alt={activeCreator.name}
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1 mb-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+                    {activeCreator.name}
+                  </h2>
+                  <span title="Verified Creator Profile">
+                    <ShieldCheck className="w-5 h-5 text-[#0870e8] shrink-0" />
+                  </span>
+                  <Badge variant="blue" size="sm">
+                    {activeCreator.niche}
+                  </Badge>
+                  <span className="text-xs font-semibold text-slate-500">
+                    @{activeCreator.handle}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 font-medium truncate">
+                  {activeCreator.primaryPlatform} • {activeCreator.creatorStage} • {activeCreator.location || "India"}
+                </p>
+              </div>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 font-sans">
-              Welcome back, {activeCreator.name.split(" ")[0]}
-            </h2>
+            {/* Quick Contextual Action Pills */}
+            <div className="flex items-center gap-2 flex-wrap shrink-0">
+              <Link
+                href="/onboarding"
+                className="btn-tactile inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-blue-50 hover:bg-blue-100 text-[#0870e8] border border-blue-200/80 font-bold text-xs transition-colors shadow-2xs"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#0870e8]" />
+                <span>Onboarding Setup</span>
+              </Link>
+              <Link
+                href="/roadmap"
+                className="btn-tactile inline-flex items-center justify-center gap-1.5 px-4.5 py-2 rounded-full bg-[#0870e8] hover:bg-[#065ec4] text-white font-bold text-xs shadow-xs transition-colors"
+              >
+                <span>View 30-Day Plan</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              <Link
+                href="/opportunities"
+                className="btn-tactile inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs transition-colors border border-slate-200/80"
+              >
+                <span>Review Deals ({opportunities.length})</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" />
+              </Link>
+            </div>
+          </div>
 
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              Your 30-day focus is <strong className="text-slate-900 font-semibold">{activePhase?.phaseTitle || "Growth Acceleration"}</strong>. You have <strong className="text-blue-700 font-semibold">{sortedOpportunities.length} high-compatibility sponsor matches</strong> ready for outreach, with an estimated deal pipeline of <strong className="text-emerald-700 font-semibold">₹{activeCreator.estimatedPipelineValue.toLocaleString()}</strong>.
+          {/* Strategic Context Strip */}
+          <div className="pt-3 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+            <p className="text-slate-600 leading-relaxed font-normal max-w-3xl">
+              Your 30-day focus is <strong className="text-slate-900 font-semibold">{activePhase?.phaseTitle || "Growth Acceleration"}</strong>. You have <strong className="text-[#0870e8] font-semibold">{sortedOpportunities.length} high-compatibility sponsor matches</strong> ready for outreach, with an estimated deal pipeline of <strong className="text-emerald-700 font-semibold">₹{activeCreator.estimatedPipelineValue.toLocaleString()}</strong>.
             </p>
-
-            {/* Micro Parameter Indicators */}
-            <div className="flex items-center gap-4 pt-1 flex-wrap text-xs text-slate-500">
+            <div className="flex items-center gap-4 text-xs text-slate-500 shrink-0">
               <div className="flex items-center gap-1.5">
-                <Target className="w-3.5 h-3.5 text-blue-600" />
-                <span>Primary Goal: <strong className="text-slate-800">{activeCreator.primaryGoal}</strong></span>
+                <Target className="w-3.5 h-3.5 text-[#0870e8]" />
+                <span>Goal: <strong className="text-slate-800">{activeCreator.primaryGoal}</strong></span>
               </div>
-              <span className="text-slate-300 hidden sm:inline">•</span>
+              <span className="text-slate-300">•</span>
               <div className="flex items-center gap-1.5">
                 <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Target: <strong className="text-slate-800">₹{activeCreator.monthlyIncomeTarget.toLocaleString()} / mo</strong></span>
               </div>
             </div>
           </div>
-
-          {/* Quick Contextual Actions */}
-          <div className="flex sm:flex-row lg:flex-col gap-2 shrink-0">
-            <Link
-              href="/onboarding"
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200/80 font-bold text-xs transition-colors shadow-2xs"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-              <span>Onboarding Setup</span>
-            </Link>
-            <Link
-              href="/roadmap"
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs transition-colors"
-            >
-              <span>View 30-Day Plan</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-            <Link
-              href="/opportunities"
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs transition-colors"
-            >
-              <span>Review Deals ({opportunities.length})</span>
-              <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" />
-            </Link>
-          </div>
         </div>
       </div>
 
-      {/* 2. ANALYTICS & PERFORMANCE INTELLIGENCE GRID */}
+      {/* 2. 4-METRIC KEY STATISTICS GRID */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Followers */}
+        <Card className="p-4 sm:p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Audience Scale
+            </span>
+            <Users className="w-4 h-4 text-slate-400" />
+          </div>
+          <div className="my-2">
+            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-sans">
+              {activeCreator.followerCount.toLocaleString()}
+            </span>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Verified {activeCreator.primaryPlatform} audience
+            </p>
+          </div>
+          <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-semibold pt-2 border-t border-slate-100">
+            <TrendingUp className="w-3 h-3" />
+            <span>+{activeCreator.monthlyGrowthRate}% monthly growth</span>
+          </div>
+        </Card>
+
+        {/* Engagement Rate */}
+        <Card className="p-4 sm:p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Engagement Rate
+            </span>
+            <Badge variant="emerald" size="sm">
+              Top Tier
+            </Badge>
+          </div>
+          <div className="my-2">
+            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-sans">
+              {activeCreator.engagementRate}%
+            </span>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              vs. 2.2% platform baseline
+            </p>
+          </div>
+          <div className="flex items-center gap-1 text-[11px] text-slate-500 pt-2 border-t border-slate-100">
+            <span>High comment-to-view ratio</span>
+          </div>
+        </Card>
+
+        {/* Growth Rate */}
+        <Card className="p-4 sm:p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Average Reach
+            </span>
+            <Badge variant="blue" size="sm">
+              Verified
+            </Badge>
+          </div>
+          <div className="my-2">
+            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-sans">
+              {activeCreator.avgImpressionsPerPost.toLocaleString()}
+            </span>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Average impressions / post
+            </p>
+          </div>
+          <div className="flex items-center gap-1 text-[11px] text-slate-500 pt-2 border-t border-slate-100">
+            <span>Consistent 30-day posting</span>
+          </div>
+        </Card>
+
+        {/* Deal Pipeline Value */}
+        <Card className="p-4 sm:p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Deal Pipeline
+            </span>
+            <Badge variant="emerald" size="sm">
+              5 Eligible
+            </Badge>
+          </div>
+          <div className="my-2">
+            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-sans">
+              ₹{activeCreator.estimatedPipelineValue.toLocaleString()}
+            </span>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Estimated active potential
+            </p>
+          </div>
+          <div className="flex items-center gap-1 text-[11px] text-slate-500 pt-2 border-t border-slate-100">
+            <span>{Math.round((activeCreator.estimatedPipelineValue / activeCreator.monthlyIncomeTarget) * 100)}% of monthly target</span>
+          </div>
+        </Card>
+      </div>
+
+      {/* 3. PERFORMANCE INTELLIGENCE & REACH TRAJECTORY */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left: Impression Velocity & Audience Chart (7 cols) */}
         <Card className="lg:col-span-7 flex flex-col justify-between">
@@ -190,8 +324,8 @@ export default function OverviewPage() {
           </CardHeader>
 
           <CardContent className="space-y-4">
-            {/* Functional SVG Sparkline */}
-            <div className="p-3 bg-slate-50/70 rounded-lg border border-slate-200/60">
+            {/* Functional SVG Sparkline with Blue Gradient Fill */}
+            <div className="p-4 bg-slate-50/70 rounded-2xl border border-slate-200/60">
               <div className="flex items-center justify-between text-[11px] text-slate-500 mb-2">
                 <span>30-Day Velocity Curve</span>
                 <span className="text-emerald-700 font-semibold">Exceeds platform baseline by +38%</span>
@@ -210,8 +344,8 @@ export default function OverviewPage() {
                   {/* Gradient fill */}
                   <defs>
                     <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#0055ff" stopOpacity="0.15" />
-                      <stop offset="100%" stopColor="#0055ff" stopOpacity="0.0" />
+                      <stop offset="0%" stopColor="#0870e8" stopOpacity="0.18" />
+                      <stop offset="100%" stopColor="#0870e8" stopOpacity="0.0" />
                     </linearGradient>
                   </defs>
                   <path
@@ -223,7 +357,7 @@ export default function OverviewPage() {
                   <path
                     d={pathD}
                     fill="none"
-                    stroke="#0055ff"
+                    stroke="#0870e8"
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -235,17 +369,17 @@ export default function OverviewPage() {
                       <circle
                         cx={pt.x}
                         cy={pt.y}
-                        r="3.5"
+                        r="4"
                         fill="#ffffff"
-                        stroke="#0055ff"
-                        strokeWidth="2"
+                        stroke="#0870e8"
+                        strokeWidth="2.5"
                       />
                       <text
                         x={pt.x}
-                        y={chartHeight + 12}
-                        textAnchor="middle"
+                        y={chartHeight + 14}
                         fontSize="9"
-                        fill="#64748b"
+                        fill="#94a3b8"
+                        textAnchor="middle"
                         fontWeight="600"
                       >
                         {pt.label}
@@ -256,50 +390,53 @@ export default function OverviewPage() {
               </div>
             </div>
 
-            {/* Audience Demographic Footprint */}
-            <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
-              <span className="text-slate-500">Core Community:</span>
-              <span className="font-semibold text-slate-800 text-right">
-                {activeCreator.audienceDemographic}
-              </span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-center">
+              {impressionTrend.map((t, idx) => (
+                <div key={idx} className="p-2 rounded-xl bg-white border border-slate-200/60 shadow-2xs">
+                  <span className="text-[10px] text-slate-400 font-semibold">{t.label} Impressions</span>
+                  <p className="text-xs font-bold text-slate-800">{t.val.toLocaleString()}</p>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Right: Dual Scorecards (5 cols) */}
-        <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-          {/* Card A: Engagement Quality */}
-          <Card className="p-4 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Audience Retention
-              </span>
-              <Badge variant="emerald" size="sm">
-                Top 15% Tier
-              </Badge>
-            </div>
-
-            <div className="my-2">
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black text-slate-900 tracking-tight font-sans">
-                  {activeCreator.engagementRate}%
+        {/* Right: Benchmarks & Income Progress (5 cols) */}
+        <div className="lg:col-span-5 flex flex-col gap-4 justify-between">
+          {/* Card A: Category Engagement Comparison */}
+          <Card className="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  Audience Retention
                 </span>
-                <span className="text-xs text-slate-500 font-medium">
-                  vs 2.2% category avg
+                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  Top 15% Tier
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                High-intent comment-to-view ratio on {activeCreator.primaryPlatform}.
-              </p>
+
+              <div className="my-2.5">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-black text-slate-900 tracking-tight font-sans">
+                    {activeCreator.engagementRate}%
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium">
+                    vs 2.2% category avg
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  High-intent comment-to-view ratio on {activeCreator.primaryPlatform}.
+                </p>
+              </div>
             </div>
 
             {/* Visual benchmark bar */}
-            <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="space-y-1.5 pt-2 border-t border-slate-100">
               <div className="flex items-center justify-between text-[10px] text-slate-400">
                 <span>Baseline (2.2%)</span>
                 <span className="font-bold text-slate-700">Your Rate ({activeCreator.engagementRate}%)</span>
               </div>
-              <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-emerald-500 rounded-full"
                   style={{ width: `${Math.min(100, (activeCreator.engagementRate / 6) * 100)}%` }}
@@ -308,42 +445,51 @@ export default function OverviewPage() {
             </div>
           </Card>
 
-          {/* Card B: Monetisation Pipeline */}
-          <Card className="p-4 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Deal Pipeline
-              </span>
-              <Badge variant="blue" size="sm">
-                5 Qualified
-              </Badge>
-            </div>
-
-            <div className="my-2">
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black text-slate-900 tracking-tight font-sans">
-                  ₹{activeCreator.estimatedPipelineValue.toLocaleString()}
+          {/* Card B: Monthly Income Goal Progress */}
+          <Card className="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  Monthly Goal Progress
                 </span>
-                <span className="text-xs text-slate-500 font-medium">
-                  active potential
-                </span>
+                <Badge variant="blue" size="sm">
+                  {Math.round((activeCreator.estimatedPipelineValue / activeCreator.monthlyIncomeTarget) * 100)}% of Target
+                </Badge>
               </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                Calculated from verified brands matching your minimum follower threshold.
-              </p>
+
+              <div className="my-2.5">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-black text-slate-900 tracking-tight font-sans">
+                    ₹{activeCreator.estimatedPipelineValue.toLocaleString()}
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium">
+                    of ₹{activeCreator.monthlyIncomeTarget.toLocaleString()} / mo
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Calculated from verified brands matching your minimum follower threshold.
+                </p>
+              </div>
             </div>
 
-            <div className="flex items-center justify-between text-[11px] pt-1 border-t border-slate-100">
-              <span className="text-slate-500">Target Progress:</span>
-              <span className="font-mono font-bold text-slate-800">
-                {Math.round((activeCreator.estimatedPipelineValue / activeCreator.monthlyIncomeTarget) * 100)}% of goal
-              </span>
+            {/* Income progress bar */}
+            <div className="space-y-1.5 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-between text-[10px] text-slate-400">
+                <span>Pipeline Potential</span>
+                <span className="font-bold text-slate-700">Goal: ₹{activeCreator.monthlyIncomeTarget.toLocaleString()}</span>
+              </div>
+              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#0870e8] rounded-full transition-all duration-300"
+                  style={{ width: `${Math.min(100, (activeCreator.estimatedPipelineValue / activeCreator.monthlyIncomeTarget) * 100)}%` }}
+                />
+              </div>
             </div>
           </Card>
         </div>
       </div>
 
-      {/* 3. EXECUTION & STRATEGIC FOCUS (Split Layout) */}
+      {/* 4. EXECUTION & STRATEGIC FOCUS (Roadmap & Priority Actions) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left: 30-Day Roadmap Progress (6 cols) */}
         <Card className="lg:col-span-6 flex flex-col justify-between">
@@ -361,7 +507,7 @@ export default function OverviewPage() {
             </div>
             <Link
               href="/roadmap"
-              className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+              className="text-xs font-bold text-[#0870e8] hover:text-blue-700 flex items-center gap-1"
             >
               <span>Full Roadmap</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -377,9 +523,9 @@ export default function OverviewPage() {
                 </span>
                 <span className="font-bold text-slate-900 font-mono">{roadmapProgressPercent}%</span>
               </div>
-              <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-blue-600 rounded-full transition-all duration-300"
+                  className="h-full bg-[#0870e8] rounded-full transition-all duration-300"
                   style={{ width: `${roadmapProgressPercent}%` }}
                 />
               </div>
@@ -391,14 +537,14 @@ export default function OverviewPage() {
                 <div
                   key={m.id}
                   onClick={() => activePhase && toggleMilestone(activePhase.id, m.id)}
-                  className={`flex items-start gap-2.5 p-2.5 rounded-lg border transition-all cursor-pointer ${
+                  className={`flex items-start gap-3 p-3 rounded-xl border transition-all cursor-pointer ${
                     m.completed
-                      ? "bg-slate-50 border-slate-200/80 text-slate-500"
-                      : "bg-white border-slate-200/90 hover:border-slate-300 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+                      ? "bg-slate-50/70 border-slate-200/80 text-slate-500"
+                      : "bg-white border-slate-200/80 hover:border-slate-300 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
                   }`}
                 >
                   <div
-                    className={`mt-0.5 w-4 h-4 rounded flex items-center justify-center shrink-0 transition-colors ${
+                    className={`mt-0.5 w-4 h-4 rounded-md flex items-center justify-center shrink-0 transition-colors ${
                       m.completed ? "bg-emerald-600 text-white" : "border border-slate-300 bg-white"
                     }`}
                   >
@@ -416,7 +562,7 @@ export default function OverviewPage() {
                       {m.description}
                     </p>
                   </div>
-                  <span className="text-[9px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded shrink-0">
+                  <span className="text-[9px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full shrink-0">
                     {m.tag}
                   </span>
                 </div>
@@ -431,7 +577,7 @@ export default function OverviewPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-bold text-slate-900 text-sm">Prioritised Actions</h3>
-                <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
+                <span className="text-xs font-mono font-bold text-[#0870e8] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/70">
                   {completedActionsCount}/{totalActionsCount} Done
                 </span>
               </div>
@@ -439,7 +585,7 @@ export default function OverviewPage() {
             </div>
             <Link
               href="/actions"
-              className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+              className="text-xs font-bold text-[#0870e8] hover:text-blue-700 flex items-center gap-1"
             >
               <span>Action Centre</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -447,69 +593,110 @@ export default function OverviewPage() {
           </CardHeader>
 
           <CardContent className="space-y-2.5">
-            {prioritizedActions.map((action) => (
-              <div
-                key={action.id}
-                className={`p-3 rounded-lg border transition-all ${
-                  action.completed
-                    ? "bg-slate-50/70 border-slate-200 text-slate-400"
-                    : "bg-white border-slate-200/90 hover:border-slate-300 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
-                }`}
-              >
-                <div className="flex items-start gap-2.5">
-                  <button
-                    onClick={() => toggleAction(action.id)}
-                    className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors shrink-0 ${
-                      action.completed
-                        ? "bg-blue-600 border-blue-600 text-white"
-                        : "border-slate-300 hover:border-blue-600 bg-white"
-                    }`}
-                    aria-label="Toggle action completion"
-                  >
-                    {action.completed && <Check className="w-3 h-3 stroke-[3]" />}
-                  </button>
+            {prioritizedActions.map((action) => {
+              const status: ActionStatus = action.status || (action.completed ? "Completed" : "Not started");
+              const isCompleted = status === "Completed";
+              const isInProgress = status === "In progress";
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-1 mb-1">
-                      <Badge
-                        variant={
-                          action.priority === "High"
-                            ? "rose"
-                            : action.priority === "Medium"
-                            ? "amber"
-                            : "slate"
-                        }
-                        size="sm"
-                      >
-                        {action.priority}
-                      </Badge>
-                      <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                        <Clock className="w-2.5 h-2.5" /> {action.deadline}
-                      </span>
-                    </div>
-
-                    <p
-                      className={`text-xs font-bold leading-tight ${
-                        action.completed ? "line-through text-slate-400" : "text-slate-900"
+              return (
+                <div
+                  key={action.id}
+                  className={`p-3 rounded-xl border transition-all ${
+                    isCompleted
+                      ? "bg-slate-50/70 border-slate-200 text-slate-400"
+                      : isInProgress
+                      ? "bg-white border-blue-300 shadow-xs"
+                      : "bg-white border-slate-200/80 hover:border-slate-300 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <button
+                      onClick={() => toggleAction(action.id)}
+                      className={`mt-0.5 w-4 h-4 rounded-md border flex items-center justify-center transition-colors shrink-0 ${
+                        isCompleted
+                          ? "bg-emerald-600 border-emerald-600 text-white"
+                          : "border-slate-300 hover:border-[#0870e8] bg-white"
                       }`}
+                      title={isCompleted ? "Mark incomplete" : "Mark completed"}
+                      aria-label="Toggle action completion"
                     >
-                      {action.title}
-                    </p>
+                      {isCompleted && <Check className="w-3 h-3 stroke-[3]" />}
+                    </button>
 
-                    <p className="text-[11px] text-slate-500 mt-1 line-clamp-1 leading-snug">
-                      <strong className="text-slate-700 font-semibold">Reason: </strong>
-                      {action.reason}
-                    </p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1 mb-1 flex-wrap">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <Badge
+                            variant={
+                              action.priority === "High"
+                                ? "rose"
+                                : action.priority === "Medium"
+                                ? "amber"
+                                : "slate"
+                            }
+                            size="sm"
+                          >
+                            {action.priority}
+                          </Badge>
+
+                          {/* Interactive Status Pill */}
+                          <button
+                            onClick={() => {
+                              const nextStatus: ActionStatus =
+                                status === "Not started"
+                                  ? "In progress"
+                                  : status === "In progress"
+                                  ? "Completed"
+                                  : "Not started";
+                              updateActionStatus(action.id, nextStatus);
+                            }}
+                            className={`btn-tactile px-2 py-0.5 rounded-full text-[10px] font-bold border transition-colors ${
+                              status === "Completed"
+                                ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                                : status === "In progress"
+                                ? "bg-blue-50 text-blue-800 border-blue-200"
+                                : "bg-slate-100 text-slate-600 border-slate-200"
+                            }`}
+                            title="Click to cycle status"
+                          >
+                            {status}
+                          </button>
+
+                          {action.relatedTitle && (
+                            <span className="text-[10px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full font-medium truncate max-w-[150px]">
+                              {action.relatedTitle}
+                            </span>
+                          )}
+                        </div>
+
+                        <span className="text-[10px] text-slate-400 flex items-center gap-1 shrink-0">
+                          <Clock className="w-2.5 h-2.5" /> {action.deadline}
+                        </span>
+                      </div>
+
+                      <p
+                        className={`text-xs font-bold leading-tight ${
+                          isCompleted ? "line-through text-slate-400" : "text-slate-900"
+                        }`}
+                      >
+                        {action.title}
+                      </p>
+
+                      <p className="text-[11px] text-slate-500 mt-1 line-clamp-1 leading-snug">
+                        <strong className="text-slate-700 font-semibold">Reason: </strong>
+                        {action.reason}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </CardContent>
         </Card>
       </div>
 
-      {/* 4. CURATED OPPORTUNITY MATCHES (Structured Row Pattern) */}
-      <div className="space-y-3">
+      {/* 5. CURATED OPPORTUNITY MATCHES */}
+      <div className="space-y-3.5">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-bold text-slate-900 text-base">
@@ -521,7 +708,7 @@ export default function OverviewPage() {
           </div>
           <Link
             href="/opportunities"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-800 hover:bg-slate-50 shadow-2xs transition-colors"
+            className="btn-tactile inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 text-xs font-bold text-slate-800 hover:bg-slate-50 shadow-2xs transition-colors"
           >
             <span>Marketplace ({opportunities.length})</span>
             <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
@@ -536,12 +723,12 @@ export default function OverviewPage() {
             return (
               <div
                 key={opp.id}
-                className="bg-white rounded-xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-4 flex flex-col justify-between hover:border-slate-300 transition-all"
+                className="bg-white rounded-2xl border border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] p-5 flex flex-col justify-between hover:border-slate-300/80 transition-all group"
               >
                 <div>
-                  <div className="flex items-start justify-between gap-2 mb-3">
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-2xl p-1.5 bg-slate-50 rounded-lg border border-slate-200/60">
+                  <div className="flex items-start justify-between gap-2 mb-3.5">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl p-2 bg-slate-50 rounded-xl border border-slate-200/60 shadow-2xs group-hover:scale-105 transition-transform">
                         {opp.brandLogo}
                       </span>
                       <div>
@@ -553,9 +740,21 @@ export default function OverviewPage() {
                         </p>
                       </div>
                     </div>
-                    <Badge variant="blue" size="sm">
-                      {compatibility.score}% Match
-                    </Badge>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      {compatibility.qualifies ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                          <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+                          Eligible
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200/80">
+                          Ineligible
+                        </span>
+                      )}
+                      <Badge variant="blue" size="sm">
+                        {compatibility.score}% Match
+                      </Badge>
+                    </div>
                   </div>
 
                   <h5 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1 mb-1">
@@ -572,7 +771,7 @@ export default function OverviewPage() {
                   </div>
                 </div>
 
-                <div className="pt-2 flex items-center justify-between gap-2 border-t border-slate-100">
+                <div className="pt-3 flex items-center justify-between gap-2 border-t border-slate-100">
                   <button
                     onClick={() => {
                       setSelectedOpp(opp);
@@ -584,7 +783,7 @@ export default function OverviewPage() {
                   </button>
 
                   {isApplied ? (
-                    <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
+                    <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
                       Applied ✓
                     </span>
                   ) : (
@@ -593,7 +792,7 @@ export default function OverviewPage() {
                         setSelectedOpp(opp);
                         setApplyOpen(true);
                       }}
-                      className="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-2xs transition-colors"
+                      className="btn-tactile px-3.5 py-1.5 rounded-full bg-[#0870e8] hover:bg-[#065ec4] text-white text-xs font-semibold shadow-2xs transition-colors"
                     >
                       Apply Now
                     </button>

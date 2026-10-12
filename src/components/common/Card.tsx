@@ -16,8 +16,10 @@ export function Card({
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-all duration-150 ${
-        hoverable ? "hover:border-slate-300 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] cursor-pointer" : ""
+      className={`bg-white rounded-2xl border border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] transition-all duration-200 ${
+        hoverable
+          ? "hover:border-slate-300 hover:shadow-[0_4px_14px_rgba(0,0,0,0.05),0_12px_24px_rgba(0,0,0,0.02)] hover:-translate-y-0.5 cursor-pointer active:scale-[0.99]"
+          : ""
       } ${className}`}
     >
       {children}
@@ -57,7 +59,7 @@ export function CardFooter({
   className?: string;
 }) {
   return (
-    <div className={`px-5 py-3.5 bg-slate-50/60 rounded-b-xl border-t border-slate-100 ${className}`}>
+    <div className={`px-5 py-3.5 bg-slate-50/50 rounded-b-2xl border-t border-slate-100 ${className}`}>
       {children}
     </div>
   );

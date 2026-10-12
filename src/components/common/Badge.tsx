@@ -28,29 +28,29 @@ export function Badge({
   icon,
 }: BadgeProps) {
   const variantStyles: Record<BadgeVariant, string> = {
-    blue: "bg-blue-50/90 text-blue-700 border-blue-200/90 font-semibold",
-    violet: "bg-violet-50/90 text-violet-700 border-violet-200/90 font-semibold",
-    indigo: "bg-blue-50/90 text-blue-700 border-blue-200/90 font-semibold", // maps to electric blue
-    purple: "bg-violet-50/90 text-violet-700 border-violet-200/90 font-semibold", // maps to restrained violet
-    emerald: "bg-emerald-50/90 text-emerald-700 border-emerald-200/90 font-semibold",
-    amber: "bg-amber-50/90 text-amber-800 border-amber-200/90 font-semibold",
-    rose: "bg-rose-50/90 text-rose-700 border-rose-200/90 font-semibold",
-    sky: "bg-sky-50/90 text-sky-700 border-sky-200/90 font-semibold",
-    slate: "bg-slate-100 text-slate-700 border-slate-200/90 font-medium",
-    outline: "bg-transparent text-slate-600 border-slate-300 font-medium",
+    blue: "bg-blue-50/90 text-[#0870e8] border-blue-200/70 font-semibold",
+    violet: "bg-violet-50/90 text-violet-700 border-violet-200/70 font-semibold",
+    indigo: "bg-indigo-50/90 text-indigo-700 border-indigo-200/70 font-semibold",
+    purple: "bg-purple-50/90 text-purple-700 border-purple-200/70 font-semibold",
+    emerald: "bg-emerald-50/90 text-emerald-700 border-emerald-200/70 font-semibold",
+    amber: "bg-amber-50/90 text-amber-800 border-amber-200/70 font-semibold",
+    rose: "bg-rose-50/90 text-rose-700 border-rose-200/70 font-semibold",
+    sky: "bg-sky-50/90 text-sky-700 border-sky-200/70 font-semibold",
+    slate: "bg-slate-100 text-slate-700 border-slate-200/80 font-medium",
+    outline: "bg-white/80 text-slate-600 border-slate-200 font-medium",
   };
 
   const sizeStyles = {
-    sm: "px-2 py-0.5 text-[11px] tracking-tight",
-    md: "px-2.5 py-0.5 text-xs tracking-tight",
+    sm: "px-2.5 py-0.5 text-[10.5px] leading-tight",
+    md: "px-3 py-1 text-xs leading-tight",
   };
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-md border ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border transition-colors ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
     >
       {icon && <span className="shrink-0">{icon}</span>}
-      <span>{children}</span>
+      <span className="truncate">{children}</span>
     </span>
   );
 }

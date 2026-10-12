@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { useCreator } from "@/context/CreatorContext";
 import { MOCK_MONETISATION_CHANNELS } from "@/data/mockMonetisation";
 import { MonetisationChannel } from "@/types/creator";
@@ -9,37 +8,30 @@ import {
   Sparkles,
   ShieldAlert,
   CheckCircle2,
-  ArrowRight,
   HelpCircle,
   AlertCircle,
   Bookmark,
   BookmarkCheck,
   PlusCircle,
   Target,
-  DollarSign,
-  TrendingUp,
-  Layers,
   ChevronDown,
   ChevronUp,
   Check,
-  Info,
-  Calendar,
-  Briefcase,
-  Flame,
-  Award,
 } from "lucide-react";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/common/Card";
+import { Card } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
+import { PersonaSwitcherBar } from "@/components/common/PersonaSwitcherBar";
+import { HackathonDemoBar } from "@/components/common/HackathonDemoBar";
 
 export default function MonetisationPage() {
   const {
     activeCreator,
     activeCreatorId,
-    switchCreator,
     addAction,
     actions,
     showToast,
+    isGeminiConfigured,
   } = useCreator();
 
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -88,7 +80,11 @@ export default function MonetisationPage() {
   // Convert pathway into functional Action Item
   const handleCreateActionItem = (channel: MonetisationChannel) => {
     const actionTitle = `Execute Launch: ${channel.title}`;
-    const alreadyExists = actions.some((a) => a.title === actionTitle);
+    const alreadyExists = actions.some(
+      (a) =>
+        a.title.toLowerCase().trim() === actionTitle.toLowerCase().trim() ||
+        (a.relatedId && a.relatedId === `channel-${channel.id}`)
+    );
 
     if (alreadyExists) {
       showToast("This pathway is already queued in your Action Centre", "info");
@@ -102,7 +98,12 @@ export default function MonetisationPage() {
       reason: `First step: ${channel.suggestedFirstStep}`,
       deadline: "In 7 days",
       estimatedTime: "45 mins",
+      status: "Not started",
       completed: false,
+      relatedType: "monetisation",
+      relatedId: `channel-${channel.id}`,
+      relatedTitle: channel.title,
+      relatedLink: "/monetisation",
     });
   };
 
@@ -127,19 +128,29 @@ export default function MonetisationPage() {
 
   return (
     <div className="space-y-6 pb-12">
+      {/* 0. HACKATHON DEMO ASSISTANT */}
+      <HackathonDemoBar />
+
       {/* 1. TOP DISCLAIMER WITH EXPLICIT REVENUE CAVEAT */}
       <DemoDisclaimer text="Illustrative Revenue Models: Price ranges, CPM benchmarks, and earning potentials are illustrative models based on category averages. They do not constitute financial guarantees or verified historical payouts. Connect verified accounts for empirical revenue tracking." />
 
-      {/* 2. STRATEGIC HEADER & HACKATHON DEMO SWITCHER */}
-      <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-4 sm:p-5">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      {/* 2. CONSISTENT PERSONA SWITCHER BAR */}
+      <PersonaSwitcherBar subtitle="Suitability scores, revenue potentials, and launch checklists adapt dynamically to the active creator persona." />
+
+      {/* 3. STRATEGIC HEADER */}
+      <div className="bg-white rounded-[22px] border border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] p-5 sm:p-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
           <div className="space-y-2 max-w-3xl">
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="emerald" size="sm">
                 Monetisation Engine
               </Badge>
-              <span className="text-xs text-slate-400 font-medium">•</span>
-              <span className="text-xs text-slate-600 font-medium">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2.5 py-0.5 rounded-full border border-slate-200/60">
+                <span className={`w-1.5 h-1.5 rounded-full ${isGeminiConfigured ? "bg-emerald-500" : "bg-amber-500"}`} />
+                {isGeminiConfigured ? "Gemini Calibrated" : "Deterministic Benchmarks"}
+              </span>
+              <span className="text-xs text-slate-300">•</span>
+              <span className="text-xs font-semibold text-slate-500">
                 {activeCreator.primaryPlatform} • {activeCreator.niche} • {activeCreator.followerCount.toLocaleString()} followers
               </span>
             </div>
@@ -154,68 +165,36 @@ export default function MonetisationPage() {
             </p>
           </div>
 
-          {/* Quick Demo Switcher & Saved Counter */}
-          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
-            {/* Hackathon Preset Switcher */}
-            <div className="flex items-center gap-1.5 p-1 rounded-lg bg-slate-100 border border-slate-200/80">
-              <span className="text-[10px] font-bold text-slate-400 px-1.5 uppercase tracking-wider">
-                Switch Demo:
-              </span>
-              <button
-                type="button"
-                onClick={() => switchCreator("rahul")}
-                className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
-                  activeCreatorId === "rahul"
-                    ? "bg-white text-blue-700 shadow-2xs font-bold"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                ⚡ Rahul (Fitness)
-              </button>
-              <button
-                type="button"
-                onClick={() => switchCreator("priya")}
-                className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
-                  activeCreatorId === "priya"
-                    ? "bg-white text-indigo-700 shadow-2xs font-bold"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                ⚡ Priya (Finance)
-              </button>
-            </div>
-
-            {/* Saved Pathways Counter Pill */}
-            <div className="flex items-center justify-between gap-3 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/80 text-xs">
-              <span className="text-slate-600 font-medium flex items-center gap-1.5">
-                <Bookmark className="w-3.5 h-3.5 text-blue-600" />
-                Saved Pathways:
-              </span>
-              <span className="font-bold text-slate-900 font-mono">
-                {savedChannelIds.length} of {channels.length}
-              </span>
-            </div>
+          {/* Saved Pathways Counter Pill */}
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-full bg-slate-50/80 border border-slate-200/80 text-xs shrink-0 shadow-2xs">
+            <span className="text-slate-600 font-semibold flex items-center gap-1.5">
+              <Bookmark className="w-3.5 h-3.5 text-[#0870e8]" />
+              Saved Pathways:
+            </span>
+            <span className="font-bold text-slate-900 font-mono">
+              {savedChannelIds.length} of {channels.length}
+            </span>
           </div>
         </div>
       </div>
 
       {/* 3. CATEGORY FILTER TABS */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 bg-white p-2 sm:p-2.5 rounded-full border border-slate-200/75 shadow-xs">
         {categories.map((cat) => (
           <button
             key={cat.id}
             type="button"
             onClick={() => setSelectedCategory(cat.id)}
-            className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 ${
               selectedCategory === cat.id
-                ? "bg-blue-600 text-white shadow-xs"
-                : "bg-slate-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-            }`}
+                ? "bg-[#0870e8] text-white shadow-xs font-bold"
+                : "bg-slate-100/80 text-slate-600 hover:text-slate-900 hover:bg-slate-200/70"
+            } btn-tactile`}
           >
             <span>{cat.label}</span>
             <span
-              className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
-                selectedCategory === cat.id ? "bg-white/20 text-white" : "bg-slate-200 text-slate-700"
+              className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                selectedCategory === cat.id ? "bg-white/20 text-white" : "bg-slate-200/80 text-slate-700"
               }`}
             >
               {cat.count}
@@ -225,7 +204,7 @@ export default function MonetisationPage() {
       </div>
 
       {/* 4. IMPORTANT REVENUE NOTICE STRIP */}
-      <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50/70 border border-amber-200/80 text-amber-900 text-xs shadow-2xs">
+      <div className="flex items-start gap-3 p-4 rounded-[16px] bg-amber-50/70 border border-amber-200/80 text-amber-900 text-xs shadow-2xs">
         <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
         <div className="leading-relaxed">
           <strong className="font-bold">Illustrative Pricing Benchmarks: </strong>
@@ -243,10 +222,10 @@ export default function MonetisationPage() {
           return (
             <Card
               key={channel.id}
-              className={`flex flex-col justify-between overflow-hidden border transition-all duration-200 ${
+              className={`flex flex-col justify-between overflow-hidden border transition-all duration-200 rounded-[20px] shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] ${
                 isSaved
-                  ? "border-blue-300 ring-1 ring-blue-500/20 shadow-xs"
-                  : "border-slate-200/90 hover:border-slate-300"
+                  ? "border-[#0870e8] ring-1 ring-[#0870e8]/20"
+                  : "border-slate-200/75 hover:border-slate-300"
               }`}
             >
               {/* TOP HEADER */}
@@ -257,7 +236,7 @@ export default function MonetisationPage() {
                       <Badge variant="blue" size="sm">
                         {channel.badge}
                       </Badge>
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                         {channel.complexity} Complexity
                       </span>
                       <span className="text-slate-300">•</span>
@@ -266,7 +245,7 @@ export default function MonetisationPage() {
                       </span>
                     </div>
 
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug tracking-tight">
                       {channel.title}
                     </h3>
                     <p className="text-xs text-slate-500 line-clamp-1">{channel.subtitle}</p>
@@ -275,7 +254,7 @@ export default function MonetisationPage() {
                   {/* Relative Suitability Gauge & Save Bookmark Button */}
                   <div className="flex items-center gap-1.5 shrink-0">
                     <div
-                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${
+                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border ${
                         channel.suitabilityScore >= 90
                           ? "bg-emerald-50 text-emerald-800 border-emerald-200"
                           : "bg-blue-50 text-blue-800 border-blue-200"
@@ -288,15 +267,15 @@ export default function MonetisationPage() {
                     <button
                       type="button"
                       onClick={() => toggleSaveChannel(channel.id)}
-                      className={`p-1.5 rounded-lg border transition-colors ${
+                      className={`p-2 rounded-full border transition-all btn-tactile ${
                         isSaved
-                          ? "bg-blue-50 text-blue-600 border-blue-200"
-                          : "bg-white text-slate-400 hover:text-slate-700 border-slate-200 hover:bg-slate-50"
+                          ? "bg-blue-50 text-[#0870e8] border-blue-200"
+                          : "bg-white text-slate-400 hover:text-slate-700 border-slate-200/80 hover:bg-slate-50"
                       }`}
                       title={isSaved ? "Saved to portfolio" : "Save pathway"}
                     >
                       {isSaved ? (
-                        <BookmarkCheck className="w-4 h-4 text-blue-600" />
+                        <BookmarkCheck className="w-4 h-4 text-[#0870e8]" />
                       ) : (
                         <Bookmark className="w-4 h-4" />
                       )}
@@ -306,7 +285,7 @@ export default function MonetisationPage() {
 
                 {/* Relative Suitability Explanation */}
                 {channel.suitabilityExplanation && (
-                  <div className="mt-3 p-2.5 rounded-lg bg-blue-50/60 border border-blue-200/60 text-xs text-blue-900 leading-relaxed">
+                  <div className="mt-3 p-3 rounded-xl bg-blue-50/60 border border-blue-200/60 text-xs text-blue-900 leading-relaxed">
                     <strong className="font-bold text-blue-800">Suitability Assessment: </strong>
                     {channel.suitabilityExplanation}
                   </div>
@@ -317,10 +296,10 @@ export default function MonetisationPage() {
               <div className="p-5 space-y-4 flex-1">
                 {/* 1. WHY IT SUITS THIS CREATOR */}
                 <div className="space-y-1.5">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                    <HelpCircle className="w-3.5 h-3.5 text-blue-600" /> Why this suits {activeCreator.name.split(" ")[0]}
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+                    <HelpCircle className="w-3.5 h-3.5 text-[#0870e8]" /> Why this suits {activeCreator.name.split(" ")[0]}
                   </h4>
-                  <p className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
+                  <p className="text-xs text-slate-700 leading-relaxed bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/70">
                     {channel.whyItSuits}
                   </p>
                 </div>
@@ -338,8 +317,8 @@ export default function MonetisationPage() {
 
                   {channel.illustrativePriceRange && (
                     <div className="sm:text-right">
-                      <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
-                        Illustrative Benchmark Range
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                        Benchmark Range
                       </span>
                       <p className="text-xs font-bold text-slate-800 mt-0.5">
                         {channel.illustrativePriceRange}
@@ -351,14 +330,14 @@ export default function MonetisationPage() {
                 {/* 3. PREREQUISITES OR SKILLS NEEDED */}
                 {channel.prerequisites && channel.prerequisites.length > 0 && (
                   <div className="space-y-1.5">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
                       <Target className="w-3.5 h-3.5 text-indigo-600" /> Prerequisites & Skills Needed
                     </h4>
                     <div className="space-y-1.5">
                       {channel.prerequisites.map((prereq, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start gap-2 text-xs text-slate-600 leading-snug bg-slate-50/70 p-2 rounded-lg border border-slate-100"
+                          className="flex items-start gap-2 text-xs text-slate-600 leading-snug bg-slate-50/70 p-2 rounded-xl border border-slate-200/50"
                         >
                           <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
                           <span>{prereq}</span>
@@ -370,7 +349,7 @@ export default function MonetisationPage() {
 
                 {/* 4. POTENTIAL RISKS OR LIMITATIONS */}
                 {channel.potentialRisks && (
-                  <div className="p-3 rounded-xl bg-amber-50/50 border border-amber-200/70 text-xs text-amber-900 space-y-1">
+                  <div className="p-3.5 rounded-xl bg-amber-50/50 border border-amber-200/70 text-xs text-amber-900 space-y-1">
                     <span className="font-bold flex items-center gap-1.5 text-amber-800">
                       <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                       Potential Risks & Practical Limitations
@@ -384,14 +363,14 @@ export default function MonetisationPage() {
                 {/* EXPANDABLE LAUNCH CHECKLIST */}
                 {isExpanded && (
                   <div className="space-y-2 pt-2 border-t border-slate-100 animate-fadeIn">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" /> Step-by-Step Launch Checklist
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#0870e8]" /> Step-by-Step Launch Checklist
                     </h4>
                     <div className="space-y-1.5">
                       {channel.launchChecklist.map((step, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start gap-2.5 text-xs text-slate-600 p-2 rounded-lg bg-slate-50"
+                          className="flex items-start gap-2.5 text-xs text-slate-600 p-2 rounded-xl bg-slate-50/80 border border-slate-200/50"
                         >
                           <span className="w-4 h-4 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                             {idx + 1}
@@ -408,7 +387,7 @@ export default function MonetisationPage() {
               <div className="p-4 bg-slate-50/80 border-t border-slate-100 space-y-3">
                 <div className="flex items-start justify-between gap-3 text-xs">
                   <div className="min-w-0">
-                    <span className="text-[10px] uppercase font-bold text-blue-600 block">
+                    <span className="text-[10px] uppercase font-bold text-[#0870e8] block">
                       Suggested First Step:
                     </span>
                     <p className="font-semibold text-slate-800 text-xs leading-snug mt-0.5">
@@ -419,7 +398,7 @@ export default function MonetisationPage() {
                   <button
                     type="button"
                     onClick={() => toggleExpand(channel.id)}
-                    className="text-[11px] text-slate-500 hover:text-slate-800 font-semibold flex items-center gap-1 shrink-0 mt-1"
+                    className="text-[11px] text-slate-500 hover:text-slate-800 font-semibold flex items-center gap-1 shrink-0 mt-1 btn-tactile"
                   >
                     <span>{isExpanded ? "Hide Steps" : "View Checklist"}</span>
                     {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -431,10 +410,10 @@ export default function MonetisationPage() {
                   <button
                     type="button"
                     onClick={() => handleCreateActionItem(channel)}
-                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs ${
+                    className={`flex-1 py-2 px-4 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs btn-tactile ${
                       isQueued
                         ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                        : "bg-blue-600 hover:bg-blue-700 text-white"
+                        : "bg-[#0870e8] hover:bg-[#0760cb] text-white"
                     }`}
                   >
                     {isQueued ? (
@@ -453,9 +432,9 @@ export default function MonetisationPage() {
                   <button
                     type="button"
                     onClick={() => toggleSaveChannel(channel.id)}
-                    className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-colors flex items-center gap-1.5 ${
+                    className={`py-2 px-4 rounded-full text-xs font-semibold border transition-all flex items-center gap-1.5 btn-tactile ${
                       isSaved
-                        ? "bg-white text-blue-700 border-blue-200 font-bold"
+                        ? "bg-white text-[#0870e8] border-blue-200 font-bold shadow-2xs"
                         : "bg-white text-slate-600 hover:text-slate-900 border-slate-200"
                     }`}
                   >

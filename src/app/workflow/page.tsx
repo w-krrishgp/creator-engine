@@ -135,9 +135,9 @@ ${activeCreator.name}`;
       <DemoDisclaimer text="Creator Engine Workflow automates the end-to-end deal lifecycle: from outbound pitch drafting and ASCI compliance to invoice generation." />
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
               Creator Workflow & Deal Automation
             </h2>
@@ -151,35 +151,36 @@ ${activeCreator.name}`;
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant="emerald" size="md">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             Pipeline Active
-          </Badge>
+          </span>
         </div>
       </div>
 
       {/* Visual 5-Stage Stepper Bar */}
-      <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5">
+      <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
         {workflowStages.map((s) => {
           const isSelected = activeStage === s.stage;
           const isPassed = activeStage > s.stage;
 
           return (
-            <div
+            <button
               key={s.stage}
               onClick={() => setActiveStage(s.stage)}
-              className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
+              className={`text-left p-4 rounded-2xl border transition-all duration-200 btn-tactile cursor-pointer ${
                 isSelected
-                  ? "bg-blue-600 text-white border-blue-600 shadow-xs"
+                  ? "bg-[#0870e8] text-white border-[#0870e8] shadow-[0_4px_14px_rgba(8,112,232,0.25)]"
                   : isPassed
-                  ? "bg-emerald-50/70 border-emerald-200 text-slate-800"
-                  : "bg-white border-slate-200 hover:border-slate-300 text-slate-600"
+                  ? "bg-emerald-50/80 border-emerald-200/80 text-slate-800 hover:border-emerald-300"
+                  : "bg-white border-slate-200/75 hover:border-slate-300 text-slate-600 shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
               }`}
             >
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center justify-between mb-2">
                 <span
-                  className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-transform ${
                     isSelected
-                      ? "bg-white text-blue-700"
+                      ? "bg-white text-[#0870e8]"
                       : isPassed
                       ? "bg-emerald-600 text-white"
                       : "bg-slate-100 text-slate-600"
@@ -188,11 +189,11 @@ ${activeCreator.name}`;
                   {isPassed ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : s.stage}
                 </span>
                 <span
-                  className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                  className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
                     isSelected
                       ? "bg-white/20 text-white"
                       : isPassed
-                      ? "bg-emerald-100 text-emerald-800"
+                      ? "bg-emerald-100/90 text-emerald-800"
                       : "bg-slate-100 text-slate-500"
                   }`}
                 >
@@ -201,13 +202,13 @@ ${activeCreator.name}`;
               </div>
               <h4 className="text-xs font-bold truncate leading-tight">{s.title}</h4>
               <p
-                className={`text-[11px] truncate mt-0.5 ${
+                className={`text-[11px] truncate mt-1 ${
                   isSelected ? "text-blue-100" : "text-slate-400"
                 }`}
               >
                 {s.subtitle}
               </p>
-            </div>
+            </button>
           );
         })}
       </div>
@@ -218,8 +219,8 @@ ${activeCreator.name}`;
         <div className="lg:col-span-7 space-y-6">
           {/* Stage 1: Pitching */}
           {activeStage === 1 && (
-            <Card>
-              <CardHeader>
+            <Card className="rounded-2xl border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)]">
+              <CardHeader className="border-b border-slate-100 pb-4">
                 <div>
                   <h3 className="font-bold text-slate-900 text-base">
                     Stage 1: Outbound Brand Pitching & Angle Calibration
@@ -233,15 +234,15 @@ ${activeCreator.name}`;
                 </Badge>
               </CardHeader>
 
-              <CardContent className="space-y-4">
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/90 space-y-2">
-                  <div className="flex items-center justify-between">
+              <CardContent className="space-y-5 pt-5">
+                <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/75 border border-slate-200/80 space-y-3">
+                  <div className="flex items-center justify-between gap-3">
                     <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-blue-600" /> Auto-Generated Pitch Template
+                      <Sparkles className="w-3.5 h-3.5 text-[#0870e8]" /> Auto-Generated Pitch Template
                     </span>
                     <button
                       onClick={() => copyToClipboard(coldPitchTemplate, "Brand Pitch Template")}
-                      className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors flex items-center gap-1.5 shadow-2xs"
+                      className="px-3.5 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-800 transition-all flex items-center gap-1.5 shadow-2xs btn-tactile cursor-pointer"
                     >
                       {copiedKey === "Brand Pitch Template" ? (
                         <>
@@ -250,32 +251,32 @@ ${activeCreator.name}`;
                         </>
                       ) : (
                         <>
-                          <Copy className="w-3.5 h-3.5" />
+                          <Copy className="w-3.5 h-3.5 text-slate-500" />
                           <span>Copy Pitch</span>
                         </>
                       )}
                     </button>
                   </div>
 
-                  <pre className="text-xs text-slate-700 font-sans whitespace-pre-wrap leading-relaxed bg-white p-3.5 rounded-lg border border-slate-200 max-h-72 overflow-y-auto">
+                  <pre className="text-xs text-slate-700 font-sans whitespace-pre-wrap leading-relaxed bg-white p-4 rounded-xl border border-slate-200/80 max-h-72 overflow-y-auto shadow-2xs">
                     {coldPitchTemplate}
                   </pre>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
                     Pre-Pitch Checklist
                   </h4>
                   <div className="grid gap-2 text-xs text-slate-600">
-                    <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Verify marketing manager / brand lead contact on LinkedIn or Apollo</span>
                     </div>
-                    <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Attach 1-page PDF Media Kit showing {activeCreator.engagementRate}% engagement</span>
                     </div>
-                    <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Propose 2 concrete content concepts tailored to their quarterly campaign</span>
                     </div>
@@ -287,8 +288,8 @@ ${activeCreator.name}`;
 
           {/* Stage 2: Contract & Scope */}
           {activeStage === 2 && (
-            <Card>
-              <CardHeader>
+            <Card className="rounded-2xl border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)]">
+              <CardHeader className="border-b border-slate-100 pb-4">
                 <div>
                   <h3 className="font-bold text-slate-900 text-base">
                     Stage 2: Contract Terms, Exclusivity & Rate Lock
@@ -302,16 +303,16 @@ ${activeCreator.name}`;
                 </Badge>
               </CardHeader>
 
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 pt-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <div className="p-4 rounded-xl bg-slate-50/75 border border-slate-200/80 space-y-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       Payment Terms
                     </span>
                     <p className="text-xs font-bold text-slate-900">Net 15 or Net 30 Days</p>
                     <p className="text-[11px] text-slate-500">Insist on 50% advance for deals over ₹50,000</p>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <div className="p-4 rounded-xl bg-slate-50/75 border border-slate-200/80 space-y-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       Usage Rights
                     </span>
@@ -320,7 +321,7 @@ ${activeCreator.name}`;
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-900 space-y-1">
+                <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200/90 text-xs text-amber-900 space-y-1">
                   <strong className="font-bold flex items-center gap-1.5">
                     <ShieldCheck className="w-4 h-4 text-amber-700" /> Exclusivity Trap Warning
                   </strong>
@@ -334,8 +335,8 @@ ${activeCreator.name}`;
 
           {/* Stage 3: Content Production */}
           {activeStage === 3 && (
-            <Card>
-              <CardHeader>
+            <Card className="rounded-2xl border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)]">
+              <CardHeader className="border-b border-slate-100 pb-4">
                 <div>
                   <h3 className="font-bold text-slate-900 text-base">
                     Stage 3: High-Retention Content Filming & Hook Testing
@@ -349,21 +350,21 @@ ${activeCreator.name}`;
                 </Badge>
               </CardHeader>
 
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
+              <CardContent className="space-y-4 pt-5">
+                <div className="space-y-2.5">
                   <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                     The 3-Part Hook Formula
                   </h4>
-                  <div className="grid gap-2 text-xs">
-                    <div className="p-3 rounded-xl bg-indigo-50/60 border border-indigo-100">
+                  <div className="grid gap-2.5 text-xs">
+                    <div className="p-3.5 rounded-xl bg-indigo-50/60 border border-indigo-100/90">
                       <span className="font-bold text-indigo-900">0s - 3s: Visual Pattern Interrupt: </span>
                       <span className="text-slate-700">Display the shocking number or end result before explaining context.</span>
                     </div>
-                    <div className="p-3 rounded-xl bg-purple-50/60 border border-purple-100">
+                    <div className="p-3.5 rounded-xl bg-purple-50/60 border border-purple-100/90">
                       <span className="font-bold text-purple-900">3s - 25s: The Mechanism / Solution: </span>
                       <span className="text-slate-700">Integrate brand naturally as the tool that solved the core frustration.</span>
                     </div>
-                    <div className="p-3 rounded-xl bg-emerald-50/60 border border-emerald-100">
+                    <div className="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-100/90">
                       <span className="font-bold text-emerald-900">25s - 45s: Low-Friction Call-to-Action: </span>
                       <span className="text-slate-700">&ldquo;Link in bio with code for 15% off&rdquo; or &ldquo;Comment GUIDE for the direct PDF link&rdquo;.</span>
                     </div>
@@ -375,8 +376,8 @@ ${activeCreator.name}`;
 
           {/* Stage 4: ASCI Compliance */}
           {activeStage === 4 && (
-            <Card>
-              <CardHeader>
+            <Card className="rounded-2xl border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)]">
+              <CardHeader className="border-b border-slate-100 pb-4">
                 <div>
                   <h3 className="font-bold text-slate-900 text-base">
                     Stage 4: Compliance, ASCI Guidelines & Brand Sign-off
@@ -390,8 +391,8 @@ ${activeCreator.name}`;
                 </Badge>
               </CardHeader>
 
-              <CardContent className="space-y-3">
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 space-y-2">
+              <CardContent className="space-y-3 pt-5">
+                <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-xs text-slate-700 space-y-2">
                   <h4 className="font-bold text-slate-900">Mandatory Disclosure Rules:</h4>
                   <ul className="list-disc pl-4 space-y-1 text-slate-600">
                     <li>Use Instagram Paid Partnership tag or LinkedIn &quot;#ad #sponsored&quot; in first 2 lines.</li>
@@ -405,8 +406,8 @@ ${activeCreator.name}`;
 
           {/* Stage 5: Invoicing & Retainer */}
           {activeStage === 5 && (
-            <Card>
-              <CardHeader>
+            <Card className="rounded-2xl border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)]">
+              <CardHeader className="border-b border-slate-100 pb-4">
                 <div>
                   <h3 className="font-bold text-slate-900 text-base">
                     Stage 5: Proof of Performance & Invoice Dispatch
@@ -420,15 +421,15 @@ ${activeCreator.name}`;
                 </Badge>
               </CardHeader>
 
-              <CardContent className="space-y-4">
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/90 space-y-2">
-                  <div className="flex items-center justify-between">
+              <CardContent className="space-y-4 pt-5">
+                <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/75 border border-slate-200/80 space-y-3">
+                  <div className="flex items-center justify-between gap-3">
                     <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                       <DollarSign className="w-3.5 h-3.5 text-emerald-600" /> Automated Invoice Dispatch Email
                     </span>
                     <button
                       onClick={() => copyToClipboard(invoiceEmailTemplate, "Invoice Email")}
-                      className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors flex items-center gap-1.5 shadow-2xs"
+                      className="px-3.5 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-800 transition-all flex items-center gap-1.5 shadow-2xs btn-tactile cursor-pointer"
                     >
                       {copiedKey === "Invoice Email" ? (
                         <>
@@ -437,14 +438,14 @@ ${activeCreator.name}`;
                         </>
                       ) : (
                         <>
-                          <Copy className="w-3.5 h-3.5" />
+                          <Copy className="w-3.5 h-3.5 text-slate-500" />
                           <span>Copy Email</span>
                         </>
                       )}
                     </button>
                   </div>
 
-                  <pre className="text-xs text-slate-700 font-sans whitespace-pre-wrap leading-relaxed bg-white p-3.5 rounded-lg border border-slate-200 max-h-60 overflow-y-auto">
+                  <pre className="text-xs text-slate-700 font-sans whitespace-pre-wrap leading-relaxed bg-white p-4 rounded-xl border border-slate-200/80 max-h-60 overflow-y-auto shadow-2xs">
                     {invoiceEmailTemplate}
                   </pre>
                 </div>
@@ -456,8 +457,8 @@ ${activeCreator.name}`;
         {/* Right Column: Workflow Quick Utilities & Rate Calculator (5 cols) */}
         <div className="lg:col-span-5 space-y-5">
           {/* Quick Rate Card Calculator */}
-          <Card>
-            <CardHeader>
+          <Card className="rounded-2xl border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)]">
+            <CardHeader className="border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-emerald-600" />
                 <h3 className="font-bold text-slate-900 text-sm">
@@ -469,8 +470,8 @@ ${activeCreator.name}`;
               </Badge>
             </CardHeader>
 
-            <CardContent className="space-y-3">
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2">
+            <CardContent className="space-y-3 pt-4">
+              <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-xs space-y-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500 font-medium">Audience Tier:</span>
                   <span className="font-bold text-slate-900">{activeCreator.creatorStage}</span>
@@ -479,9 +480,9 @@ ${activeCreator.name}`;
                   <span className="text-slate-500 font-medium">Primary Platform:</span>
                   <span className="font-bold text-slate-900">{activeCreator.primaryPlatform}</span>
                 </div>
-                <div className="flex items-center justify-between pt-1 border-t border-slate-200">
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200/80">
                   <span className="text-slate-700 font-bold">Suggested Base Fee / Post:</span>
-                  <span className="text-sm font-extrabold text-blue-600 font-mono">
+                  <span className="text-base font-extrabold text-[#0870e8] font-mono">
                     ₹{(activeCreator.followerCount * (activeCreator.primaryPlatform === "LinkedIn" ? 5 : 1.8)).toLocaleString()}
                   </span>
                 </div>
@@ -493,10 +494,10 @@ ${activeCreator.name}`;
           </Card>
 
           {/* Workflow Automation Alerts */}
-          <Card>
-            <CardHeader>
+          <Card className="rounded-2xl border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)]">
+            <CardHeader className="border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-blue-600" />
+                <Clock className="w-4 h-4 text-[#0870e8]" />
                 <h3 className="font-bold text-slate-900 text-sm">
                   Workflow Reminders & SLAs
                 </h3>
@@ -506,16 +507,16 @@ ${activeCreator.name}`;
               </Badge>
             </CardHeader>
 
-            <CardContent className="space-y-2.5 text-xs">
-              <div className="flex items-start gap-2.5 p-3 rounded-lg bg-slate-50 border border-slate-200/80 text-slate-700">
-                <span className="w-2 h-2 rounded-full bg-blue-600 mt-1 shrink-0" />
+            <CardContent className="space-y-2.5 text-xs pt-4">
+              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 text-slate-700">
+                <span className="w-2 h-2 rounded-full bg-[#0870e8] mt-1 shrink-0" />
                 <span>Submit creative draft minimum <strong>48 hours</strong> prior to scheduled campaign go-live date.</span>
               </div>
-              <div className="flex items-start gap-2.5 p-3 rounded-lg bg-slate-50 border border-slate-200/80 text-slate-700">
+              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 text-slate-700">
                 <span className="w-2 h-2 rounded-full bg-emerald-600 mt-1 shrink-0" />
                 <span>Export 7-day post-launch insights screenshot report to attach with invoice.</span>
               </div>
-              <div className="flex items-start gap-2.5 p-3 rounded-lg bg-slate-50 border border-slate-200/80 text-slate-700">
+              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 text-slate-700">
                 <span className="w-2 h-2 rounded-full bg-purple-600 mt-1 shrink-0" />
                 <span>Offer 15% discount if brand converts to a 3-month quarterly retainer commitment.</span>
               </div>

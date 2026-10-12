@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { Opportunity } from "@/types/creator";
 import { useCreator } from "@/context/CreatorContext";
 import { calculateCompatibility } from "@/utils/compatibility";
@@ -11,10 +12,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   FileText,
-  DollarSign,
   Clock,
   ArrowRight,
-  ShieldCheck,
 } from "lucide-react";
 import { Badge } from "../common/Badge";
 
@@ -67,14 +66,14 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="bg-white rounded-2xl max-w-xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="bg-white rounded-[22px] max-w-xl w-full max-h-[90vh] flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.18)] border border-slate-200/80 overflow-hidden animate-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="p-5 sm:p-6 border-b border-slate-100 flex items-start justify-between bg-slate-50/70">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl">{opportunity.brandLogo}</span>
-              <h2 className="text-lg font-bold text-slate-900">
+            <div className="flex items-center gap-2.5">
+              <span className="text-2xl">{opportunity.brandLogo}</span>
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight">
                 {confirmedAppId ? "Application Confirmed" : `Apply to ${opportunity.brand}`}
               </h2>
             </div>
@@ -84,16 +83,16 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
           </div>
           <button
             onClick={handleCloseAndReset}
-            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* CONFIRMATION STATE VIEW */}
         {confirmedAppId ? (
           <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-center animate-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm animate-bounce">
+            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
               <CheckCircle2 className="w-8 h-8" />
             </div>
 
@@ -101,18 +100,18 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
               <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">
                 Application Successfully Logged!
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
+              <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
                 Your pitch and verified creator profile have been logged to the Creator Engine deal pipeline for {opportunity.brand}.
               </p>
             </div>
 
             {/* Application Receipt Card */}
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-left space-y-3">
+            <div className="p-4 rounded-[16px] bg-slate-50/80 border border-slate-200/80 text-left space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                   Tracking Reference
                 </span>
-                <span className="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                <span className="font-mono text-xs font-bold text-[#0870e8] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
                   #{confirmedAppId}
                 </span>
               </div>
@@ -138,7 +137,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
 
               {/* Pipeline stage tracker */}
               <div className="pt-2 border-t border-slate-200/80 space-y-1.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
                   <Clock className="w-3 h-3 text-emerald-600" /> Pipeline Status: Under Review
                 </span>
                 <p className="text-[11px] text-slate-600 leading-relaxed">
@@ -147,11 +146,19 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
               </div>
             </div>
 
-            <div className="pt-2 flex items-center justify-center gap-3">
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/actions"
+                onClick={handleCloseAndReset}
+                className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white font-bold text-xs shadow-xs hover:shadow-sm transition-all flex items-center justify-center gap-2 btn-tactile"
+              >
+                <span>Track in Action Centre</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
               <button
                 type="button"
                 onClick={handleCloseAndReset}
-                className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors btn-tactile"
               >
                 Return to Marketplace
               </button>
@@ -162,17 +169,17 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
           <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5">
             {/* LIVE ELIGIBILITY VALIDATION CALLOUT */}
             {qualifies ? (
-              <div className="p-3.5 rounded-xl bg-emerald-50/80 border border-emerald-200 flex items-start gap-2.5 text-xs text-emerald-900">
+              <div className="p-3.5 rounded-xl bg-emerald-50/80 border border-emerald-200/80 flex items-start gap-2.5 text-xs text-emerald-900">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-bold text-emerald-900">Eligibility Validation: Passed</p>
-                  <p className="text-[11px] text-emerald-700">
+                  <p className="text-[11px] text-emerald-700 leading-relaxed">
                     {activeCreator.name} satisfies all mandatory brand prerequisites ({opportunity.minFollowers.toLocaleString()} min followers, {opportunity.platform} channel, {activeCreator.niche} alignment).
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="p-3.5 rounded-xl bg-amber-50/90 border border-amber-200 flex items-start gap-2.5 text-xs text-amber-900">
+              <div className="p-3.5 rounded-xl bg-amber-50/90 border border-amber-200/80 flex items-start gap-2.5 text-xs text-amber-900">
                 <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-bold text-amber-900">Eligibility Notice: Requirements Unmet</p>
@@ -184,7 +191,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
             )}
 
             {/* Creator Profile Auto-Attached Banner */}
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/90 flex items-center justify-between">
+            <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <img
                   src={activeCreator.avatar}
@@ -205,10 +212,10 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
 
             {/* Agreed Deliverables Checklist */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+              <label className="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
                 <FileText className="w-3.5 h-3.5 text-slate-400" /> Deliverables Commitment
               </label>
-              <div className="p-3 rounded-lg bg-slate-50 border border-slate-200/80 space-y-1.5">
+              <div className="p-3 rounded-xl bg-slate-50/80 border border-slate-200/70 space-y-1.5">
                 {opportunity.deliverables.map((item, idx) => (
                   <div key={idx} className="flex items-center gap-2 text-xs text-slate-700 font-medium">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
@@ -221,7 +228,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
             {/* Requested Compensation */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <label className="text-xs font-bold text-slate-600 uppercase tracking-wider">
                   Proposed Compensation (INR)
                 </label>
                 <span className="text-[11px] text-slate-500 font-medium">
@@ -237,7 +244,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
                   placeholder={suggestedBudget.replace("₹", "")}
                   value={requestedFee}
                   onChange={(e) => setRequestedFee(e.target.value)}
-                  className="w-full pl-8 pr-4 py-2 rounded-lg border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                  className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8] transition-all"
                 />
               </div>
             </div>
@@ -245,10 +252,10 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
             {/* Creator Pitch & Angle */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-blue-600" /> Pitch & Content Concept
+                <label className="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#0870e8]" /> Pitch & Content Concept
                 </label>
-                <span className="text-[11px] text-blue-600 font-semibold">
+                <span className="text-[11px] text-[#0870e8] font-semibold">
                   Personalized to {activeCreator.name}
                 </span>
               </div>
@@ -256,7 +263,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
                 rows={4}
                 value={currentPitch}
                 onChange={(e) => setPitchNotes(e.target.value)}
-                className="w-full p-3.5 rounded-lg border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 resize-none font-sans"
+                className="w-full p-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-[#0870e8]/20 focus:border-[#0870e8] resize-none font-sans transition-all"
               />
             </div>
 
@@ -267,7 +274,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
                   type="checkbox"
                   checked={agreedToDeliverables}
                   onChange={(e) => setAgreedToDeliverables(e.target.checked)}
-                  className="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  className="mt-0.5 rounded border-slate-300 text-[#0870e8] focus:ring-[#0870e8]"
                 />
                 <span className="text-xs text-slate-600">
                   I agree to deliver the required formats before the application deadline ({opportunity.deadline}).
@@ -279,7 +286,7 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
                   type="checkbox"
                   checked={agreedToCompliance}
                   onChange={(e) => setAgreedToCompliance(e.target.checked)}
-                  className="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  className="mt-0.5 rounded border-slate-300 text-[#0870e8] focus:ring-[#0870e8]"
                 />
                 <span className="text-xs text-slate-500">
                   I commit to adhering to ASCI influencer disclosure regulations and brand guidelines.
@@ -292,14 +299,14 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
               <button
                 type="button"
                 onClick={handleCloseAndReset}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-full hover:bg-slate-100 transition-colors btn-tactile"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={submitting || !agreedToDeliverables || !agreedToCompliance}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold text-xs shadow-xs transition-all hover:scale-[1.01]"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] disabled:opacity-50 text-white font-bold text-xs shadow-xs hover:shadow-sm transition-all btn-tactile"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>{submitting ? "Submitting Application..." : "Submit Application"}</span>
