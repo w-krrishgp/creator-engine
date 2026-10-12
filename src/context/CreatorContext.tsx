@@ -222,7 +222,23 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
       }
     };
 
+    const checkGemini = async () => {
+      try {
+        const res = await fetch("/api/recommendations");
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.configured) {
+            setIsGeminiConfigured(true);
+            setAiModelUsed(data.model || "gemini-3.8-flash");
+          }
+        }
+      } catch {
+        // Ignore
+      }
+    };
+
     checkSupabase();
+    checkGemini();
   }, [activeCreatorId]);
 
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
@@ -863,7 +879,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   const appliedOpportunitiesCount = opportunities.filter((o) => o.status === "Applied").length;
   const profileCompletion = calculateProfileCompletion(activeCreator);
   const isOnboarded = Boolean(activeCreator?.isOnboarded);
-  const isDemoMode = !isSupabaseConnected || !isGeminiConfigured;
+  const isDemoMode = !isSupabaseConnected;
 
   return (
     <CreatorContext.Provider

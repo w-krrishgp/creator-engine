@@ -150,6 +150,20 @@ function validateAndSanitizeAiOutput(
   };
 }
 
+export async function GET() {
+  const apiKey = process.env.GEMINI_API_KEY;
+  const isApiKeyMissingOrPlaceholder =
+    !apiKey ||
+    apiKey.trim() === "" ||
+    apiKey.includes("placeholder") ||
+    apiKey.includes("your-gemini-api-key");
+
+  return NextResponse.json({
+    configured: !isApiKeyMissingOrPlaceholder,
+    model: "gemini-3.8-flash",
+  });
+}
+
 export async function POST(req: NextRequest) {
   let requestCreator: CreatorProfile | null = null;
   try {
