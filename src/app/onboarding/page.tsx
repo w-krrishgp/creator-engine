@@ -2,14 +2,12 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCreator, calculateProfileCompletion } from "@/context/CreatorContext";
 import {
   OnboardingFormData,
   PlatformType,
   CreatorStageType,
   ExperienceLevelType,
-  CreatorProfile,
 } from "@/types/creator";
 import { MOCK_CREATORS } from "@/data/mockCreators";
 import {
@@ -22,20 +20,11 @@ import {
   ArrowLeft,
   Sparkles,
   Info,
-  DollarSign,
-  Briefcase,
-  Layers,
-  Award,
-  Calendar,
-  MapPin,
-  FileText,
-  AlertCircle,
   RotateCcw,
-  ExternalLink,
   ShieldCheck,
   Check,
 } from "lucide-react";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/common/Card";
+import { Card, CardContent, CardFooter } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
 
@@ -102,7 +91,6 @@ const MONETISATION_OPTIONS = [
 ];
 
 export default function OnboardingPage() {
-  const router = useRouter();
   const { activeCreator, completeOnboarding, switchCreator, showToast } = useCreator();
 
   // Step 1 to 5

@@ -39,8 +39,6 @@ export default function ActionsPage() {
     totalActionsCount,
     refreshAiRecommendations,
     isAiGenerating,
-    isGeminiConfigured,
-    isDemoMode,
   } = useCreator();
 
   // Filter & Search state
@@ -643,7 +641,11 @@ export default function ActionsPage() {
                   <label className="text-xs font-bold text-slate-700">Link to Related Area</label>
                   <select
                     value={newRelatedType}
-                    onChange={(e) => setNewRelatedType(e.target.value as any)}
+                    onChange={(e) =>
+                      setNewRelatedType(
+                        e.target.value as "roadmap" | "opportunity" | "monetisation" | "goal" | "none"
+                      )
+                    }
                     className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white"
                   >
                     <option value="none">None (General Action)</option>

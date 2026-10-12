@@ -5,36 +5,40 @@ import { AiRecommendationsResponse } from "@/types/ai";
 import { generateFallbackRecommendations } from "@/lib/ai/fallbackRecommendations";
 
 
+type UnknownRecord = Record<string, unknown>;
+
 /**
  * Validates and cleans raw AI output into a well-structured AiRecommendationsResponse.
  */
 function validateAndSanitizeAiOutput(
-  rawJson: any,
+  rawJsonInput: unknown,
   creator: CreatorProfile,
   modelName: string
 ): AiRecommendationsResponse {
+  const rawJson = (rawJsonInput && typeof rawJsonInput === "object" ? rawJsonInput : {}) as UnknownRecord;
+  const rawPositioning = (rawJson.positioning && typeof rawJson.positioning === "object" ? rawJson.positioning : {}) as UnknownRecord;
   const fallback = generateFallbackRecommendations(creator);
 
   const positioning = {
-    thesis: typeof rawJson?.positioning?.thesis === "string" && rawJson.positioning.thesis.trim().length > 0
-      ? rawJson.positioning.thesis
+    thesis: typeof rawPositioning.thesis === "string" && rawPositioning.thesis.trim().length > 0
+      ? rawPositioning.thesis
       : fallback.positioning.thesis,
-    targetAudience: typeof rawJson?.positioning?.targetAudience === "string" && rawJson.positioning.targetAudience.trim().length > 0
-      ? rawJson.positioning.targetAudience
+    targetAudience: typeof rawPositioning.targetAudience === "string" && rawPositioning.targetAudience.trim().length > 0
+      ? rawPositioning.targetAudience
       : fallback.positioning.targetAudience,
-    differentiator: typeof rawJson?.positioning?.differentiator === "string" && rawJson.positioning.differentiator.trim().length > 0
-      ? rawJson.positioning.differentiator
+    differentiator: typeof rawPositioning.differentiator === "string" && rawPositioning.differentiator.trim().length > 0
+      ? rawPositioning.differentiator
       : fallback.positioning.differentiator,
-    elevatorPitch: typeof rawJson?.positioning?.elevatorPitch === "string" && rawJson.positioning.elevatorPitch.trim().length > 0
-      ? rawJson.positioning.elevatorPitch
+    elevatorPitch: typeof rawPositioning.elevatorPitch === "string" && rawPositioning.elevatorPitch.trim().length > 0
+      ? rawPositioning.elevatorPitch
       : fallback.positioning.elevatorPitch,
   };
 
-  const growthRoadmap = Array.isArray(rawJson?.growthRoadmap) && rawJson.growthRoadmap.length > 0
-    ? rawJson.growthRoadmap.map((phase: any, index: number) => {
+  const growthRoadmap = Array.isArray(rawJson.growthRoadmap) && rawJson.growthRoadmap.length > 0
+    ? (rawJson.growthRoadmap as UnknownRecord[]).map((phase, index) => {
         const fallbackPhase = fallback.growthRoadmap[index] || fallback.growthRoadmap[0];
-        const days = ["30 Days", "60 Days", "90 Days"].includes(phase?.days)
-          ? phase.days
+        const days = typeof phase?.days === "string" && ["30 Days", "60 Days", "90 Days"].includes(phase.days)
+          ? (phase.days as "30 Days" | "60 Days" | "90 Days")
           : fallbackPhase.days;
 
         return {
@@ -42,31 +46,35 @@ function validateAndSanitizeAiOutput(
           phaseTitle: typeof phase?.phaseTitle === "string" ? phase.phaseTitle : fallbackPhase.phaseTitle,
           phaseObjective: typeof phase?.phaseObjective === "string" ? phase.phaseObjective : fallbackPhase.phaseObjective,
           milestones: Array.isArray(phase?.milestones) && phase.milestones.length > 0
-            ? phase.milestones.map((m: any) => ({
+            ? (phase.milestones as UnknownRecord[]).map((m) => ({
                 title: typeof m?.title === "string" ? m.title : "Key Execution Milestone",
                 description: typeof m?.description === "string" ? m.description : "",
                 tag: typeof m?.tag === "string" ? m.tag : "Growth",
               }))
             : fallbackPhase.milestones,
           contentGaps: Array.isArray(phase?.contentGaps) && phase.contentGaps.length > 0
-            ? phase.contentGaps.map((g: any) => ({
+            ? (phase.contentGaps as UnknownRecord[]).map((g) => ({
                 gap: typeof g?.gap === "string" ? g.gap : (typeof g === "string" ? g : "Content cadence gap"),
                 reason: typeof g?.reason === "string" ? g.reason : "Impacting engagement retention.",
-                impactLevel: ["Critical", "High", "Medium"].includes(g?.impactLevel) ? g.impactLevel : "High",
+                impactLevel: typeof g?.impactLevel === "string" && ["Critical", "High", "Medium"].includes(g.impactLevel)
+                  ? (g.impactLevel as "Critical" | "High" | "Medium")
+                  : ("High" as const),
               }))
             : fallbackPhase.contentGaps,
           skillsToImprove: Array.isArray(phase?.skillsToImprove) && phase.skillsToImprove.length > 0
-            ? phase.skillsToImprove.map((s: any) => ({
+            ? (phase.skillsToImprove as UnknownRecord[]).map((s) => ({
                 skill: typeof s?.skill === "string" ? s.skill : (typeof s === "string" ? s : "Core skill priority"),
-                category: ["Content Production", "Commercial & Pitching", "Audience Retention", "Legal & Compliance", "Strategy"].includes(s?.category)
-                  ? s.category
-                  : "Content Production",
-                priority: ["Critical", "High", "Medium"].includes(s?.priority) ? s.priority : "High",
+                category: typeof s?.category === "string" && ["Content Production", "Commercial & Pitching", "Audience Retention", "Legal & Compliance", "Strategy"].includes(s.category)
+                  ? (s.category as "Content Production" | "Commercial & Pitching" | "Audience Retention" | "Legal & Compliance" | "Strategy")
+                  : ("Content Production" as const),
+                priority: typeof s?.priority === "string" && ["Critical", "High", "Medium"].includes(s.priority)
+                  ? (s.priority as "Critical" | "High" | "Medium")
+                  : ("High" as const),
                 actionStep: typeof s?.actionStep === "string" ? s.actionStep : "Implement daily practice routine.",
               }))
             : fallbackPhase.skillsToImprove,
           topicOpportunities: Array.isArray(phase?.topicOpportunities) && phase.topicOpportunities.length > 0
-            ? phase.topicOpportunities.map((t: any) => ({
+            ? (phase.topicOpportunities as UnknownRecord[]).map((t) => ({
                 title: typeof t?.title === "string" ? t.title : "High Impact Content Angle",
                 hookAngle: typeof t?.hookAngle === "string" ? t.hookAngle : "Address core audience pain point.",
                 suggestedFormat: typeof t?.suggestedFormat === "string" ? t.suggestedFormat : "Short-form video",
@@ -77,11 +85,13 @@ function validateAndSanitizeAiOutput(
       })
     : fallback.growthRoadmap;
 
-  const monetisationPathways = Array.isArray(rawJson?.monetisationPathways) && rawJson.monetisationPathways.length > 0
-    ? rawJson.monetisationPathways.map((m: any, index: number) => {
+  const monetisationPathways = Array.isArray(rawJson.monetisationPathways) && rawJson.monetisationPathways.length > 0
+    ? (rawJson.monetisationPathways as UnknownRecord[]).map((m, index) => {
         const fallbackChannel = fallback.monetisationPathways[index] || fallback.monetisationPathways[0];
         const validCategories = ["brand_collaborations", "affiliate_marketing", "consulting_services", "digital_products", "pr_speaking"];
-        const category = validCategories.includes(m?.category) ? m.category : fallbackChannel.category;
+        const category = typeof m?.category === "string" && validCategories.includes(m.category)
+          ? (m.category as "brand_collaborations" | "affiliate_marketing" | "consulting_services" | "digital_products" | "pr_speaking")
+          : fallbackChannel.category;
 
         return {
           channelTitle: typeof m?.channelTitle === "string" ? m.channelTitle : fallbackChannel.channelTitle,
@@ -92,30 +102,36 @@ function validateAndSanitizeAiOutput(
           whyItSuits: typeof m?.whyItSuits === "string" ? m.whyItSuits : fallbackChannel.whyItSuits,
           suggestedFirstStep: typeof m?.suggestedFirstStep === "string" ? m.suggestedFirstStep : fallbackChannel.suggestedFirstStep,
           estimatedPotential: typeof m?.estimatedPotential === "string" ? m.estimatedPotential : fallbackChannel.estimatedPotential,
-          readinessStatus: ["Ready to Launch", "High Opportunity", "Scale Phase"].includes(m?.readinessStatus)
-            ? m.readinessStatus
+          readinessStatus: typeof m?.readinessStatus === "string" && ["Ready to Launch", "High Opportunity", "Scale Phase"].includes(m.readinessStatus)
+            ? (m.readinessStatus as "Ready to Launch" | "High Opportunity" | "Scale Phase")
             : fallbackChannel.readinessStatus,
           launchChecklist: Array.isArray(m?.launchChecklist) && m.launchChecklist.length > 0
-            ? m.launchChecklist.map((c: any) => String(c))
+            ? (m.launchChecklist as unknown[]).map((c) => String(c))
             : fallbackChannel.launchChecklist,
         };
       })
     : fallback.monetisationPathways;
 
-  const nextActions = Array.isArray(rawJson?.nextActions) && rawJson.nextActions.length > 0
-    ? rawJson.nextActions.map((a: any, index: number) => {
+  const nextActions = Array.isArray(rawJson.nextActions) && rawJson.nextActions.length > 0
+    ? (rawJson.nextActions as UnknownRecord[]).map((a, index) => {
         const fallbackAction = fallback.nextActions[index] || fallback.nextActions[0];
         const validCategories = ["Growth", "Monetisation", "Brand Pitch", "Audience Trust"];
-        const category = validCategories.includes(a?.category) ? a?.category : fallbackAction.category;
+        const category = typeof a?.category === "string" && validCategories.includes(a.category)
+          ? (a.category as "Growth" | "Monetisation" | "Brand Pitch" | "Audience Trust")
+          : fallbackAction.category;
 
         return {
           title: typeof a?.title === "string" ? a.title : fallbackAction.title,
           category,
-          priority: ["High", "Medium", "Low"].includes(a?.priority) ? a.priority : "High",
+          priority: typeof a?.priority === "string" && ["High", "Medium", "Low"].includes(a.priority)
+            ? (a.priority as "High" | "Medium" | "Low")
+            : ("High" as const),
           reason: typeof a?.reason === "string" ? a.reason : fallbackAction.reason,
           deadline: typeof a?.deadline === "string" ? a.deadline : "In 5 days",
           estimatedTime: typeof a?.estimatedTime === "string" ? a.estimatedTime : "45 mins",
-          relatedType: ["roadmap", "opportunity", "monetisation", "goal"].includes(a?.relatedType) ? a.relatedType : fallbackAction.relatedType,
+          relatedType: typeof a?.relatedType === "string" && ["roadmap", "opportunity", "monetisation", "goal"].includes(a.relatedType)
+            ? (a.relatedType as "roadmap" | "opportunity" | "monetisation" | "goal")
+            : fallbackAction.relatedType,
           relatedTitle: typeof a?.relatedTitle === "string" ? a.relatedTitle : fallbackAction.relatedTitle,
         };
       })
@@ -277,14 +293,15 @@ CRITICAL GOVERNANCE REQUIREMENTS:
           setTimeout(() => reject(new Error(`Model ${model} timed out after 20 seconds`)), 20000)
         );
 
-        const response: any = await Promise.race([callPromise, timeoutPromise]);
+        const response = (await Promise.race([callPromise, timeoutPromise])) as { text?: string } | undefined;
         if (response?.text) {
           responseText = response.text;
           modelUsed = model;
           break;
         }
-      } catch (err: any) {
-        console.warn(`Gemini generation with ${model} encountered notice:`, err?.message || err);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.warn(`Gemini generation with ${model} encountered notice:`, message);
       }
     }
 
@@ -304,8 +321,9 @@ CRITICAL GOVERNANCE REQUIREMENTS:
     const sanitizedResult = validateAndSanitizeAiOutput(parsedJson, creator, modelUsed);
 
     return NextResponse.json(sanitizedResult);
-  } catch (err: any) {
-    console.error("Gemini API Error in /api/recommendations:", err?.message || err);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("Gemini API Error in /api/recommendations:", message);
 
     // If an error or rate limit occurs, gracefully fall back to deterministic response
     // rather than breaking the application experience
@@ -333,7 +351,7 @@ CRITICAL GOVERNANCE REQUIREMENTS:
         monthlyGrowthRate: 5.0,
         avgImpressionsPerPost: 15000,
       },
-      `Gemini service notice: ${err?.message || "Temporarily unavailable"}. Switched to deterministic recommendations.`
+      `Gemini service notice: ${message || "Temporarily unavailable"}. Switched to deterministic recommendations.`
     );
 
     return NextResponse.json(fallback, { status: 200 });

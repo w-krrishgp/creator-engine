@@ -215,14 +215,15 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         } else {
           setSupabaseStatusMessage(`Supabase connection error: ${conn.errorMessage || "Unknown error"}`);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         setIsSupabaseConnected(false);
-        setSupabaseStatusMessage(`Supabase connection failed: ${err?.message || "Check network/credentials"}`);
+        const errorMessage = err instanceof Error ? err.message : "Check network/credentials";
+        setSupabaseStatusMessage(`Supabase connection failed: ${errorMessage}`);
       }
     };
 
     checkSupabase();
-  }, []);
+  }, [activeCreatorId]);
 
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
 
@@ -817,7 +818,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
           showToast(`Live recommendations synthesized via ${data.modelUsed || "Gemini"}!`, "success");
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("AI recommendation error:", err);
       showToast("Unable to refresh recommendations via Gemini API. Local cache preserved.", "warning");
     } finally {
@@ -845,7 +846,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         setSupabaseStatusMessage(`Supabase connection failed: ${conn.errorMessage || "Unknown"}`);
         showToast("Supabase connection failed. Switched to offline demo mode.", "warning");
       }
-    } catch (err: any) {
+    } catch {
       setIsSupabaseConnected(false);
       showToast("Supabase synchronization error.", "warning");
     }

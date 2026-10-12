@@ -4,6 +4,7 @@ import {
   Opportunity,
   ActionItem,
   ActionStatus,
+  PlatformType,
 } from "@/types/creator";
 
 export interface SyncStatus {
@@ -51,8 +52,9 @@ export const supabaseService = {
         connected: true,
         lastSyncedAt: new Date().toISOString(),
       };
-    } catch (err: any) {
-      return { isConfigured: true, connected: false, errorMessage: err.message };
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      return { isConfigured: true, connected: false, errorMessage };
     }
   },
 
@@ -165,27 +167,27 @@ export const supabaseService = {
 
       if (error || !data) return null;
 
-      return data.map((d: any) => ({
-        id: d.id,
-        brand: d.brand,
-        brandLogo: d.brand_logo,
-        brandCategory: d.brand_category,
-        title: d.title,
-        description: d.description,
-        niche: Array.isArray(d.niche) ? d.niche : [],
-        platform: d.platform,
-        minFollowers: d.min_followers,
+      return (data as Array<Record<string, unknown>>).map((d) => ({
+        id: String(d.id),
+        brand: String(d.brand),
+        brandLogo: d.brand_logo ? String(d.brand_logo) : "",
+        brandCategory: String(d.brand_category),
+        title: String(d.title),
+        description: String(d.description),
+        niche: Array.isArray(d.niche) ? (d.niche as string[]) : [],
+        platform: (d.platform as PlatformType | "Multi-Platform") || "Multi-Platform",
+        minFollowers: Number(d.min_followers),
         minEngagementRate: d.min_engagement_rate ? Number(d.min_engagement_rate) : undefined,
-        budgetRange: d.budget_range,
+        budgetRange: String(d.budget_range),
         budgetMin: Number(d.budget_min),
         budgetMax: Number(d.budget_max),
-        deadline: d.deadline,
-        deliverables: Array.isArray(d.deliverables) ? d.deliverables : [],
+        deadline: String(d.deadline),
+        deliverables: Array.isArray(d.deliverables) ? (d.deliverables as string[]) : [],
         status: "Available" as const,
-        targetAudience: d.target_audience || "",
-        targetLocation: d.target_location,
-        eligibilityRequirements: Array.isArray(d.eligibility_requirements) ? d.eligibility_requirements : [],
-        perks: Array.isArray(d.perks) ? d.perks : [],
+        targetAudience: d.target_audience ? String(d.target_audience) : "",
+        targetLocation: d.target_location ? String(d.target_location) : undefined,
+        eligibilityRequirements: Array.isArray(d.eligibility_requirements) ? (d.eligibility_requirements as string[]) : [],
+        perks: Array.isArray(d.perks) ? (d.perks as string[]) : [],
         sponsoredTag: Boolean(d.sponsored_tag),
       }));
     } catch {
@@ -236,21 +238,21 @@ export const supabaseService = {
 
       if (error || !data) return null;
 
-      return data.map((d: any) => ({
-        id: d.id,
-        creatorId: d.creator_id,
-        title: d.title,
-        category: d.category,
-        priority: d.priority,
-        reason: d.reason,
-        deadline: d.deadline,
-        estimatedTime: d.estimated_time,
+      return (data as Array<Record<string, unknown>>).map((d) => ({
+        id: String(d.id),
+        creatorId: String(d.creator_id || creatorId),
+        title: String(d.title),
+        category: d.category as ActionItem["category"],
+        priority: d.priority as ActionItem["priority"],
+        reason: String(d.reason),
+        deadline: String(d.deadline),
+        estimatedTime: String(d.estimated_time),
         status: d.status as ActionStatus,
         completed: Boolean(d.completed),
-        relatedType: d.related_type,
-        relatedId: d.related_id,
-        relatedTitle: d.related_title,
-        relatedLink: d.related_link,
+        relatedType: d.related_type as ActionItem["relatedType"],
+        relatedId: d.related_id ? String(d.related_id) : undefined,
+        relatedTitle: d.related_title ? String(d.related_title) : undefined,
+        relatedLink: d.related_link ? String(d.related_link) : undefined,
       }));
     } catch {
       return null;
