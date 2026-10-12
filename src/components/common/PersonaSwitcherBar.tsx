@@ -4,6 +4,7 @@ import React from "react";
 import { useCreator } from "@/context/CreatorContext";
 import { Badge } from "@/components/common/Badge";
 import { Zap } from "lucide-react";
+import { PlanBadge } from "@/components/subscription/PlanBadge";
 
 interface PersonaSwitcherBarProps {
   subtitle?: string;
@@ -37,6 +38,7 @@ export function PersonaSwitcherBar({ subtitle }: PersonaSwitcherBarProps) {
             <Badge variant="blue" size="sm">
               {activeCreator.niche}
             </Badge>
+            <PlanBadge size="xs" linkToPricing />
             {isDemoMode ? (
               <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200/80">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />

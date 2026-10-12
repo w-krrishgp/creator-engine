@@ -15,7 +15,9 @@ import {
   Sparkles,
   CheckCircle2,
   SlidersHorizontal,
+  CreditCard,
 } from "lucide-react";
+import { PlanBadge } from "@/components/subscription/PlanBadge";
 
 interface SidebarProps {
   onMobileClose?: () => void;
@@ -31,6 +33,8 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
     completedActionsCount,
     totalActionsCount,
     appliedOpportunitiesCount,
+    currentPlanId,
+    currentPlan,
   } = useCreator();
 
   // Navigation ordered as requested: Home, Roadmap, Monetisation, Opportunities, Workflow, Actions, Profile
@@ -82,6 +86,18 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
       icon: UserCheck,
       badge: `${profileCompletion}%`,
       badgeColor: profileCompletion >= 90 ? "bg-emerald-50 text-emerald-700 border-emerald-200/80 font-bold" : "bg-blue-50 text-[#0870e8] border-blue-200/80 font-bold",
+    },
+    {
+      name: "Pricing",
+      href: "/pricing",
+      icon: CreditCard,
+      badge: currentPlan.name,
+      badgeColor:
+        currentPlanId === "pro_plus"
+          ? "bg-purple-50 text-purple-700 border-purple-200/80 font-bold"
+          : currentPlanId === "pro"
+          ? "bg-blue-50 text-[#0870e8] border-blue-200/80 font-bold"
+          : "bg-slate-100 text-slate-700 border-slate-200/80",
     },
   ];
 
@@ -213,9 +229,12 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
               </div>
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold text-slate-900 truncate leading-tight">
-                {activeCreator.name}
-              </p>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <p className="text-xs font-bold text-slate-900 truncate leading-tight">
+                  {activeCreator.name}
+                </p>
+                <PlanBadge size="xs" linkToPricing />
+              </div>
               <p className="text-[10px] text-slate-400 truncate">
                 {activeCreator.followerCount.toLocaleString()} • {activeCreator.primaryPlatform}
               </p>

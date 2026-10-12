@@ -10,6 +10,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { Sidebar } from "./Sidebar";
+import { PlanBadge } from "@/components/subscription/PlanBadge";
 
 export function Header() {
   const pathname = usePathname();
@@ -66,6 +67,12 @@ export function Header() {
           subtitle: "5-stage guided setup for positioning, audience, channels & revenue targets",
           tag: "Setup",
         };
+      case "/pricing":
+        return {
+          title: "Pricing & Memberships",
+          subtitle: "Transparent creator subscription tiers, quotas, and limits",
+          tag: "Pricing",
+        };
       default:
         return {
           title: "Creator Engine",
@@ -113,6 +120,9 @@ export function Header() {
 
         {/* Right: Contextual Actions & Persona Switcher */}
         <div className="flex items-center gap-2.5">
+          {/* Current Membership Plan */}
+          <PlanBadge size="sm" linkToPricing />
+
           {/* Status Indicator */}
           <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/80 text-[11px] font-medium shadow-2xs">
             {isDemoMode ? (

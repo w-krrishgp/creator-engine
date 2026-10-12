@@ -25,6 +25,7 @@ import {
 import { Card, CardHeader, CardContent } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
+import { SubscriptionCard } from "@/components/subscription/SubscriptionCard";
 
 export default function ProfilePage() {
   const {
@@ -574,8 +575,11 @@ export default function ProfilePage() {
           </form>
         </div>
 
-        {/* Right Column: Profile Readiness Gauge & Live Media Kit Card (4 cols) */}
+        {/* Right Column: Profile Readiness Gauge, Subscription, & Live Media Kit Card (4 cols) */}
         <div className="lg:col-span-4 space-y-6">
+          {/* Subscription & Membership Tier Card */}
+          <SubscriptionCard />
+
           {/* Profile Completion Indicator */}
           <Card>
             <CardHeader>

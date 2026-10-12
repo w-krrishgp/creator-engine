@@ -15,6 +15,8 @@ import { MOCK_ROADMAPS } from "@/data/mockRoadmap";
 import { MOCK_ACTIONS } from "@/data/mockActions";
 import { supabaseService } from "@/services/supabaseService";
 import { AiRecommendationsResponse } from "@/types/ai";
+import { PlanId, SubscriptionPlan, SubscriptionRecord } from "@/types/subscription";
+import { SUBSCRIPTION_PLANS, SAMPLE_DEFAULT_SUBSCRIPTIONS } from "@/config/subscriptions";
 
 interface ToastNotification {
   id: string;
@@ -46,6 +48,13 @@ interface CreatorContextType {
   aiModelUsed: string | null;
   refreshAiRecommendations: () => Promise<void>;
   syncWithSupabase: () => Promise<void>;
+  // Subscription System
+  currentPlanId: PlanId;
+  currentPlan: SubscriptionPlan;
+  currentSubscription: SubscriptionRecord | null;
+  isSubscriptionLoading: boolean;
+  subscriptionError: string | null;
+  refreshSubscription: () => Promise<void>;
   // Action Handlers
   switchCreator: (id: string) => void;
   updateCreatorProfile: (data: Partial<CreatorProfile>) => void;
@@ -126,6 +135,11 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   const [lastAiGeneratedAt, setLastAiGeneratedAt] = useState<string | null>(null);
   const [aiModelUsed, setAiModelUsed] = useState<string | null>(null);
 
+  // Subscriptions state
+  const [subscriptionsByCreator, setSubscriptionsByCreator] = useState<Record<string, SubscriptionRecord>>({});
+  const [isSubscriptionLoading, setIsSubscriptionLoading] = useState<boolean>(true);
+  const [subscriptionError, setSubscriptionError] = useState<string | null>(null);
+
   const opportunities = oppsByCreator[activeCreatorId] || MOCK_OPPORTUNITIES;
 
   // Sync from localStorage and check Supabase on client hydration
@@ -178,6 +192,15 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         }
         setActionsByCreator(cleaned);
       }
+
+      // Restore saved subscription from localStorage
+      const savedSub = localStorage.getItem(`creator_engine_sub_${activeCreatorId}`);
+      if (savedSub) {
+        try {
+          const parsedSub = JSON.parse(savedSub);
+          setSubscriptionsByCreator((prev) => ({ ...prev, [activeCreatorId]: parsedSub }));
+        } catch {}
+      }
     } catch {
       // Ignore
     }
@@ -211,6 +234,17 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
           const remoteActions = await supabaseService.getActions(activeCreatorId);
           if (remoteActions && remoteActions.length > 0) {
             setActionsByCreator((prev) => ({ ...prev, [activeCreatorId]: remoteActions }));
+          }
+
+          // Load subscription from Supabase
+          try {
+            const remoteSub = await supabaseService.getSubscription(activeCreatorId);
+            if (remoteSub) {
+              setSubscriptionsByCreator((prev) => ({ ...prev, [activeCreatorId]: remoteSub }));
+              localStorage.setItem(`creator_engine_sub_${activeCreatorId}`, JSON.stringify(remoteSub));
+            }
+          } catch {
+            // Fallback handled locally
           }
         } else {
           setSupabaseStatusMessage(`Supabase connection error: ${conn.errorMessage || "Unknown error"}`);
@@ -872,6 +906,52 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   const currentActions = actionsByCreator[activeCreatorId] || MOCK_ACTIONS[activeCreatorId] || [];
   const currentRoadmaps = roadmapsByCreator[activeCreatorId] || MOCK_ROADMAPS[activeCreatorId] || [];
 
+  // Subscription calculation (using stable baseline dates to ensure pure render and SSR stability)
+  const buildFallbackSubscription = (cid: string): SubscriptionRecord => {
+    const sample = SAMPLE_DEFAULT_SUBSCRIPTIONS[cid] || { planId: "normal" as PlanId, status: "active" as const, priceInr: 0 };
+    return {
+      id: `sub-${cid}-default`,
+      creatorId: cid,
+      userId: null,
+      planId: sample.planId,
+      status: sample.status,
+      billingCycle: "monthly",
+      priceInr: sample.priceInr,
+      currentPeriodStart: "2026-10-01T00:00:00.000Z",
+      currentPeriodEnd: "2026-11-01T00:00:00.000Z",
+      cancelAtPeriodEnd: false,
+      createdAt: "2026-10-01T00:00:00.000Z",
+      updatedAt: "2026-10-01T00:00:00.000Z",
+    };
+  };
+
+  const currentSubscription: SubscriptionRecord =
+    subscriptionsByCreator[activeCreatorId] || buildFallbackSubscription(activeCreatorId);
+  const currentPlanId: PlanId = currentSubscription.planId || "normal";
+  const currentPlan: SubscriptionPlan = SUBSCRIPTION_PLANS[currentPlanId] || SUBSCRIPTION_PLANS.normal;
+
+  const refreshSubscription = async () => {
+    setIsSubscriptionLoading(true);
+    setSubscriptionError(null);
+    try {
+      if (supabaseService.isConfigured()) {
+        const remoteSub = await supabaseService.getSubscription(activeCreatorId);
+        if (remoteSub) {
+          setSubscriptionsByCreator((prev) => ({ ...prev, [activeCreatorId]: remoteSub }));
+          localStorage.setItem(`creator_engine_sub_${activeCreatorId}`, JSON.stringify(remoteSub));
+          setIsSubscriptionLoading(false);
+          return;
+        }
+      }
+      const local = subscriptionsByCreator[activeCreatorId] || buildFallbackSubscription(activeCreatorId);
+      setSubscriptionsByCreator((prev) => ({ ...prev, [activeCreatorId]: local }));
+    } catch (err: unknown) {
+      setSubscriptionError(err instanceof Error ? err.message : "Error refreshing subscription");
+    } finally {
+      setIsSubscriptionLoading(false);
+    }
+  };
+
   const completedActionsCount = currentActions.filter(
     (a) => a.status === "Completed" || a.completed
   ).length;
@@ -906,6 +986,12 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         aiModelUsed,
         refreshAiRecommendations,
         syncWithSupabase,
+        currentPlanId,
+        currentPlan,
+        currentSubscription,
+        isSubscriptionLoading,
+        subscriptionError,
+        refreshSubscription,
         switchCreator,
         updateCreatorProfile,
         resetCreatorProfile,

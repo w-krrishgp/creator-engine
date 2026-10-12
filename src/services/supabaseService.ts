@@ -6,6 +6,7 @@ import {
   ActionStatus,
   PlatformType,
 } from "@/types/creator";
+import { SubscriptionRecord, PlanId } from "@/types/subscription";
 
 export interface SyncStatus {
   isConfigured: boolean;
@@ -296,6 +297,65 @@ export const supabaseService = {
 
     try {
       const { error } = await client.from("action_items").delete().eq("id", actionId);
+      return !error;
+    } catch {
+      return false;
+    }
+  },
+
+  async getSubscription(creatorId: string): Promise<SubscriptionRecord | null> {
+    const client = getSupabaseClient();
+    if (!client) return null;
+
+    try {
+      const { data, error } = await client
+        .from("creator_subscriptions")
+        .select("*")
+        .eq("creator_id", creatorId)
+        .single();
+
+      if (error || !data) return null;
+
+      return {
+        id: String(data.id),
+        creatorId: String(data.creator_id),
+        userId: data.user_id ? String(data.user_id) : null,
+        planId: data.plan_id as PlanId,
+        status: data.status,
+        billingCycle: data.billing_cycle || "monthly",
+        priceInr: Number(data.price_inr || 0),
+        currentPeriodStart: data.current_period_start,
+        currentPeriodEnd: data.current_period_end,
+        cancelAtPeriodEnd: Boolean(data.cancel_at_period_end),
+        createdAt: data.created_at,
+        updatedAt: data.updated_at,
+      };
+    } catch {
+      return null;
+    }
+  },
+
+  async saveSubscription(subscription: SubscriptionRecord): Promise<boolean> {
+    const client = getSupabaseClient();
+    if (!client) return false;
+
+    try {
+      const { error } = await client.from("creator_subscriptions").upsert(
+        {
+          id: subscription.id,
+          creator_id: subscription.creatorId,
+          user_id: subscription.userId || null,
+          plan_id: subscription.planId,
+          status: subscription.status,
+          billing_cycle: subscription.billingCycle,
+          price_inr: subscription.priceInr,
+          current_period_start: subscription.currentPeriodStart,
+          current_period_end: subscription.currentPeriodEnd,
+          cancel_at_period_end: subscription.cancelAtPeriodEnd,
+        },
+        { onConflict: "creator_id" }
+      );
+
       return !error;
     } catch {
       return false;
