@@ -361,34 +361,82 @@ CREATE TABLE IF NOT EXISTS public.creator_subscriptions (
     current_period_start TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     current_period_end TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '30 days'),
     cancel_at_period_end BOOLEAN NOT NULL DEFAULT false,
+    -- Quota & Usage Tracking
+    ai_usage_count INTEGER NOT NULL DEFAULT 0,
+    applications_usage_count INTEGER NOT NULL DEFAULT 0,
+    usage_reset_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '30 days'),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT unique_creator_subscription UNIQUE (creator_id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_creator_subscriptions_creator ON public.creator_subscriptions(creator_id);
+CREATE INDEX IF NOT EXISTS idx_creator_subscriptions_user ON public.creator_subscriptions(user_id);
 CREATE INDEX IF NOT EXISTS idx_creator_subscriptions_plan ON public.creator_subscriptions(plan_id);
+
+-- ------------------------------------------------------------------------------
+-- 10. SUBSCRIPTION USAGE AUDIT LOGS
+-- ------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.subscription_usage_logs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    creator_id TEXT NOT NULL REFERENCES public.creator_profiles(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    action_type TEXT NOT NULL CHECK (action_type IN ('ai_recommendation', 'campaign_application')),
+    plan_id TEXT NOT NULL CHECK (plan_id IN ('normal', 'pro', 'pro_plus')),
+    metadata JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_usage_logs_creator ON public.subscription_usage_logs(creator_id);
+CREATE INDEX IF NOT EXISTS idx_usage_logs_action ON public.subscription_usage_logs(action_type);
 
 DROP TRIGGER IF EXISTS set_timestamp_creator_subscriptions ON public.creator_subscriptions;
 CREATE TRIGGER set_timestamp_creator_subscriptions
     BEFORE UPDATE ON public.creator_subscriptions
     FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
+-- RLS Enforcement
 ALTER TABLE public.creator_subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscription_usage_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Subscriptions select policy" ON public.creator_subscriptions;
 DROP POLICY IF EXISTS "Allow read subscriptions for demo or owner" ON public.creator_subscriptions;
 CREATE POLICY "Allow read subscriptions for demo or owner"
     ON public.creator_subscriptions FOR SELECT
-    USING (creator_id IN ('rahul', 'priya') OR auth.uid() = user_id);
+    TO public
+    USING (
+        creator_id IN ('rahul', 'priya') 
+        OR (auth.uid() IS NOT NULL AND auth.uid() = user_id)
+    );
 
 DROP POLICY IF EXISTS "Allow write subscriptions for demo or owner" ON public.creator_subscriptions;
-CREATE POLICY "Allow write subscriptions for demo or owner"
+DROP POLICY IF EXISTS "Deny client subscription writes" ON public.creator_subscriptions;
+CREATE POLICY "Allow service role full access on subscriptions"
     ON public.creator_subscriptions FOR ALL
-    USING (creator_id IN ('rahul', 'priya') OR auth.uid() = user_id);
+    TO service_role
+    USING (true)
+    WITH CHECK (true);
 
-INSERT INTO public.creator_subscriptions (creator_id, plan_id, status, price_inr)
+DROP POLICY IF EXISTS "Allow read usage logs for demo or owner" ON public.subscription_usage_logs;
+CREATE POLICY "Allow read usage logs for demo or owner"
+    ON public.subscription_usage_logs FOR SELECT
+    TO public
+    USING (
+        creator_id IN ('rahul', 'priya')
+        OR (auth.uid() IS NOT NULL AND auth.uid() = user_id)
+    );
+
+DROP POLICY IF EXISTS "Allow service role full access on usage logs" ON public.subscription_usage_logs;
+CREATE POLICY "Allow service role full access on usage logs"
+    ON public.subscription_usage_logs FOR ALL
+    TO service_role
+    USING (true)
+    WITH CHECK (true);
+
+INSERT INTO public.creator_subscriptions (creator_id, plan_id, status, price_inr, ai_usage_count, applications_usage_count)
 VALUES
-    ('rahul', 'normal', 'active', 0),
-    ('priya', 'pro', 'active', 500)
+    ('rahul', 'normal', 'active', 0, 0, 0),
+    ('priya', 'pro', 'active', 500, 0, 0)
 ON CONFLICT (creator_id) DO NOTHING;
+
 

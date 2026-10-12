@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { Badge } from "../common/Badge";
 
+import { UpgradePromptModal } from "@/components/subscription/UpgradePromptModal";
+
 interface ApplyModalProps {
   opportunity: Opportunity | null;
   isOpen: boolean;
@@ -24,13 +26,15 @@ interface ApplyModalProps {
 }
 
 export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
-  const { activeCreator, applyOpportunity } = useCreator();
+  const { activeCreator, applyOpportunity, subscriptionUsage } = useCreator();
   const [pitchNotes, setPitchNotes] = useState("");
   const [requestedFee, setRequestedFee] = useState("");
   const [agreedToDeliverables, setAgreedToDeliverables] = useState(true);
   const [agreedToCompliance, setAgreedToCompliance] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [confirmedAppId, setConfirmedAppId] = useState<string | null>(null);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [quotaMessage, setQuotaMessage] = useState<string | undefined>(undefined);
 
   if (!isOpen || !opportunity) return null;
 
@@ -45,17 +49,22 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
   const currentPitch = pitchNotes || defaultPitch;
   const suggestedBudget = requestedFee || `₹${((opportunity.budgetMin + opportunity.budgetMax) / 2).toLocaleString()}`;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
 
-    const generatedId = `CE-APP-${Math.floor(1000 + Math.random() * 9000)}`;
+    const result = await applyOpportunity(opportunity.id, currentPitch, suggestedBudget);
+    setSubmitting(false);
 
-    setTimeout(() => {
-      applyOpportunity(opportunity.id, currentPitch, suggestedBudget);
-      setSubmitting(false);
-      setConfirmedAppId(generatedId);
-    }, 450);
+    if (result && result.quotaExceeded) {
+      setQuotaMessage(result.reason || "Monthly campaign application limit reached.");
+      setUpgradeModalOpen(true);
+      return;
+    }
+
+    if (result && result.success) {
+      setConfirmedAppId(result.applicationReference || "CE-APP-CONFIRMED");
+    }
   };
 
   const handleCloseAndReset = () => {
@@ -309,12 +318,21 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] disabled:opacity-50 text-white font-bold text-xs shadow-xs hover:shadow-sm transition-all btn-tactile"
               >
                 <Send className="w-3.5 h-3.5" />
-                <span>{submitting ? "Submitting Application..." : "Submit Application"}</span>
+                {submitting ? 'Submitting...' : 'Submit Pitch Application'}
               </button>
             </div>
           </form>
         )}
       </div>
+
+      <UpgradePromptModal
+        isOpen={upgradeModalOpen}
+        onClose={() => setUpgradeModalOpen(false)}
+        limitType="applications"
+        customMessage={quotaMessage}
+        currentUsageCount={subscriptionUsage?.applicationsUsage}
+        resetDate={subscriptionUsage?.usageResetAt}
+      />
     </div>
   );
 }

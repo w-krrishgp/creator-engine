@@ -3,6 +3,7 @@ import { GoogleGenAI } from "@google/genai";
 import { CreatorProfile } from "@/types/creator";
 import { AiRecommendationsResponse } from "@/types/ai";
 import { generateFallbackRecommendations } from "@/lib/ai/fallbackRecommendations";
+import { verifyAndConsumeAiQuota } from "@/lib/subscription/serverGate";
 
 
 type UnknownRecord = Record<string, unknown>;
@@ -178,6 +179,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // SERVER-SIDE SUBSCRIPTION & QUOTA GATEKEEPER
+    // Enforces verified subscription and quota limits directly on the server.
+    // Never trusts client-supplied plan parameters.
+    const quotaCheck = await verifyAndConsumeAiQuota(creator.id);
+    if (!quotaCheck.authorized) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "QUOTA_EXCEEDED",
+          message: quotaCheck.reason,
+          planId: quotaCheck.verifiedSub.planId,
+          planName: quotaCheck.verifiedSub.plan.name,
+          aiUsage: quotaCheck.verifiedSub.aiUsage,
+          aiLimit: quotaCheck.verifiedSub.aiLimit,
+          usageResetAt: quotaCheck.verifiedSub.usageResetAt,
+          upgradeRequired: quotaCheck.verifiedSub.planId === "normal" ? "pro" : "pro_plus",
+        },
+        { status: 403 }
+      );
+    }
+
     const apiKey = process.env.GEMINI_API_KEY;
     const isApiKeyMissingOrPlaceholder =
       !apiKey ||
@@ -334,7 +356,15 @@ CRITICAL GOVERNANCE REQUIREMENTS:
     const parsedJson = JSON.parse(cleanedJsonText);
     const sanitizedResult = validateAndSanitizeAiOutput(parsedJson, creator, modelUsed);
 
-    return NextResponse.json(sanitizedResult);
+    return NextResponse.json({
+      ...sanitizedResult,
+      usage: {
+        aiUsage: quotaCheck.verifiedSub.aiUsage,
+        aiLimit: quotaCheck.verifiedSub.aiLimit,
+        aiRemaining: quotaCheck.verifiedSub.aiRemaining,
+        usageResetAt: quotaCheck.verifiedSub.usageResetAt,
+      },
+    });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("Gemini API Error in /api/recommendations:", message);

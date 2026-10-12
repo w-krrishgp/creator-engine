@@ -26,6 +26,7 @@ import { Badge } from "@/components/common/Badge";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
 import { PersonaSwitcherBar } from "@/components/common/PersonaSwitcherBar";
 import { HackathonDemoBar } from "@/components/common/HackathonDemoBar";
+import { UpgradePromptModal } from "@/components/subscription/UpgradePromptModal";
 
 export default function ActionsPage() {
   const {
@@ -39,6 +40,9 @@ export default function ActionsPage() {
     totalActionsCount,
     refreshAiRecommendations,
     isAiGenerating,
+    currentPlan,
+    currentPlanId,
+    subscriptionUsage,
   } = useCreator();
 
   // Filter & Search state
@@ -46,6 +50,7 @@ export default function ActionsPage() {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
 
   // New action form state
   const [newTitle, setNewTitle] = useState("");
@@ -98,7 +103,7 @@ export default function ActionsPage() {
     e.preventDefault();
     if (!newTitle.trim()) return;
 
-    addAction({
+    const success = addAction({
       title: newTitle.trim(),
       priority: newPriority,
       category: newCategory,
@@ -120,6 +125,12 @@ export default function ActionsPage() {
           ? "/profile"
           : undefined,
     });
+
+    if (!success) {
+      setIsModalOpen(false);
+      setUpgradeModalOpen(true);
+      return;
+    }
 
     setNewTitle("");
     setNewReason("");
@@ -165,6 +176,13 @@ export default function ActionsPage() {
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap self-start sm:self-auto">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 text-xs font-mono font-bold">
+            <span>Capacity:</span>
+            <span className={actions.length >= currentPlan.limits.maxActiveActions ? "text-amber-600 font-extrabold" : "text-[#0870e8]"}>
+              {actions.length}/{currentPlan.limits.maxActiveActions}
+            </span>
+            <span className="text-[10px] text-slate-400 font-sans uppercase">({currentPlan.name})</span>
+          </div>
           <button
             onClick={refreshAiRecommendations}
             disabled={isAiGenerating}
@@ -174,7 +192,13 @@ export default function ActionsPage() {
             <span>{isAiGenerating ? "Synthesizing AI Actions..." : "AI Prioritize Actions"}</span>
           </button>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              if (actions.length >= currentPlan.limits.maxActiveActions) {
+                setUpgradeModalOpen(true);
+                return;
+              }
+              setIsModalOpen(true);
+            }}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0761c9] text-white font-bold text-xs shadow-[0_4px_14px_rgba(8,112,232,0.25)] transition-all cursor-pointer btn-tactile"
           >
             <Plus className="w-4 h-4" />
@@ -698,6 +722,15 @@ export default function ActionsPage() {
           </div>
         </div>
       )}
+
+      {/* Subscription Capacity Upgrade Prompt Modal */}
+      <UpgradePromptModal
+        isOpen={upgradeModalOpen}
+        onClose={() => setUpgradeModalOpen(false)}
+        limitType="actions"
+        currentUsageCount={actions.length}
+        resetDate={subscriptionUsage?.usageResetAt}
+      />
     </div>
   );
 }

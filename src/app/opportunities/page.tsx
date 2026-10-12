@@ -20,7 +20,7 @@ import { PersonaSwitcherBar } from "@/components/common/PersonaSwitcherBar";
 import { HackathonDemoBar } from "@/components/common/HackathonDemoBar";
 
 export default function OpportunitiesPage() {
-  const { activeCreator, opportunities } = useCreator();
+  const { activeCreator, opportunities, currentPlan, currentPlanId, subscriptionUsage } = useCreator();
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState("");
@@ -130,6 +130,43 @@ export default function OpportunitiesPage() {
 
       {/* 2. CONSISTENT PERSONA SWITCHER BAR */}
       <PersonaSwitcherBar subtitle="Campaign compatibility scores and hard eligibility checks dynamically recalculate based on the active persona's metrics." />
+
+      {/* 2.1 MONTHLY APPLICATION QUOTA & RESET BANNER */}
+      <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/60">
+            <Briefcase className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold text-slate-900">
+                Monthly Brand Application Quota
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 uppercase">
+                {currentPlan.name}
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Server-enforced limit on concurrent sponsor pitches per billing cycle.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="text-right">
+            <div className="font-mono font-bold text-slate-800">
+              <span className={subscriptionUsage && subscriptionUsage.applicationsRemaining <= 0 ? "text-amber-600 font-extrabold" : "text-emerald-700 font-extrabold"}>
+                {subscriptionUsage?.applicationsUsage ?? 0}
+              </span>
+              {" / "}
+              <span>{subscriptionUsage?.applicationsLimit ?? currentPlan.limits.maxApplicationsPerMonth}</span> deals used
+            </div>
+            <div className="text-[10px] text-slate-400 font-mono">
+              Resets on: {subscriptionUsage?.usageResetAt ? new Date(subscriptionUsage.usageResetAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Next cycle"}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Header and Marketplace Stats Overview */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">

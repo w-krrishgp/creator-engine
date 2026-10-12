@@ -6,7 +6,7 @@ import { useCreator } from "@/context/CreatorContext";
 import { SUBSCRIPTION_PLANS } from "@/config/subscriptions";
 import { PlanId, SubscriptionPlan } from "@/types/subscription";
 import { PlanBadge } from "@/components/subscription/PlanBadge";
-import { CheckoutNoticeModal } from "@/components/subscription/CheckoutNoticeModal";
+import { RazorpayCheckoutModal } from "@/components/subscription/RazorpayCheckoutModal";
 import {
   Check,
   X,
@@ -401,8 +401,8 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* Checkout Sandbox Notice Modal */}
-      <CheckoutNoticeModal
+      {/* Razorpay Interactive Subscription Checkout Modal */}
+      <RazorpayCheckoutModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         targetPlan={selectedPlanForModal}

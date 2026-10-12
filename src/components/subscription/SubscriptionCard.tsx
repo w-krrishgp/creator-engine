@@ -177,13 +177,19 @@ export function SubscriptionCard() {
               </div>
             </div>
 
-            {/* Actions: Upgrade / Compare Plans */}
-            <div className="pt-2 space-y-2">
+            {/* Actions: Upgrade / Manage Subscription */}
+            <div className="pt-2 flex items-center gap-2">
+              <Link
+                href="/subscription"
+                className="btn-tactile flex-1 py-2 px-3 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all text-center"
+              >
+                Manage Billing
+              </Link>
               <Link
                 href="/pricing"
-                className="btn-tactile w-full py-2.5 px-4 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs"
+                className="btn-tactile flex-1 py-2 px-3 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white text-xs font-bold transition-all text-center flex items-center justify-center gap-1 shadow-xs"
               >
-                <span>{currentPlanId === "pro_plus" ? "View Plan Benefits" : "Upgrade Membership Plan"}</span>
+                <span>{currentPlanId === "pro_plus" ? "Pricing" : "Upgrade"}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>

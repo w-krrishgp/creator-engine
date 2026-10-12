@@ -99,6 +99,13 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
           ? "bg-blue-50 text-[#0870e8] border-blue-200/80 font-bold"
           : "bg-slate-100 text-slate-700 border-slate-200/80",
     },
+    {
+      name: "Billing",
+      href: "/subscription",
+      icon: SlidersHorizontal,
+      badge: "Manage",
+      badgeColor: "bg-slate-100 text-slate-600 border-slate-200/80",
+    },
   ];
 
   return (

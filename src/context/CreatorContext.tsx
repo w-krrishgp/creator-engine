@@ -15,7 +15,7 @@ import { MOCK_ROADMAPS } from "@/data/mockRoadmap";
 import { MOCK_ACTIONS } from "@/data/mockActions";
 import { supabaseService } from "@/services/supabaseService";
 import { AiRecommendationsResponse } from "@/types/ai";
-import { PlanId, SubscriptionPlan, SubscriptionRecord } from "@/types/subscription";
+import { PlanId, SubscriptionPlan, SubscriptionRecord, SubscriptionUsage } from "@/types/subscription";
 import { SUBSCRIPTION_PLANS, SAMPLE_DEFAULT_SUBSCRIPTIONS } from "@/config/subscriptions";
 
 interface ToastNotification {
@@ -46,15 +46,17 @@ interface CreatorContextType {
   isAiGenerating: boolean;
   lastAiGeneratedAt: string | null;
   aiModelUsed: string | null;
-  refreshAiRecommendations: () => Promise<void>;
+  refreshAiRecommendations: () => Promise<{ success: boolean; quotaExceeded?: boolean; reason?: string }>;
   syncWithSupabase: () => Promise<void>;
   // Subscription System
   currentPlanId: PlanId;
   currentPlan: SubscriptionPlan;
   currentSubscription: SubscriptionRecord | null;
+  subscriptionUsage: SubscriptionUsage | null;
   isSubscriptionLoading: boolean;
   subscriptionError: string | null;
   refreshSubscription: () => Promise<void>;
+  refreshSubscriptionUsage: () => Promise<void>;
   // Action Handlers
   switchCreator: (id: string) => void;
   updateCreatorProfile: (data: Partial<CreatorProfile>) => void;
@@ -63,9 +65,13 @@ interface CreatorContextType {
   toggleAction: (id: string) => void;
   updateActionStatus: (id: string, status: ActionStatus) => void;
   deleteAction: (id: string) => void;
-  addAction: (item: Omit<ActionItem, "id" | "creatorId">) => void;
+  addAction: (item: Omit<ActionItem, "id" | "creatorId">) => boolean;
   toggleMilestone: (phaseId: string, milestoneId: string) => void;
-  applyOpportunity: (oppId: string, notes?: string, requestedFee?: string) => void;
+  applyOpportunity: (
+    oppId: string,
+    notes?: string,
+    requestedFee?: string
+  ) => Promise<{ success: boolean; applicationReference?: string; quotaExceeded?: boolean; reason?: string }>;
   saveOpportunity: (oppId: string) => void;
   withdrawApplication: (oppId: string) => void;
   resetAllDemoData: () => void;
@@ -137,8 +143,39 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
 
   // Subscriptions state
   const [subscriptionsByCreator, setSubscriptionsByCreator] = useState<Record<string, SubscriptionRecord>>({});
+  const [usageByCreator, setUsageByCreator] = useState<Record<string, SubscriptionUsage>>({});
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState<boolean>(true);
   const [subscriptionError, setSubscriptionError] = useState<string | null>(null);
+
+  const fetchSubscriptionUsage = async (creatorId: string) => {
+    try {
+      const res = await fetch(`/api/subscription/usage?creatorId=${encodeURIComponent(creatorId)}`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.usage) {
+          setUsageByCreator((prev) => ({ ...prev, [creatorId]: json.usage }));
+          if (json.planId) {
+            setSubscriptionsByCreator((prev) => {
+              const existing = prev[creatorId] || buildFallbackSubscription(creatorId);
+              return {
+                ...prev,
+                [creatorId]: {
+                  ...existing,
+                  planId: json.planId,
+                  status: json.status || existing.status,
+                  priceInr: json.priceInr ?? existing.priceInr,
+                  currentPeriodStart: json.currentPeriodStart || existing.currentPeriodStart,
+                  currentPeriodEnd: json.currentPeriodEnd || existing.currentPeriodEnd,
+                },
+              };
+            });
+          }
+        }
+      }
+    } catch {
+      // Ignore network errors in local dev
+    }
+  };
 
   const opportunities = oppsByCreator[activeCreatorId] || MOCK_OPPORTUNITIES;
 
@@ -273,6 +310,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
 
     checkSupabase();
     checkGemini();
+    fetchSubscriptionUsage(activeCreatorId);
   }, [activeCreatorId]);
 
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
@@ -297,6 +335,9 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     } catch {
       // Ignore
     }
+
+    // Refresh subscription usage and verified tier for switched creator
+    fetchSubscriptionUsage(id);
 
     // Try fetching profile and actions for switched creator from Supabase if connected
     if (isSupabaseConnected) {
@@ -448,23 +489,32 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     showToast("Action item removed from queue", "info");
   };
 
-  const addAction = (item: Omit<ActionItem, "id" | "creatorId">) => {
+  const addAction = (item: Omit<ActionItem, "id" | "creatorId">): boolean => {
+    const currentList = actionsByCreator[activeCreatorId] || [];
+    if (currentList.length >= currentPlan.limits.maxActiveActions) {
+      showToast(
+        `Action Centre capacity reached (${currentList.length}/${currentPlan.limits.maxActiveActions} tasks). Complete active items or upgrade to ${currentPlanId === "normal" ? "Pro" : "Pro+"}.`,
+        "warning"
+      );
+      return false;
+    }
+
     const newItem: ActionItem = {
       ...item,
       id: `act-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
       creatorId: activeCreatorId,
     };
 
-    setActionsByCreator((prev) => {
-      const currentList = prev[activeCreatorId] || [];
-      const titleLower = newItem.title.toLowerCase().trim();
-      const existing = currentList.find((a) => a.title.toLowerCase().trim() === titleLower);
-      if (existing) {
-        showToast("This action is already in your execution queue", "warning");
-        return prev;
-      }
+    const titleLower = newItem.title.toLowerCase().trim();
+    const existing = currentList.find((a) => a.title.toLowerCase().trim() === titleLower);
+    if (existing) {
+      showToast("This action is already in your execution queue", "warning");
+      return false;
+    }
 
-      const updatedList = [newItem, ...currentList];
+    setActionsByCreator((prev) => {
+      const list = prev[activeCreatorId] || [];
+      const updatedList = [newItem, ...list];
       const next = { ...prev, [activeCreatorId]: updatedList };
       try {
         localStorage.setItem("creator_engine_actions", JSON.stringify(next));
@@ -480,6 +530,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     });
 
     showToast(`Added to Action Centre: "${newItem.title.slice(0, 30)}..."`, "success");
+    return true;
   };
 
   const toggleMilestone = (phaseId: string, milestoneId: string) => {
@@ -521,86 +572,155 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const applyOpportunity = (oppId: string, notes?: string, requestedFee?: string) => {
+  const applyOpportunity = async (
+    oppId: string,
+    notes?: string,
+    requestedFee?: string
+  ): Promise<{ success: boolean; applicationReference?: string; quotaExceeded?: boolean; reason?: string }> => {
     const targetOpp = opportunities.find((o) => o.id === oppId);
-    const newAppRef = `CE-APP-${Math.floor(1000 + Math.random() * 9000)}`;
 
-    setOppsByCreator((prev) => {
-      const currentList = prev[activeCreatorId] || [];
-      const updatedList = currentList.map((opp) => {
-        if (opp.id === oppId) {
+    try {
+      // Server-Side Quota Enforcement & Verification
+      const res = await fetch("/api/opportunities/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          opportunityId: oppId,
+          creatorId: activeCreatorId,
+          fee: requestedFee,
+          notes,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        if (res.status === 403 && data.error === "QUOTA_EXCEEDED") {
+          if (data.applicationsUsage !== undefined) {
+            setUsageByCreator((prev) => {
+              const current = prev[activeCreatorId];
+              return {
+                ...prev,
+                [activeCreatorId]: {
+                  aiUsage: current?.aiUsage ?? 0,
+                  aiLimit: current?.aiLimit ?? currentPlan.limits.aiRecommendationsPerMonth,
+                  aiRemaining: current?.aiRemaining ?? currentPlan.limits.aiRecommendationsPerMonth,
+                  applicationsUsage: data.applicationsUsage,
+                  applicationsLimit: data.applicationsLimit ?? currentPlan.limits.maxApplicationsPerMonth,
+                  applicationsRemaining: 0,
+                  usageResetAt: data.usageResetAt ?? current?.usageResetAt ?? new Date().toISOString(),
+                },
+              };
+            });
+          }
+          showToast(data.message || "Monthly campaign application limit reached.", "warning");
           return {
-            ...opp,
-            status: "Applied" as const,
-            appliedDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-            applicationId: newAppRef,
-            appliedNotes: notes,
-            appliedFee: requestedFee,
+            success: false,
+            quotaExceeded: true,
+            reason: data.message || "Monthly campaign application limit reached for your plan.",
           };
         }
-        return opp;
-      });
-      const next = { ...prev, [activeCreatorId]: updatedList };
-      try {
-        localStorage.setItem("creator_engine_opps_by_creator", JSON.stringify(next));
-      } catch {
-        // Ignore
+        showToast(data.error || `Server error: HTTP ${res.status}`, "warning");
+        return {
+          success: false,
+          reason: data.error || `Server error: HTTP ${res.status}`,
+        };
       }
-      return next;
-    });
 
-    // Automatically synchronize with Supabase applications table
-    if (supabaseService.isConfigured()) {
-      supabaseService.saveApplication(newAppRef, oppId, activeCreatorId, requestedFee, notes).catch(() => {});
+      const newAppRef = data.applicationReference || `CE-APP-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      if (data.usage) {
+        setUsageByCreator((prev) => ({
+          ...prev,
+          [activeCreatorId]: {
+            aiUsage: prev[activeCreatorId]?.aiUsage ?? 0,
+            aiLimit: prev[activeCreatorId]?.aiLimit ?? currentPlan.limits.aiRecommendationsPerMonth,
+            aiRemaining: prev[activeCreatorId]?.aiRemaining ?? currentPlan.limits.aiRecommendationsPerMonth,
+            applicationsUsage: data.usage.applicationsUsage,
+            applicationsLimit: data.usage.applicationsLimit,
+            applicationsRemaining: data.usage.applicationsRemaining,
+            usageResetAt: data.usage.usageResetAt,
+          },
+        }));
+      }
+
+      setOppsByCreator((prev) => {
+        const currentList = prev[activeCreatorId] || [];
+        const updatedList = currentList.map((opp) => {
+          if (opp.id === oppId) {
+            return {
+              ...opp,
+              status: "Applied" as const,
+              appliedDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+              applicationId: newAppRef,
+              appliedNotes: notes,
+              appliedFee: requestedFee,
+            };
+          }
+          return opp;
+        });
+        const next = { ...prev, [activeCreatorId]: updatedList };
+        try {
+          localStorage.setItem("creator_engine_opps_by_creator", JSON.stringify(next));
+        } catch {
+          // Ignore
+        }
+        return next;
+      });
+
+      // Add corresponding Action items into Action Centre
+      const followUpAction: ActionItem = {
+        id: `act-followup-${oppId}-${Date.now()}`,
+        creatorId: activeCreatorId,
+        title: `Follow up on ${targetOpp?.brand || "Brand"} campaign pitch (${newAppRef})`,
+        category: "Brand Pitch",
+        priority: "High",
+        reason: `Application submitted for "${targetOpp?.title}". Brands review pitches within 3 business days; follow up with portfolio analytics.`,
+        deadline: "In 3 days",
+        estimatedTime: "15 mins",
+        status: "Not started",
+        completed: false,
+        relatedType: "opportunity",
+        relatedId: `followup-${oppId}`,
+        relatedTitle: targetOpp?.title,
+        relatedLink: `/opportunities`,
+      };
+
+      setActionsByCreator((prev) => {
+        const currentList = prev[activeCreatorId] || [];
+        const updatedList = currentList.map((a) => {
+          if (a.relatedId === oppId && a.category === "Brand Pitch") {
+            return {
+              ...a,
+              status: "Completed" as ActionStatus,
+              completed: true,
+              title: `Pitch submitted to ${targetOpp?.brand || "Brand"} (${newAppRef})`,
+            };
+          }
+          return a;
+        });
+
+        const hasFollowUp = updatedList.some((a) => a.relatedId === `followup-${oppId}`);
+        const nextList = hasFollowUp ? updatedList : [followUpAction, ...updatedList];
+        const next = { ...prev, [activeCreatorId]: nextList };
+        try {
+          localStorage.setItem("creator_engine_actions", JSON.stringify(next));
+        } catch {}
+
+        if (supabaseService.isConfigured()) {
+          supabaseService.saveAction(followUpAction).catch(() => {});
+        }
+
+        return next;
+      });
+
+      showToast(`Pitch submitted to ${targetOpp?.brand || "Brand"}! Ref: ${newAppRef}`, "success");
+      return { success: true, applicationReference: newAppRef };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Error submitting application";
+      showToast(message, "warning");
+      return { success: false, reason: message };
     }
-
-    // Add corresponding Action items into Action Centre
-    const followUpAction: ActionItem = {
-      id: `act-followup-${oppId}-${Date.now()}`,
-      creatorId: activeCreatorId,
-      title: `Follow up on ${targetOpp?.brand || "Brand"} campaign pitch (${newAppRef})`,
-      category: "Brand Pitch",
-      priority: "High",
-      reason: `Application submitted for "${targetOpp?.title}". Brands review pitches within 3 business days; follow up with portfolio analytics.`,
-      deadline: "In 3 days",
-      estimatedTime: "15 mins",
-      status: "Not started",
-      completed: false,
-      relatedType: "opportunity",
-      relatedId: `followup-${oppId}`,
-      relatedTitle: targetOpp?.title,
-      relatedLink: `/opportunities`,
-    };
-
-    setActionsByCreator((prev) => {
-      const currentList = prev[activeCreatorId] || [];
-      const updatedList = currentList.map((a) => {
-        if (a.relatedId === oppId && a.category === "Brand Pitch") {
-          return {
-            ...a,
-            status: "Completed" as ActionStatus,
-            completed: true,
-            title: `Pitch submitted to ${targetOpp?.brand || "Brand"} (${newAppRef})`,
-          };
-        }
-        return a;
-      });
-
-      const hasFollowUp = updatedList.some((a) => a.relatedId === `followup-${oppId}`);
-      const nextList = hasFollowUp ? updatedList : [followUpAction, ...updatedList];
-      const next = { ...prev, [activeCreatorId]: nextList };
-      try {
-        localStorage.setItem("creator_engine_actions", JSON.stringify(next));
-      } catch {}
-
-      if (supabaseService.isConfigured()) {
-        supabaseService.saveAction(followUpAction).catch(() => {});
-      }
-
-      return next;
-    });
-
-    showToast(`Pitch submitted to ${targetOpp?.brand || "Brand"}! Ref: ${newAppRef}`, "success");
   };
 
   const saveOpportunity = (oppId: string) => {
@@ -733,7 +853,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   /**
    * Generates or refreshes structured creator recommendations via Gemini API route
    */
-  const refreshAiRecommendations = async () => {
+  const refreshAiRecommendations = async (): Promise<{ success: boolean; quotaExceeded?: boolean; reason?: string }> => {
     setIsAiGenerating(true);
     showToast("Synthesizing creator recommendations via Gemini API...", "info");
 
@@ -745,11 +865,39 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ creator: activeProf }),
       });
 
+      const data = await res.json().catch(() => ({}));
+
       if (!res.ok) {
+        if (res.status === 403 && data.error === "QUOTA_EXCEEDED") {
+          if (data.aiUsage !== undefined) {
+            setUsageByCreator((prev) => {
+              const current = prev[activeCreatorId];
+              return {
+                ...prev,
+                [activeCreatorId]: {
+                  aiUsage: data.aiUsage,
+                  aiLimit: data.aiLimit ?? current?.aiLimit ?? currentPlan.limits.aiRecommendationsPerMonth,
+                  aiRemaining: 0,
+                  applicationsUsage: current?.applicationsUsage ?? 0,
+                  applicationsLimit: current?.applicationsLimit ?? currentPlan.limits.maxApplicationsPerMonth,
+                  applicationsRemaining: current?.applicationsRemaining ?? currentPlan.limits.maxApplicationsPerMonth,
+                  usageResetAt: data.usageResetAt ?? current?.usageResetAt ?? new Date().toISOString(),
+                },
+              };
+            });
+          }
+          showToast(data.message || "Monthly AI recommendations limit reached.", "warning");
+          return {
+            success: false,
+            quotaExceeded: true,
+            reason: data.message || "Monthly AI recommendations limit reached for your plan.",
+          };
+        }
         throw new Error(`API returned HTTP status ${res.status}`);
       }
 
-      const data: AiRecommendationsResponse = await res.json();
+      // Refresh usage from server after successful generation
+      fetchSubscriptionUsage(activeCreatorId).catch(() => {});
 
       if (data && data.success) {
         // 1. Update creator positioning statement
@@ -772,14 +920,14 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         if (Array.isArray(data.growthRoadmap) && data.growthRoadmap.length > 0) {
           setRoadmapsByCreator((prev) => {
             const currentPhases = prev[activeCreatorId] || MOCK_ROADMAPS[activeCreatorId] || [];
-            const updatedPhases: RoadmapPhase[] = data.growthRoadmap.map((aiPhase, idx) => {
+            const updatedPhases: RoadmapPhase[] = data.growthRoadmap.map((aiPhase: any, idx: number) => {
               const currentPhase = currentPhases[idx] || currentPhases[0] || {};
               return {
                 id: currentPhase.id || `${activeCreatorId}-phase-${idx + 1}`,
                 days: aiPhase.days,
                 phaseTitle: aiPhase.phaseTitle,
                 phaseObjective: aiPhase.phaseObjective,
-                milestones: aiPhase.milestones.map((m, mIdx) => {
+                milestones: aiPhase.milestones.map((m: any, mIdx: number) => {
                   const existingM = currentPhase.milestones?.[mIdx];
                   return {
                     id: existingM?.id || `m-ai-${idx}-${mIdx}`,
@@ -811,7 +959,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
             const existingTitles = new Set(currentActions.map((a) => a.title.toLowerCase().trim()));
             const newAiActions: ActionItem[] = [];
 
-            data.nextActions.forEach((aiAct, idx) => {
+            data.nextActions.forEach((aiAct: any, idx: number) => {
               if (!existingTitles.has(aiAct.title.toLowerCase().trim())) {
                 newAiActions.push({
                   id: `act-ai-${activeCreatorId}-${Date.now()}-${idx}`,
@@ -833,7 +981,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
             // Update reasons for any existing actions with matching titles
             const updatedExisting = currentActions.map((act) => {
               const match = data.nextActions.find(
-                (na) => na.title.toLowerCase().trim() === act.title.toLowerCase().trim()
+                (na: any) => na.title.toLowerCase().trim() === act.title.toLowerCase().trim()
               );
               if (match) {
                 return { ...act, reason: match.reason, priority: match.priority };
@@ -867,10 +1015,14 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
           setAiModelUsed(data.modelUsed || "gemini-3.8-flash");
           showToast(`Live recommendations synthesized via ${data.modelUsed || "Gemini"}!`, "success");
         }
+        return { success: true };
       }
+      return { success: true };
     } catch (err: unknown) {
       console.error("AI recommendation error:", err);
+      const msg = err instanceof Error ? err.message : "Unable to refresh recommendations via Gemini API.";
       showToast("Unable to refresh recommendations via Gemini API. Local cache preserved.", "warning");
+      return { success: false, reason: msg };
     } finally {
       setIsAiGenerating(false);
     }
@@ -989,9 +1141,21 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         currentPlanId,
         currentPlan,
         currentSubscription,
+        subscriptionUsage: usageByCreator[activeCreatorId] || {
+          aiUsage: 0,
+          aiLimit: currentPlan.limits.aiRecommendationsPerMonth,
+          aiRemaining: currentPlan.limits.aiRecommendationsPerMonth,
+          applicationsUsage: 0,
+          applicationsLimit: currentPlan.limits.maxApplicationsPerMonth,
+          applicationsRemaining: currentPlan.limits.maxApplicationsPerMonth,
+          usageResetAt: currentSubscription.currentPeriodEnd,
+        },
         isSubscriptionLoading,
         subscriptionError,
         refreshSubscription,
+        refreshSubscriptionUsage: async () => {
+          await fetchSubscriptionUsage(activeCreatorId);
+        },
         switchCreator,
         updateCreatorProfile,
         resetCreatorProfile,
