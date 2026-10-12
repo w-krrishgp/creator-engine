@@ -14,8 +14,16 @@ import { PlanBadge } from "@/components/subscription/PlanBadge";
 
 export function Header() {
   const pathname = usePathname();
-  const { activeCreatorId, activeCreator, switchCreator, showToast, isDemoMode } = useCreator();
+  const { activeCreatorId, activeCreator, allCreators, switchCreator, showToast, isDemoMode } = useCreator();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handlePersonaClick = (id: string) => {
+    if (activeCreatorId === id) {
+      showToast(`Already viewing ${allCreators[id]?.name || id}'s workspace`, "info");
+      return;
+    }
+    switchCreator(id);
+  };
 
   const getPageInfo = () => {
     switch (pathname) {
@@ -153,9 +161,17 @@ export function Header() {
             <span className="text-xs font-semibold text-slate-400 px-2 hidden lg:inline-flex items-center gap-1">
               <SlidersHorizontal className="w-3 h-3 text-[#0870e8]" /> Persona:
             </span>
+            {activeCreatorId !== "rahul" && activeCreatorId !== "priya" && (
+              <button
+                className="btn-tactile px-3 py-1.5 rounded-full text-xs sm:text-sm transition-all flex items-center gap-1.5 bg-emerald-600 text-white font-bold shadow-xs"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
+                <span className="truncate max-w-[100px]">{activeCreator.name}</span>
+              </button>
+            )}
             <button
-              onClick={() => switchCreator("rahul")}
-              className={`btn-tactile px-3 py-1.5 rounded-full text-xs sm:text-sm transition-all flex items-center gap-1.5 ${
+              onClick={() => handlePersonaClick("rahul")}
+              className={`btn-tactile px-3 py-1.5 rounded-full text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeCreatorId === "rahul"
                   ? "bg-white text-slate-900 font-bold shadow-[0_1px_2px_rgba(0,0,0,0.06)] border border-slate-200/60"
                   : "text-slate-600 hover:text-slate-900 font-medium"
@@ -165,8 +181,8 @@ export function Header() {
               <span>Rahul (IG)</span>
             </button>
             <button
-              onClick={() => switchCreator("priya")}
-              className={`btn-tactile px-3 py-1.5 rounded-full text-xs sm:text-sm transition-all flex items-center gap-1.5 ${
+              onClick={() => handlePersonaClick("priya")}
+              className={`btn-tactile px-3 py-1.5 rounded-full text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeCreatorId === "priya"
                   ? "bg-white text-slate-900 font-bold shadow-[0_1px_2px_rgba(0,0,0,0.06)] border border-slate-200/60"
                   : "text-slate-600 hover:text-slate-900 font-medium"

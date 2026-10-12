@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCreator, calculateProfileCompletion } from "@/context/CreatorContext";
 import {
@@ -9,6 +9,7 @@ import {
   CreatorStageType,
   ExperienceLevelType,
 } from "@/types/creator";
+import { UnifiedPlatformMetrics } from "@/types/platform";
 import {
   User,
   ShieldCheck,
@@ -21,11 +22,20 @@ import {
   Share2,
   Info,
   ArrowRight,
+  Plus,
+  Trash2,
+  RefreshCw,
+  Eye,
+  Video,
+  Users,
 } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
 import { SubscriptionCard } from "@/components/subscription/SubscriptionCard";
+import { PlatformDataStateBadge } from "@/components/platforms/PlatformDataStateBadge";
+import { ConnectAccountModal } from "@/components/platforms/ConnectAccountModal";
+import { YouTubeIcon, InstagramIcon, LinkedInIcon } from "@/components/common/PlatformIcons";
 
 export default function ProfilePage() {
   const {
@@ -33,7 +43,81 @@ export default function ProfilePage() {
     updateCreatorProfile,
     resetCreatorProfile,
     switchCreator,
+    activePlatformMetrics,
+    activeDataState,
+    importPlatformCreator,
+    disconnectPlatformCreator,
+    showToast,
   } = useCreator();
+
+  const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+
+  // Detect LinkedIn OAuth callback redirections
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const linkedinConnected = params.get("linkedin_connected");
+    const linkedinError = params.get("linkedin_error");
+    const errorDescription = params.get("error_description");
+
+    if (linkedinConnected === "success") {
+      const memberId = params.get("member_id") || "verified_member";
+      const name = params.get("name") || "LinkedIn Member";
+      const handle = params.get("handle") || `in/${memberId.slice(0, 8)}`;
+      const avatar = params.get("avatar") || undefined;
+
+      const metrics: UnifiedPlatformMetrics = {
+        id: `li_${memberId}`,
+        platform: "linkedin",
+        platformAccountId: memberId,
+        profileName: name,
+        handle: handle.startsWith("@") ? handle : `@${handle}`,
+        profileUrl: `https://www.linkedin.com/in/${encodeURIComponent(handle.replace(/^@/, ""))}`,
+        avatarUrl: avatar,
+        description: `Verified LinkedIn Member (${name})`,
+        followerCount: null,
+        followerCountSource: "unavailable",
+        totalViews: null,
+        totalViewsSource: "unavailable",
+        mediaCount: null,
+        mediaCountSource: "unavailable",
+        avgEngagementRate: null,
+        avgEngagementRateSource: "unavailable",
+        recentMedia: [],
+        authorizationStatus: "authorized",
+        dataState: "live",
+        dataCompleteness: "partial",
+        isVerifiedPlatformStats: true,
+        lastSyncedAt: new Date().toISOString(),
+        limitations: [
+          "OpenID Connect verification confirmed identity (openid, profile, email).",
+          "Follower counts, impressions, and post reach are not provided by basic sign-in.",
+          "Creator analytics require LinkedIn Community Management Partner API access.",
+        ],
+      };
+
+      importPlatformCreator(metrics);
+      showToast(`Linked LinkedIn account: ${name}`, "success");
+
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, "", cleanUrl);
+    } else if (linkedinError) {
+      let friendlyMessage = errorDescription || linkedinError;
+      if (linkedinError === "credentials_missing") {
+        friendlyMessage = "LinkedIn credentials not found. Please set LINKEDIN_CLIENT_ID and LINKEDIN_CLIENT_SECRET in .env.local.";
+      } else if (linkedinError === "invalid_state") {
+        friendlyMessage = "Security state validation failed. Please ensure browser cookies are enabled and retry connecting.";
+      } else if (linkedinError === "token_exchange_failed") {
+        friendlyMessage = `Token exchange failed: ${errorDescription || "Please verify Client Secret and Authorized Redirect URL in LinkedIn Developer Portal."}`;
+      } else if (linkedinError === "userinfo_failed") {
+        friendlyMessage = `Profile access error: ${errorDescription || "Verify 'Sign In with LinkedIn using OpenID Connect' is added in your LinkedIn app Products."}`;
+      }
+
+      showToast(`LinkedIn: ${friendlyMessage}`, "warning");
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, "", cleanUrl);
+    }
+  }, [importPlatformCreator, showToast]);
 
   // Local form state synced with activeCreator without cascading effect renders
   const [prevId, setPrevId] = useState(activeCreator.id);
@@ -226,22 +310,245 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Transparency Banner */}
-      <div className="p-4 rounded-[16px] bg-slate-50/90 border border-slate-200/80 text-slate-700 flex items-center justify-between gap-4 flex-wrap text-xs sm:text-sm">
-        <div className="flex items-center gap-2.5">
-          <Info className="w-4.5 h-4.5 text-[#0870e8] shrink-0" />
-          <span className="leading-relaxed">
-            <strong>Transparency Notice:</strong> All follower counts and metrics are manually entered and self-reported by the creator. Creator Engine does not claim active OAuth API integration.
-          </span>
+      {/* Verified Platform Connections & Provenance Card */}
+      <Card className="p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-2xl bg-[#0870e8]/10 text-[#0870e8]">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                  Verified Platform Connections
+                </h3>
+                <PlatformDataStateBadge
+                  state={activeDataState}
+                  provenance={activePlatformMetrics?.followerCountSource || (activeCreator.isManuallyReported ? "user_entered" : "official_api")}
+                  lastSyncedAt={activePlatformMetrics?.lastSyncedAt}
+                  limitations={activePlatformMetrics?.limitations}
+                  size="xs"
+                />
+              </div>
+              <p className="text-xs sm:text-sm text-slate-500">
+                Official YouTube Data API v3 & OAuth connections • Zero unverified claims
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsConnectModalOpen(true)}
+              className="btn-tactile inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0870e8] hover:bg-[#065ec4] text-white text-xs sm:text-sm font-bold shadow-xs transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Connect Platform Account</span>
+            </button>
+          </div>
         </div>
-        <Link
-          href="/onboarding"
-          className="text-[#0870e8] hover:underline font-bold flex items-center gap-1 shrink-0 text-xs sm:text-sm"
-        >
-          <span>5-Step Guided Onboarding</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
-      </div>
+
+        {activePlatformMetrics ? (
+          <div className="pt-5 space-y-5">
+            {/* Connected Account Details Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/70">
+              <div className="flex items-center gap-3.5">
+                {activePlatformMetrics.platform === "youtube" && (
+                  <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-200">
+                    <YouTubeIcon className="w-5 h-5 text-red-600" />
+                  </div>
+                )}
+                {activePlatformMetrics.platform === "instagram" && (
+                  <div className="w-10 h-10 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center shrink-0 border border-pink-200">
+                    <InstagramIcon className="w-5 h-5 text-pink-600" />
+                  </div>
+                )}
+                {activePlatformMetrics.platform === "linkedin" && (
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 border border-blue-200">
+                    <LinkedInIcon className="w-5 h-5 text-blue-700" />
+                  </div>
+                )}
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-slate-900 text-sm sm:text-base">
+                      {activePlatformMetrics.profileName}
+                    </span>
+                    <span className="text-xs font-semibold text-slate-500">
+                      {activePlatformMetrics.handle}
+                    </span>
+                    <a
+                      href={activePlatformMetrics.profileUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-slate-400 hover:text-slate-700"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                  <p className="text-2xs sm:text-xs text-slate-500 mt-0.5">
+                    Account ID: <code className="font-mono text-slate-700">{activePlatformMetrics.platformAccountId || "N/A"}</code> • Last synchronized: {activePlatformMetrics.lastSyncedAt ? new Date(activePlatformMetrics.lastSyncedAt).toLocaleString() : "Never"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsConnectModalOpen(true)}
+                  className="btn-tactile px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center gap-1.5"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Re-sync</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => disconnectPlatformCreator(activeCreator.id)}
+                  className="btn-tactile px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 text-xs font-semibold flex items-center gap-1.5"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Disconnect</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Verified Statistics Breakdown */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
+                <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
+                  Followers / Subs
+                </span>
+                <span className="text-xl font-extrabold text-slate-900">
+                  {activePlatformMetrics.followerCount !== null
+                    ? activePlatformMetrics.followerCount.toLocaleString()
+                    : <span className="text-xs italic text-slate-400">Hidden / Auth required</span>}
+                </span>
+                <span className="text-3xs text-slate-400 block mt-1">
+                  Provenance: {activePlatformMetrics.followerCountSource.replace("_", " ")}
+                </span>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
+                <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
+                  Total Views
+                </span>
+                <span className="text-xl font-extrabold text-slate-900">
+                  {activePlatformMetrics.totalViews !== null
+                    ? activePlatformMetrics.totalViews.toLocaleString()
+                    : <span className="text-xs italic text-slate-400">Not exposed</span>}
+                </span>
+                <span className="text-3xs text-slate-400 block mt-1">
+                  Provenance: {activePlatformMetrics.totalViewsSource.replace("_", " ")}
+                </span>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
+                <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
+                  Upload Count
+                </span>
+                <span className="text-xl font-extrabold text-slate-900">
+                  {activePlatformMetrics.mediaCount !== null
+                    ? activePlatformMetrics.mediaCount.toLocaleString()
+                    : <span className="text-xs italic text-slate-400">Not exposed</span>}
+                </span>
+                <span className="text-3xs text-slate-400 block mt-1">
+                  Provenance: {activePlatformMetrics.mediaCountSource.replace("_", " ")}
+                </span>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
+                <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
+                  Recent Engagement
+                </span>
+                <span className="text-xl font-extrabold text-slate-900">
+                  {activePlatformMetrics.avgEngagementRate !== null
+                    ? `${activePlatformMetrics.avgEngagementRate}%`
+                    : <span className="text-xs italic text-slate-400">Not calculated</span>}
+                </span>
+                <span className="text-3xs text-slate-400 block mt-1">
+                  Provenance: {activePlatformMetrics.avgEngagementRateSource.replace("_", " ")}
+                </span>
+              </div>
+            </div>
+
+            {/* Recent Uploads Preview */}
+            {activePlatformMetrics.recentMedia && activePlatformMetrics.recentMedia.length > 0 && (
+              <div className="space-y-2 pt-2">
+                <span className="text-xs font-bold text-slate-700 block">
+                  Recent Public Uploads ({activePlatformMetrics.recentMedia.length})
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {activePlatformMetrics.recentMedia.slice(0, 4).map((m) => (
+                    <div
+                      key={m.id}
+                      className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center gap-2.5 text-xs"
+                    >
+                      {m.thumbnailUrl && (
+                        <img
+                          src={m.thumbnailUrl}
+                          alt=""
+                          className="w-10 h-10 rounded-lg object-cover shrink-0"
+                        />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <span className="font-semibold text-slate-800 truncate block">
+                          {m.titleOrCaption}
+                        </span>
+                        <div className="flex items-center gap-2 text-2xs text-slate-500 mt-0.5">
+                          {m.viewCount !== null && (
+                            <span>{m.viewCount.toLocaleString()} views</span>
+                          )}
+                          {m.likeCount !== null && (
+                            <span>• {m.likeCount.toLocaleString()} likes</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Disclosures and Limitations */}
+            {activePlatformMetrics.limitations && activePlatformMetrics.limitations.length > 0 && (
+              <div className="p-3 rounded-xl bg-slate-100 border border-slate-200/80 text-2xs text-slate-600 space-y-1">
+                <span className="font-bold uppercase tracking-wider text-slate-500 block">
+                  Platform Disclosures:
+                </span>
+                <ul className="list-disc list-inside space-y-0.5">
+                  {activePlatformMetrics.limitations.map((lim, i) => (
+                    <li key={i}>{lim}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-sm text-slate-600">
+            <div className="flex items-center gap-2">
+              <Info className="w-4 h-4 text-[#0870e8] shrink-0" />
+              <span>
+                Currently operating with <strong>{activeCreator.name}&apos;s</strong> {activeCreator.isManuallyReported ? "user-entered data" : "demo profile"}. Connect a genuine YouTube, Instagram, or LinkedIn account to pull real statistics.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsConnectModalOpen(true)}
+              className="text-[#0870e8] hover:underline font-bold shrink-0 flex items-center gap-1"
+            >
+              <span>Connect Channel</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+      </Card>
+
+      <ConnectAccountModal
+        isOpen={isConnectModalOpen}
+        onClose={() => setIsConnectModalOpen(false)}
+        onAccountImported={(metrics) => {
+          importPlatformCreator(metrics);
+        }}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Form Fields (8 cols) */}

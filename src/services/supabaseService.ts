@@ -156,6 +156,61 @@ export const supabaseService = {
     }
   },
 
+  async saveConnectedAccount(metrics: import("@/types/platform").UnifiedPlatformMetrics): Promise<boolean> {
+    const client = getSupabaseClient();
+    if (!client) return false;
+
+    try {
+      const { error } = await client.from("connected_accounts").upsert(
+        {
+          platform: metrics.platform,
+          platform_account_id: metrics.platformAccountId,
+          profile_name: metrics.profileName,
+          handle: metrics.handle,
+          profile_url: metrics.profileUrl,
+          avatar_url: metrics.avatarUrl,
+          description: metrics.description,
+          authorization_status: metrics.authorizationStatus,
+          data_state: metrics.dataState,
+          data_completeness: metrics.dataCompleteness,
+          is_verified: metrics.isVerifiedPlatformStats,
+          follower_count: metrics.followerCount,
+          follower_count_source: metrics.followerCountSource,
+          is_subscriber_count_hidden: metrics.isSubscriberCountHidden || false,
+          total_views: metrics.totalViews,
+          total_views_source: metrics.totalViewsSource,
+          media_count: metrics.mediaCount,
+          media_count_source: metrics.mediaCountSource,
+          avg_engagement_rate: metrics.avgEngagementRate,
+          avg_engagement_rate_source: metrics.avgEngagementRateSource,
+          recent_media: metrics.recentMedia,
+          limitations: metrics.limitations,
+          last_synced_at: metrics.lastSyncedAt,
+        },
+        { onConflict: "user_id,platform,handle" }
+      );
+      return !error;
+    } catch {
+      return false;
+    }
+  },
+
+  async deleteConnectedAccount(platform: string, handle: string): Promise<boolean> {
+    const client = getSupabaseClient();
+    if (!client) return false;
+
+    try {
+      const { error } = await client
+        .from("connected_accounts")
+        .delete()
+        .eq("platform", platform)
+        .eq("handle", handle);
+      return !error;
+    } catch {
+      return false;
+    }
+  },
+
   async getOpportunities(): Promise<Opportunity[] | null> {
     const client = getSupabaseClient();
     if (!client) return null;

@@ -107,10 +107,33 @@ export default function MonetisationPage() {
     });
   };
 
-  const channels =
+  const rawChannels =
     MOCK_MONETISATION_CHANNELS[activeCreatorId] ||
     MOCK_MONETISATION_CHANNELS.rahul ||
     [];
+
+  const channels: MonetisationChannel[] = (activeCreatorId !== "rahul" && activeCreatorId !== "priya")
+    ? rawChannels.map((c) => {
+        const followers = activeCreator.followerCount || 0;
+        let suitabilityScore = c.suitabilityScore;
+        let potential = c.estimatedPotential;
+
+        if (c.category === "brand_collaborations") {
+          suitabilityScore = followers >= 50000 ? 94 : followers >= 10000 ? 88 : 72;
+          potential = followers >= 100000 ? "₹75,000 – ₹1,80,000 / month" : "₹25,000 – ₹60,000 / month";
+        } else if (c.category === "affiliate_marketing") {
+          suitabilityScore = 85;
+          potential = followers >= 50000 ? "₹35,000 – ₹80,000 / month" : "₹10,000 – ₹30,000 / month";
+        }
+
+        return {
+          ...c,
+          suitabilityScore,
+          estimatedPotential: potential,
+          whyItSuits: `Directly tailored for ${activeCreator.name}'s verified ${activeCreator.primaryPlatform} audience in ${activeCreator.niche}.`,
+        };
+      })
+    : rawChannels;
 
   const categories = [
     { id: "all", label: "All 5 Pathways", count: channels.length },

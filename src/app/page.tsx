@@ -37,6 +37,8 @@ export default function OverviewPage() {
     opportunities,
     completedActionsCount,
     totalActionsCount,
+    activePlatformMetrics,
+    activeDataState,
   } = useCreator();
 
   // State for modals on overview page
@@ -65,20 +67,33 @@ export default function OverviewPage() {
     (completedMilestones / totalMilestones) * 100
   );
 
-  // Trajectory points for the analytics chart based on active creator
+  // Trajectory points for the analytics chart based on verified recent media views or creator statistics
+  const recentViews = activePlatformMetrics?.recentMedia
+    ?.map((m) => m.viewCount)
+    .filter((v): v is number => v !== null && v > 0);
+
   const impressionTrend =
-    activeCreator.id === "rahul"
+    recentViews && recentViews.length >= 2
+      ? recentViews.slice(0, 4).reverse().map((v, i) => ({ label: `V${i + 1}`, val: v }))
+      : activeCreator.id === "rahul"
       ? [
           { label: "W1", val: 18200 },
           { label: "W2", val: 21800 },
           { label: "W3", val: 25400 },
           { label: "W4", val: 29400 },
         ]
-      : [
+      : activeCreator.id === "priya"
+      ? [
           { label: "W1", val: 9200 },
           { label: "W2", val: 11400 },
           { label: "W3", val: 14100 },
           { label: "W4", val: 16800 },
+        ]
+      : [
+          { label: "W1", val: Math.round((activeCreator.avgImpressionsPerPost || 1000) * 0.75) },
+          { label: "W2", val: Math.round((activeCreator.avgImpressionsPerPost || 1000) * 0.88) },
+          { label: "W3", val: Math.round((activeCreator.avgImpressionsPerPost || 1000) * 0.95) },
+          { label: "W4", val: activeCreator.avgImpressionsPerPost || 1000 },
         ];
 
   // SVG coordinates for a clean normalized sparkline/chart

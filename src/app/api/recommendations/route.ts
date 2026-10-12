@@ -171,6 +171,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     requestCreator = body?.creator as CreatorProfile;
     const creator = requestCreator;
+    const platformMetrics = body?.platformMetrics as import("@/types/platform").UnifiedPlatformMetrics | undefined;
 
     if (!creator || !creator.id || !creator.name) {
       return NextResponse.json(
@@ -208,7 +209,7 @@ export async function POST(req: NextRequest) {
       apiKey.includes("your-gemini-api-key");
 
     if (isApiKeyMissingOrPlaceholder) {
-      // Gracefully return deterministic demo recommendations without crashing
+      // Gracefully return deterministic recommendations without crashing
       const fallback = generateFallbackRecommendations(
         creator,
         "Operating in Demo Mode: GEMINI_API_KEY is not configured in .env.local. Showing high-fidelity deterministic recommendations."
@@ -216,7 +217,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(fallback);
     }
 
-    // Build focused prompt
+    // Build focused prompt with genuine platform metrics
     const prompt = `
 You are the Chief Creator Strategist for Creator Engine.
 Analyze the following verified creator profile and generate tailored, high-impact growth and commercial recommendations.
@@ -234,10 +235,24 @@ CREATOR PROFILE DATA:
 - Bio & Focus: ${creator.bio}
 - Location: ${creator.location}
 - Topics Covered: ${(creator.topics || []).join(", ")}
+${platformMetrics ? `
+VERIFIED PLATFORM METRICS & CONTENT HISTORY (OFFICIAL API):
+- Platform: ${platformMetrics.platform.toUpperCase()}
+- Platform Account ID: ${platformMetrics.platformAccountId || "Not exposed"}
+- Verified Follower/Subscriber Count: ${platformMetrics.followerCount !== null ? platformMetrics.followerCount.toLocaleString() : "Hidden or Requires Auth"}
+- Total Channel Views: ${platformMetrics.totalViews !== null ? platformMetrics.totalViews.toLocaleString() : "Not Exposed"}
+- Uploaded Media/Video Count: ${platformMetrics.mediaCount !== null ? platformMetrics.mediaCount.toLocaleString() : "Not Exposed"}
+- Calculated Engagement Rate: ${platformMetrics.avgEngagementRate !== null ? `${platformMetrics.avgEngagementRate}%` : "Not Available"}
+- Data Provenance State: ${platformMetrics.dataState}
+${platformMetrics.recentMedia && platformMetrics.recentMedia.length > 0 ? `- Recent Uploaded Content:
+${platformMetrics.recentMedia.map((m, i) => `  ${i + 1}. "${m.titleOrCaption}" (${m.viewCount !== null ? `${m.viewCount.toLocaleString()} views` : ""})`).join("\n")}` : ""}
+${platformMetrics.limitations && platformMetrics.limitations.length > 0 ? `- Disclosures: ${platformMetrics.limitations.join("; ")}` : ""}
+` : ""}
 
 CRITICAL GOVERNANCE REQUIREMENTS:
 1. Do NOT invent brand campaigns or alter campaign eligibility requirements. Brand campaign matching and eligibility checks are governed strictly by deterministic rules. Focus solely on creator positioning, content gaps, skill priorities, topic opportunities, 30/60/90-day execution milestones, monetisation channels, and reasoned next actions.
-2. Return ONLY a single valid JSON object with the following structure (no markdown wrappers):
+2. Ground your advice in the creator's actual niche, real recent uploads, and metrics.
+3. Return ONLY a single valid JSON object with the following structure (no markdown wrappers):
 {
   "positioning": {
     "thesis": "Concise market thesis summarizing why this creator wins in their niche",

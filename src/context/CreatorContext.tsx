@@ -17,6 +17,7 @@ import { supabaseService } from "@/services/supabaseService";
 import { AiRecommendationsResponse } from "@/types/ai";
 import { PlanId, SubscriptionPlan, SubscriptionRecord, SubscriptionUsage } from "@/types/subscription";
 import { SUBSCRIPTION_PLANS, SAMPLE_DEFAULT_SUBSCRIPTIONS } from "@/config/subscriptions";
+import { UnifiedPlatformMetrics, AccountDataState } from "@/types/platform";
 
 interface ToastNotification {
   id: string;
@@ -48,6 +49,11 @@ interface CreatorContextType {
   aiModelUsed: string | null;
   refreshAiRecommendations: () => Promise<{ success: boolean; quotaExceeded?: boolean; reason?: string }>;
   syncWithSupabase: () => Promise<void>;
+  // Platform Integrations & Data Provenance
+  activePlatformMetrics: UnifiedPlatformMetrics | null;
+  activeDataState: AccountDataState;
+  importPlatformCreator: (metrics: UnifiedPlatformMetrics) => Promise<void>;
+  disconnectPlatformCreator: (creatorId: string) => Promise<void>;
   // Subscription System
   currentPlanId: PlanId;
   currentPlan: SubscriptionPlan;
@@ -131,6 +137,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   const [oppsByCreator, setOppsByCreator] = useState<Record<string, Opportunity[]>>(INITIAL_OPPS_BY_CREATOR);
   const [roadmapsByCreator, setRoadmapsByCreator] = useState<Record<string, RoadmapPhase[]>>(MOCK_ROADMAPS);
   const [actionsByCreator, setActionsByCreator] = useState<Record<string, ActionItem[]>>(MOCK_ACTIONS);
+  const [connectedMetricsByCreator, setConnectedMetricsByCreator] = useState<Record<string, UnifiedPlatformMetrics>>({});
 
   // Connectivity & AI statuses
   const [isSupabaseConfigured, setIsSupabaseConfigured] = useState<boolean>(false);
@@ -182,20 +189,31 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   // Sync from localStorage and check Supabase on client hydration
   useEffect(() => {
     try {
+      let loadedProfiles: Record<string, CreatorProfile> = MOCK_CREATORS;
+      const savedProfiles = localStorage.getItem("creator_engine_profiles");
+      if (savedProfiles) {
+        try {
+          loadedProfiles = { ...MOCK_CREATORS, ...JSON.parse(savedProfiles) };
+          setCreators(loadedProfiles);
+        } catch {}
+      }
+
+      const savedMetrics = localStorage.getItem("creator_engine_platform_metrics");
+      if (savedMetrics) {
+        try {
+          setConnectedMetricsByCreator(JSON.parse(savedMetrics));
+        } catch {}
+      }
+
       const searchParams = new URLSearchParams(window.location.search);
       const urlPersona = searchParams.get("persona");
-      if (urlPersona && MOCK_CREATORS[urlPersona]) {
+      if (urlPersona && loadedProfiles[urlPersona]) {
         setActiveCreatorId(urlPersona);
       } else {
         const savedId = localStorage.getItem("creator_engine_active_id");
-        if (savedId && MOCK_CREATORS[savedId]) {
+        if (savedId && loadedProfiles[savedId]) {
           setActiveCreatorId(savedId);
         }
-      }
-
-      const savedProfiles = localStorage.getItem("creator_engine_profiles");
-      if (savedProfiles) {
-        setCreators(JSON.parse(savedProfiles));
       }
 
       const savedOpps = localStorage.getItem("creator_engine_opps_by_creator");
@@ -393,6 +411,157 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
       return next;
     });
     showToast(`Reset ${activeCreatorId === "rahul" ? "Rahul" : "Priya"}'s profile to original demo defaults`, "info");
+  };
+
+  const importPlatformCreator = async (metrics: UnifiedPlatformMetrics) => {
+    let niche = "Technology & Digital Media";
+    const desc = (metrics.description || "").toLowerCase();
+    const handleLower = metrics.handle.toLowerCase();
+
+    if (desc.includes("fitness") || desc.includes("health") || desc.includes("workout") || desc.includes("gym")) {
+      niche = "Fitness & Calisthenics";
+    } else if (desc.includes("finance") || desc.includes("invest") || desc.includes("money") || desc.includes("wealth") || desc.includes("crypto")) {
+      niche = "Personal Finance & Investing";
+    } else if (desc.includes("travel") || desc.includes("food") || desc.includes("lifestyle")) {
+      niche = "Lifestyle & Travel";
+    } else if (desc.includes("gaming") || desc.includes("esports")) {
+      niche = "Gaming & Esports";
+    } else if (desc.includes("tech") || desc.includes("gadget") || desc.includes("review") || handleLower.includes("mkbhd")) {
+      niche = "Consumer Tech & Reviews";
+    }
+
+    const followers = metrics.followerCount || 0;
+    let creatorStage: import("@/types/creator").CreatorStageType = "Nano (1k-10k)";
+    if (followers >= 200000) creatorStage = "Macro (200k+)";
+    else if (followers >= 50000) creatorStage = "Mid-Tier (50k-200k)";
+    else if (followers >= 10000) creatorStage = "Micro (10k-50k)";
+
+    let avgImpressions = 0;
+    if (metrics.recentMedia.length > 0) {
+      const views = metrics.recentMedia.map((m) => m.viewCount).filter((v): v is number => v !== null && v > 0);
+      if (views.length > 0) {
+        avgImpressions = Math.round(views.reduce((a, b) => a + b, 0) / views.length);
+      }
+    }
+    if (!avgImpressions && metrics.totalViews && metrics.mediaCount && metrics.mediaCount > 0) {
+      avgImpressions = Math.round(metrics.totalViews / metrics.mediaCount);
+    }
+    if (!avgImpressions) {
+      avgImpressions = Math.max(1000, Math.round(followers * 0.12));
+    }
+
+    const platformName: import("@/types/creator").PlatformType =
+      metrics.platform === "youtube" ? "YouTube" : metrics.platform === "instagram" ? "Instagram" : "LinkedIn";
+
+    const idSlug = metrics.handle.replace(/[^a-zA-Z0-9_-]/g, "").toLowerCase() || "imported";
+    const profileId = `c_${metrics.platform}_${idSlug}`;
+
+    const newProfile: CreatorProfile = {
+      id: profileId,
+      name: metrics.profileName,
+      handle: metrics.handle,
+      avatar: metrics.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&fit=crop",
+      title: `${platformName} Content Creator`,
+      niche,
+      primaryPlatform: platformName,
+      followerCount: followers,
+      secondaryPlatform: "",
+      secondaryFollowers: 0,
+      engagementRate: metrics.avgEngagementRate !== null ? metrics.avgEngagementRate : 3.5,
+      audienceDemographic: `Audience following ${metrics.profileName} on ${platformName}`,
+      contentFormat: metrics.platform === "youtube" ? "Long-form & Shorts" : metrics.platform === "instagram" ? "Reels & Carousels" : "Posts & Industry Insights",
+      contentFrequency: "3-4 pieces per week",
+      creatorStage,
+      experienceLevel: followers > 50000 ? "Established (3+ yrs)" : "Growing (1-3 yrs)",
+      primaryGoal: "Audience growth & premium sponsor collaborations",
+      monetisationGoals: ["Brand Collaborations", "Digital Guides & E-books", "Affiliate Supplements / Tools"],
+      monthlyIncomeTarget: followers > 100000 ? 150000 : 50000,
+      bio: metrics.description || `Verified creator on ${platformName}.`,
+      location: "India / Global",
+      topics: [niche, "Audience Engagement", "Content Monetisation"],
+      activeDealsCount: 1,
+      estimatedPipelineValue: followers > 100000 ? 120000 : 40000,
+      monthlyGrowthRate: 8.5,
+      avgImpressionsPerPost: avgImpressions,
+      mediaKitLink: `https://creator-engine.demo/mediakit/${idSlug}`,
+      isManuallyReported: false,
+      isOnboarded: true,
+    };
+
+    setCreators((prev) => {
+      const next = { ...prev, [profileId]: newProfile };
+      try {
+        localStorage.setItem("creator_engine_profiles", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+
+    setConnectedMetricsByCreator((prev) => {
+      const next = { ...prev, [profileId]: metrics };
+      try {
+        localStorage.setItem("creator_engine_platform_metrics", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+
+    setOppsByCreator((prev) => {
+      if (!prev[profileId]) {
+        return { ...prev, [profileId]: MOCK_OPPORTUNITIES };
+      }
+      return prev;
+    });
+
+    setActiveCreatorId(profileId);
+    try {
+      localStorage.setItem("creator_engine_active_id", profileId);
+    } catch {}
+
+    if (supabaseService.isConfigured()) {
+      supabaseService.saveProfile(newProfile).catch(() => {});
+      supabaseService.saveConnectedAccount(metrics).catch(() => {});
+    }
+
+    showToast(`Imported verified ${platformName} profile: ${metrics.profileName}!`, "success");
+
+    setTimeout(() => {
+      refreshAiRecommendations(newProfile, metrics).catch(() => {});
+    }, 400);
+  };
+
+  const disconnectPlatformCreator = async (creatorId: string) => {
+    if (activeCreatorId === creatorId) {
+      setActiveCreatorId("rahul");
+      try {
+        localStorage.setItem("creator_engine_active_id", "rahul");
+      } catch {}
+    }
+
+    setCreators((prev) => {
+      const next = { ...prev };
+      delete next[creatorId];
+      try {
+        localStorage.setItem("creator_engine_profiles", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+
+    setConnectedMetricsByCreator((prev) => {
+      const next = { ...prev };
+      delete next[creatorId];
+      try {
+        localStorage.setItem("creator_engine_platform_metrics", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+
+    if (supabaseService.isConfigured()) {
+      const parts = creatorId.split("_");
+      if (parts.length >= 3) {
+        supabaseService.deleteConnectedAccount(parts[1], parts.slice(2).join("_")).catch(() => {});
+      }
+    }
+
+    showToast("Disconnected account and removed platform records.", "info");
   };
 
   const updateActionStatus = (id: string, status: ActionStatus) => {
@@ -853,16 +1022,23 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   /**
    * Generates or refreshes structured creator recommendations via Gemini API route
    */
-  const refreshAiRecommendations = async (): Promise<{ success: boolean; quotaExceeded?: boolean; reason?: string }> => {
+  const refreshAiRecommendations = async (
+    customCreator?: CreatorProfile,
+    customMetrics?: UnifiedPlatformMetrics
+  ): Promise<{ success: boolean; quotaExceeded?: boolean; reason?: string }> => {
     setIsAiGenerating(true);
     showToast("Synthesizing creator recommendations via Gemini API...", "info");
 
     try {
-      const activeProf = creators[activeCreatorId] || MOCK_CREATORS[activeCreatorId];
+      const activeProf = customCreator || creators[activeCreatorId] || MOCK_CREATORS[activeCreatorId];
+      const metrics = customMetrics || connectedMetricsByCreator[activeProf.id] || null;
       const res = await fetch("/api/recommendations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ creator: activeProf }),
+        body: JSON.stringify({
+          creator: activeProf,
+          platformMetrics: metrics,
+        }),
       });
 
       const data = await res.json().catch(() => ({}));
@@ -1111,7 +1287,18 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   const appliedOpportunitiesCount = opportunities.filter((o) => o.status === "Applied").length;
   const profileCompletion = calculateProfileCompletion(activeCreator);
   const isOnboarded = Boolean(activeCreator?.isOnboarded);
-  const isDemoMode = !isSupabaseConnected;
+
+  // Compute explicit platform data state
+  const isDemoProfile = activeCreatorId === "rahul" || activeCreatorId === "priya";
+  const activePlatformMetrics = connectedMetricsByCreator[activeCreatorId] || null;
+  const activeDataState: AccountDataState = isDemoProfile
+    ? "demo"
+    : activePlatformMetrics
+    ? activePlatformMetrics.dataState
+    : activeCreator.isManuallyReported
+    ? "user_entered"
+    : "cached_live";
+  const isDemoMode = isDemoProfile;
 
   return (
     <CreatorContext.Provider
@@ -1138,6 +1325,10 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         aiModelUsed,
         refreshAiRecommendations,
         syncWithSupabase,
+        activePlatformMetrics,
+        activeDataState,
+        importPlatformCreator,
+        disconnectPlatformCreator,
         currentPlanId,
         currentPlan,
         currentSubscription,

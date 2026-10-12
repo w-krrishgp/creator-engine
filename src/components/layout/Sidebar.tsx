@@ -28,7 +28,9 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
   const {
     activeCreatorId,
     activeCreator,
+    allCreators,
     switchCreator,
+    showToast,
     profileCompletion,
     completedActionsCount,
     totalActionsCount,
@@ -36,6 +38,14 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
     currentPlanId,
     currentPlan,
   } = useCreator();
+
+  const handlePersonaClick = (id: string) => {
+    if (activeCreatorId === id) {
+      showToast(`Already viewing ${allCreators[id]?.name || id}'s workspace`, "info");
+      return;
+    }
+    switchCreator(id);
+  };
 
   // Navigation ordered as requested: Home, Roadmap, Monetisation, Opportunities, Workflow, Actions, Profile
   const navItems = [
@@ -154,8 +164,8 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
 
         <div className="grid grid-cols-2 gap-1 p-0.5 bg-slate-200/60 rounded-full">
           <button
-            onClick={() => switchCreator("rahul")}
-            className={`btn-tactile flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs sm:text-sm transition-all ${
+            onClick={() => handlePersonaClick("rahul")}
+            className={`btn-tactile flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs sm:text-sm transition-all cursor-pointer ${
               activeCreatorId === "rahul"
                 ? "bg-white text-slate-900 font-bold shadow-[0_1px_2px_rgba(0,0,0,0.06)] border border-slate-200/60"
                 : "text-slate-600 hover:text-slate-900 font-medium"
@@ -166,8 +176,8 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
           </button>
 
           <button
-            onClick={() => switchCreator("priya")}
-            className={`btn-tactile flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs sm:text-sm transition-all ${
+            onClick={() => handlePersonaClick("priya")}
+            className={`btn-tactile flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs sm:text-sm transition-all cursor-pointer ${
               activeCreatorId === "priya"
                 ? "bg-white text-slate-900 font-bold shadow-[0_1px_2px_rgba(0,0,0,0.06)] border border-slate-200/60"
                 : "text-slate-600 hover:text-slate-900 font-medium"

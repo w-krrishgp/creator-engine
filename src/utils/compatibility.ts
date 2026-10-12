@@ -17,8 +17,8 @@ export function calculateCompatibility(
   opportunity: Opportunity,
   creator: CreatorProfile
 ): CompatibilityBreakdown {
-  const creatorNicheLower = creator.niche.toLowerCase();
-  const oppNichesLower = opportunity.niche.map((n) => n.toLowerCase());
+  const creatorNicheLower = (creator.niche || "").toLowerCase();
+  const oppNichesLower = (opportunity.niche || []).map((n) => n.toLowerCase());
 
   // 1. Niche Match (Max 35 points)
   let nicheScore = 6;
@@ -68,8 +68,8 @@ export function calculateCompatibility(
 
   // 2. Platform Match (Max 30 points)
   let platformScore = 6;
-  const oppPlatformLower = opportunity.platform.toLowerCase();
-  const creatorPrimaryLower = creator.primaryPlatform.toLowerCase();
+  const oppPlatformLower = (opportunity.platform || "").toLowerCase();
+  const creatorPrimaryLower = (creator.primaryPlatform || "").toLowerCase();
   const creatorSecondaryLower = creator.secondaryPlatform?.toLowerCase() || "";
 
   const isNativePlatform =
@@ -105,8 +105,8 @@ export function calculateCompatibility(
 
   // 4. Target Audience & Demographic Fit (Max 10 points)
   let audienceScore = 6;
-  const creatorAudienceLower = creator.audienceDemographic.toLowerCase();
-  const oppAudienceLower = opportunity.targetAudience.toLowerCase();
+  const creatorAudienceLower = (creator.audienceDemographic || "").toLowerCase();
+  const oppAudienceLower = (opportunity.targetAudience || "").toLowerCase();
 
   const isYouthOrStudentFit =
     (creatorAudienceLower.includes("student") ||
