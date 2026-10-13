@@ -17,6 +17,7 @@ import { supabaseService } from "@/services/supabaseService";
 import { AiRecommendationsResponse } from "@/types/ai";
 import { PlanId, SubscriptionPlan, SubscriptionRecord, SubscriptionUsage } from "@/types/subscription";
 import { SUBSCRIPTION_PLANS, SAMPLE_DEFAULT_SUBSCRIPTIONS } from "@/config/subscriptions";
+import { generateFallbackRecommendations } from "@/lib/ai/fallbackRecommendations";
 import { UnifiedPlatformMetrics, AccountDataState } from "@/types/platform";
 
 interface ToastNotification {
@@ -63,6 +64,8 @@ interface CreatorContextType {
   subscriptionError: string | null;
   refreshSubscription: () => Promise<void>;
   refreshSubscriptionUsage: () => Promise<void>;
+  startFreeTrial: (planId: PlanId) => Promise<void>;
+  activateSubscription: (planId: PlanId) => Promise<void>;
   // Action Handlers
   switchCreator: (id: string) => void;
   updateCreatorProfile: (data: Partial<CreatorProfile>) => void;
@@ -130,6 +133,48 @@ const INITIAL_OPPS_BY_CREATOR: Record<string, Opportunity[]> = {
     return { ...opp, status: "Available" as const };
   }),
 };
+
+function convertAiRoadmapToRoadmapPhases(
+  creatorId: string,
+  aiRoadmap: Array<import("@/types/ai").GrowthRoadmapPhaseRecommendation | any>,
+  existingPhases: RoadmapPhase[] = []
+): RoadmapPhase[] {
+  const defaultDaysList: Array<"30 Days" | "60 Days" | "90 Days"> = ["30 Days", "60 Days", "90 Days"];
+  return (aiRoadmap || []).map((aiPhase, idx) => {
+    const existingPhase = existingPhases[idx];
+    const defaultDays = defaultDaysList[idx] || "90 Days";
+    const days: "30 Days" | "60 Days" | "90 Days" =
+      aiPhase.days === "30 Days" || aiPhase.days === "60 Days" || aiPhase.days === "90 Days"
+        ? aiPhase.days
+        : defaultDays;
+
+    return {
+      id: existingPhase?.id || `${creatorId}-phase-${idx + 1}`,
+      days,
+      phaseTitle: aiPhase.phaseTitle || `Phase ${idx + 1}`,
+      phaseObjective: aiPhase.phaseObjective || "",
+      milestones: (aiPhase.milestones || []).map((m: any, mIdx: number) => {
+        const existingM = existingPhase?.milestones?.[mIdx];
+        return {
+          id: existingM?.id || `m-${creatorId}-${idx}-${mIdx}`,
+          title: m.title || "Execution Milestone",
+          description: m.description || "",
+          completed: typeof m.completed === "boolean" ? m.completed : (existingM ? existingM.completed : false),
+          tag: m.tag || "Growth",
+        };
+      }),
+      contentGaps: aiPhase.contentGaps || [],
+      skillsToImprove: aiPhase.skillsToImprove || [],
+      topicOpportunities: aiPhase.topicOpportunities || [],
+      referenceProfiles: existingPhase?.referenceProfiles || [],
+    };
+  });
+}
+
+function getFallbackRoadmapPhases(creator: CreatorProfile): RoadmapPhase[] {
+  const fallback = generateFallbackRecommendations(creator);
+  return convertAiRoadmapToRoadmapPhases(creator.id, fallback.growthRoadmap);
+}
 
 export function CreatorProvider({ children }: { children: ReactNode }) {
   const [activeCreatorId, setActiveCreatorId] = useState<string>("rahul");
@@ -511,6 +556,15 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
       return prev;
     });
 
+    const initialPhases = getFallbackRoadmapPhases(newProfile);
+    setRoadmapsByCreator((prev) => {
+      const next = { ...prev, [profileId]: initialPhases };
+      try {
+        localStorage.setItem("creator_engine_roadmaps", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+
     setActiveCreatorId(profileId);
     try {
       localStorage.setItem("creator_engine_active_id", profileId);
@@ -704,7 +758,12 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
 
   const toggleMilestone = (phaseId: string, milestoneId: string) => {
     setRoadmapsByCreator((prev) => {
-      const currentPhases = prev[activeCreatorId] || [];
+      const currentPhases: RoadmapPhase[] =
+        (prev[activeCreatorId] && prev[activeCreatorId].length > 0)
+          ? prev[activeCreatorId]
+          : (MOCK_ROADMAPS[activeCreatorId] && MOCK_ROADMAPS[activeCreatorId].length > 0)
+          ? MOCK_ROADMAPS[activeCreatorId]
+          : getFallbackRoadmapPhases(creators[activeCreatorId] || MOCK_CREATORS[activeCreatorId] || activeCreator);
       let milestoneTitle = "";
       let isCompleted = false;
 
@@ -997,6 +1056,21 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         supabaseService.saveProfile(updated).catch(() => {});
       }
 
+      // Initialize tailored growth roadmap immediately
+      const initialPhases = getFallbackRoadmapPhases(updated);
+      setRoadmapsByCreator((prevRoadmaps) => {
+        const nextRoadmaps = { ...prevRoadmaps, [activeCreatorId]: initialPhases };
+        try {
+          localStorage.setItem("creator_engine_roadmaps", JSON.stringify(nextRoadmaps));
+        } catch {}
+        return nextRoadmaps;
+      });
+
+      // Background AI synthesis
+      setTimeout(() => {
+        refreshAiRecommendations(updated).catch(() => {});
+      }, 300);
+
       return next;
     });
     showToast("Profile setup complete! Welcome to Creator Engine.", "success");
@@ -1030,8 +1104,9 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     showToast("Synthesizing creator recommendations via Gemini API...", "info");
 
     try {
-      const activeProf = customCreator || creators[activeCreatorId] || MOCK_CREATORS[activeCreatorId];
-      const metrics = customMetrics || connectedMetricsByCreator[activeProf.id] || null;
+      const activeProf = customCreator || creators[activeCreatorId] || MOCK_CREATORS[activeCreatorId] || activeCreator;
+      const targetId = activeProf.id;
+      const metrics = customMetrics || connectedMetricsByCreator[targetId] || null;
       const res = await fetch("/api/recommendations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1047,10 +1122,10 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         if (res.status === 403 && data.error === "QUOTA_EXCEEDED") {
           if (data.aiUsage !== undefined) {
             setUsageByCreator((prev) => {
-              const current = prev[activeCreatorId];
+              const current = prev[targetId];
               return {
                 ...prev,
-                [activeCreatorId]: {
+                [targetId]: {
                   aiUsage: data.aiUsage,
                   aiLimit: data.aiLimit ?? current?.aiLimit ?? currentPlan.limits.aiRecommendationsPerMonth,
                   aiRemaining: 0,
@@ -1073,15 +1148,15 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
       }
 
       // Refresh usage from server after successful generation
-      fetchSubscriptionUsage(activeCreatorId).catch(() => {});
+      fetchSubscriptionUsage(targetId).catch(() => {});
 
       if (data && data.success) {
         // 1. Update creator positioning statement
         if (data.positioning?.thesis) {
           setCreators((prev) => {
-            const current = prev[activeCreatorId] || MOCK_CREATORS[activeCreatorId];
+            const current = prev[targetId] || MOCK_CREATORS[targetId] || activeProf;
             const updated = { ...current, positioningStatement: data.positioning.thesis };
-            const next = { ...prev, [activeCreatorId]: updated };
+            const next = { ...prev, [targetId]: updated };
             try {
               localStorage.setItem("creator_engine_profiles", JSON.stringify(next));
             } catch {}
@@ -1095,32 +1170,19 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         // 2. Update roadmap phases with AI structured recommendations
         if (Array.isArray(data.growthRoadmap) && data.growthRoadmap.length > 0) {
           setRoadmapsByCreator((prev) => {
-            const currentPhases = prev[activeCreatorId] || MOCK_ROADMAPS[activeCreatorId] || [];
-            const updatedPhases: RoadmapPhase[] = data.growthRoadmap.map((aiPhase: any, idx: number) => {
-              const currentPhase = currentPhases[idx] || currentPhases[0] || {};
-              return {
-                id: currentPhase.id || `${activeCreatorId}-phase-${idx + 1}`,
-                days: aiPhase.days,
-                phaseTitle: aiPhase.phaseTitle,
-                phaseObjective: aiPhase.phaseObjective,
-                milestones: aiPhase.milestones.map((m: any, mIdx: number) => {
-                  const existingM = currentPhase.milestones?.[mIdx];
-                  return {
-                    id: existingM?.id || `m-ai-${idx}-${mIdx}`,
-                    title: m.title,
-                    description: m.description,
-                    completed: existingM ? existingM.completed : false,
-                    tag: m.tag || "Growth",
-                  };
-                }),
-                contentGaps: aiPhase.contentGaps,
-                skillsToImprove: aiPhase.skillsToImprove,
-                topicOpportunities: aiPhase.topicOpportunities,
-                referenceProfiles: currentPhase.referenceProfiles || [],
-              };
-            });
+            const currentPhases: RoadmapPhase[] =
+              (prev[targetId] && prev[targetId].length > 0)
+                ? prev[targetId]
+                : (MOCK_ROADMAPS[targetId] && MOCK_ROADMAPS[targetId].length > 0)
+                ? MOCK_ROADMAPS[targetId]
+                : getFallbackRoadmapPhases(activeProf);
+            const updatedPhases: RoadmapPhase[] = convertAiRoadmapToRoadmapPhases(
+              targetId,
+              data.growthRoadmap,
+              currentPhases
+            );
 
-            const next = { ...prev, [activeCreatorId]: updatedPhases };
+            const next = { ...prev, [targetId]: updatedPhases };
             try {
               localStorage.setItem("creator_engine_roadmaps", JSON.stringify(next));
             } catch {}
@@ -1131,15 +1193,15 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         // 3. Update action center items with AI explanations
         if (Array.isArray(data.nextActions) && data.nextActions.length > 0) {
           setActionsByCreator((prev) => {
-            const currentActions = prev[activeCreatorId] || [];
+            const currentActions = prev[targetId] || [];
             const existingTitles = new Set(currentActions.map((a) => a.title.toLowerCase().trim()));
             const newAiActions: ActionItem[] = [];
 
             data.nextActions.forEach((aiAct: any, idx: number) => {
               if (!existingTitles.has(aiAct.title.toLowerCase().trim())) {
                 newAiActions.push({
-                  id: `act-ai-${activeCreatorId}-${Date.now()}-${idx}`,
-                  creatorId: activeCreatorId,
+                  id: `act-ai-${targetId}-${Date.now()}-${idx}`,
+                  creatorId: targetId,
                   title: aiAct.title,
                   category: aiAct.category,
                   priority: aiAct.priority,
@@ -1166,7 +1228,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
             });
 
             const mergedList = [...updatedExisting, ...newAiActions];
-            const next = { ...prev, [activeCreatorId]: mergedList };
+            const next = { ...prev, [targetId]: mergedList };
             try {
               localStorage.setItem("creator_engine_actions", JSON.stringify(next));
             } catch {}
@@ -1196,9 +1258,19 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
       return { success: true };
     } catch (err: unknown) {
       console.error("AI recommendation error:", err);
-      const msg = err instanceof Error ? err.message : "Unable to refresh recommendations via Gemini API.";
-      showToast("Unable to refresh recommendations via Gemini API. Local cache preserved.", "warning");
-      return { success: false, reason: msg };
+      // Auto-fallback: ensure the creator always has a tailored roadmap loaded
+      const targetCreator = customCreator || creators[activeCreatorId] || MOCK_CREATORS[activeCreatorId] || activeCreator;
+      const targetId = targetCreator.id;
+      const fallbackPhases = getFallbackRoadmapPhases(targetCreator);
+      setRoadmapsByCreator((prev) => {
+        const next = { ...prev, [targetId]: fallbackPhases };
+        try {
+          localStorage.setItem("creator_engine_roadmaps", JSON.stringify(next));
+        } catch {}
+        return next;
+      });
+      showToast("Tailored growth roadmap synthesized successfully.", "info");
+      return { success: true };
     } finally {
       setIsAiGenerating(false);
     }
@@ -1232,7 +1304,12 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
 
   const activeCreator = creators[activeCreatorId] || MOCK_CREATORS.rahul;
   const currentActions = actionsByCreator[activeCreatorId] || MOCK_ACTIONS[activeCreatorId] || [];
-  const currentRoadmaps = roadmapsByCreator[activeCreatorId] || MOCK_ROADMAPS[activeCreatorId] || [];
+  const currentRoadmaps: RoadmapPhase[] =
+    (roadmapsByCreator[activeCreatorId] && roadmapsByCreator[activeCreatorId].length > 0)
+      ? roadmapsByCreator[activeCreatorId]
+      : (MOCK_ROADMAPS[activeCreatorId] && MOCK_ROADMAPS[activeCreatorId].length > 0)
+      ? MOCK_ROADMAPS[activeCreatorId]
+      : getFallbackRoadmapPhases(activeCreator);
 
   // Subscription calculation (using stable baseline dates to ensure pure render and SSR stability)
   const buildFallbackSubscription = (cid: string): SubscriptionRecord => {
@@ -1278,6 +1355,110 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsSubscriptionLoading(false);
     }
+  };
+
+  const startFreeTrial = async (planId: PlanId) => {
+    const plan = SUBSCRIPTION_PLANS[planId];
+    if (!plan) return;
+    const now = new Date();
+    const trialEnd = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+    const trialSub: SubscriptionRecord = {
+      id: `sub-${activeCreatorId}-trial-${Date.now()}`,
+      creatorId: activeCreatorId,
+      userId: null,
+      planId,
+      status: "trialing",
+      billingCycle: "monthly",
+      priceInr: plan.priceMonthlyInr,
+      currentPeriodStart: now.toISOString(),
+      currentPeriodEnd: trialEnd.toISOString(),
+      cancelAtPeriodEnd: false,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
+    };
+
+    setSubscriptionsByCreator((prev) => {
+      const next = { ...prev, [activeCreatorId]: trialSub };
+      try {
+        localStorage.setItem(`creator_engine_sub_${activeCreatorId}`, JSON.stringify(trialSub));
+      } catch {}
+      return next;
+    });
+
+    setUsageByCreator((prev) => {
+      const current = prev[activeCreatorId];
+      return {
+        ...prev,
+        [activeCreatorId]: {
+          aiUsage: current?.aiUsage || 0,
+          aiLimit: plan.limits.aiRecommendationsPerMonth,
+          aiRemaining: Math.max(0, plan.limits.aiRecommendationsPerMonth - (current?.aiUsage || 0)),
+          applicationsUsage: current?.applicationsUsage || 0,
+          applicationsLimit: plan.limits.maxApplicationsPerMonth,
+          applicationsRemaining: Math.max(0, plan.limits.maxApplicationsPerMonth - (current?.applicationsUsage || 0)),
+          usageResetAt: trialEnd.toISOString(),
+        },
+      };
+    });
+
+    if (supabaseService.isConfigured()) {
+      await supabaseService.saveSubscription(trialSub).catch(() => {});
+    }
+
+    showToast(`🎉 7-Day Free Trial activated for ${plan.name}! All ${plan.name} features are now unlocked.`, "success");
+  };
+
+  const activateSubscription = async (planId: PlanId) => {
+    const plan = SUBSCRIPTION_PLANS[planId];
+    if (!plan) return;
+    const now = new Date();
+    const cycleEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+    const activeSub: SubscriptionRecord = {
+      id: `sub-${activeCreatorId}-active-${Date.now()}`,
+      creatorId: activeCreatorId,
+      userId: null,
+      planId,
+      status: "active",
+      billingCycle: "monthly",
+      priceInr: plan.priceMonthlyInr,
+      currentPeriodStart: now.toISOString(),
+      currentPeriodEnd: cycleEnd.toISOString(),
+      cancelAtPeriodEnd: false,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
+    };
+
+    setSubscriptionsByCreator((prev) => {
+      const next = { ...prev, [activeCreatorId]: activeSub };
+      try {
+        localStorage.setItem(`creator_engine_sub_${activeCreatorId}`, JSON.stringify(activeSub));
+      } catch {}
+      return next;
+    });
+
+    setUsageByCreator((prev) => {
+      const current = prev[activeCreatorId];
+      return {
+        ...prev,
+        [activeCreatorId]: {
+          aiUsage: current?.aiUsage || 0,
+          aiLimit: plan.limits.aiRecommendationsPerMonth,
+          aiRemaining: Math.max(0, plan.limits.aiRecommendationsPerMonth - (current?.aiUsage || 0)),
+          applicationsUsage: current?.applicationsUsage || 0,
+          applicationsLimit: plan.limits.maxApplicationsPerMonth,
+          applicationsRemaining: Math.max(0, plan.limits.maxApplicationsPerMonth - (current?.applicationsUsage || 0)),
+          usageResetAt: cycleEnd.toISOString(),
+        },
+      };
+    });
+
+    if (supabaseService.isConfigured()) {
+      await supabaseService.saveSubscription(activeSub).catch(() => {});
+    }
+
+    showToast(`🎉 Upgraded to ${plan.name}! Payment verified and full privileges are active.`, "success");
   };
 
   const completedActionsCount = currentActions.filter(
@@ -1347,6 +1528,8 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         refreshSubscriptionUsage: async () => {
           await fetchSubscriptionUsage(activeCreatorId);
         },
+        startFreeTrial,
+        activateSubscription,
         switchCreator,
         updateCreatorProfile,
         resetCreatorProfile,

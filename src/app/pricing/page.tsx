@@ -6,7 +6,7 @@ import { useCreator } from "@/context/CreatorContext";
 import { SUBSCRIPTION_PLANS } from "@/config/subscriptions";
 import { PlanId, SubscriptionPlan } from "@/types/subscription";
 import { PlanBadge } from "@/components/subscription/PlanBadge";
-import { RazorpayCheckoutModal } from "@/components/subscription/RazorpayCheckoutModal";
+import { SubscriptionPaymentModal } from "@/components/subscription/SubscriptionPaymentModal";
 import {
   Check,
   X,
@@ -19,6 +19,8 @@ import {
   AlertCircle,
   Layers,
   ChevronDown,
+  QrCode,
+  Zap,
 } from "lucide-react";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
 
@@ -165,8 +167,8 @@ export default function PricingPage() {
                 )}
               </div>
 
-              {/* Primary Call to Action Button */}
-              <div className="mb-6">
+              {/* Primary Call to Action Buttons */}
+              <div className="mb-6 space-y-2">
                 {isCurrent ? (
                   <button
                     disabled
@@ -176,19 +178,32 @@ export default function PricingPage() {
                     <span>Active Current Plan</span>
                   </button>
                 ) : (
-                  <button
-                    onClick={() => handlePlanAction(plan)}
-                    className={`btn-tactile w-full py-3 px-4 rounded-full font-bold text-sm sm:text-base shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                      isPro
-                        ? "bg-[#0870e8] hover:bg-[#075fca] text-white shadow-[0_4px_14px_rgba(8,112,232,0.25)]"
-                        : isProPlus
-                        ? "bg-slate-900 hover:bg-slate-800 text-white"
-                        : "bg-white hover:bg-slate-50 text-slate-700 border border-slate-300"
-                    }`}
-                  >
-                    <span>{plan.id === "normal" ? "Downgrade to Normal" : `Upgrade to ${plan.name}`}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
+                  <>
+                    <button
+                      onClick={() => handlePlanAction(plan)}
+                      className={`btn-tactile w-full py-2.5 px-4 rounded-full font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                        isPro
+                          ? "bg-[#0870e8] hover:bg-[#075fca] text-white shadow-[0_4px_14px_rgba(8,112,232,0.25)]"
+                          : isProPlus
+                          ? "bg-slate-900 hover:bg-slate-800 text-white"
+                          : "bg-white hover:bg-slate-50 text-slate-700 border border-slate-300"
+                      }`}
+                    >
+                      {plan.id !== "normal" && <QrCode className="w-4 h-4" />}
+                      <span>{plan.id === "normal" ? "Downgrade to Normal" : `Pay with UPI QR / Card`}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+
+                    {plan.id !== "normal" && (
+                      <button
+                        onClick={() => handlePlanAction(plan)}
+                        className="btn-tactile w-full py-2 px-4 rounded-full font-bold text-xs bg-amber-500 hover:bg-amber-600 text-white shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Zap className="w-3.5 h-3.5" />
+                        <span>Start 7-Day Free Trial (Test {plan.name})</span>
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
 
@@ -401,11 +416,15 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* Razorpay Interactive Subscription Checkout Modal */}
-      <RazorpayCheckoutModal
+      {/* Subscription Benefits, UPI QR Code & Free Trial Modal */}
+      <SubscriptionPaymentModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         targetPlan={selectedPlanForModal}
+        initialPlanId={selectedPlanForModal?.id || "pro"}
+        onSuccess={() => {
+          refreshSubscription();
+        }}
       />
     </div>
   );

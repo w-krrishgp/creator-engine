@@ -22,8 +22,9 @@ export function PlanBadge({
   linkToPricing = false,
   className = "",
 }: PlanBadgeProps) {
-  const { currentPlanId } = useCreator();
+  const { currentPlanId, currentSubscription } = useCreator();
   const targetId = planId || currentPlanId;
+  const isTrial = currentSubscription?.status === "trialing" && targetId === currentPlanId;
   const plan = SUBSCRIPTION_PLANS[targetId] || SUBSCRIPTION_PLANS.normal;
 
   const sizeClasses = {
@@ -64,11 +65,16 @@ export function PlanBadge({
   const content = (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full font-bold border ${cfg.badgeBg} ${cfg.text} ${cfg.border} ${sizeClasses[size]} ${className} shadow-2xs transition-all`}
-      title={`${plan.name} Plan: ${plan.priceFormatted}/mo — ${plan.tagline}`}
+      title={`${plan.name} Plan: ${plan.priceFormatted}/mo — ${plan.tagline}${isTrial ? " (Free Trial Active)" : ""}`}
     >
       {cfg.icon}
       <span>{plan.name}</span>
-      {showPrice && (
+      {isTrial && (
+        <span className="px-1.5 py-0.2 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-200 text-amber-900 border border-amber-300">
+          Trial
+        </span>
+      )}
+      {showPrice && !isTrial && (
         <span className="opacity-85 font-normal text-xs">
           ({plan.priceFormatted}/mo)
         </span>

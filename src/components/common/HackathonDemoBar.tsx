@@ -117,6 +117,10 @@ export function HackathonDemoBar() {
     handleRunStep(nextIdx);
   };
 
+  if (!isDemoMode) {
+    return null;
+  }
+
   const currentStep = DEMO_STEPS[activeStepIndex];
 
   return (

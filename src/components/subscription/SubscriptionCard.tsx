@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCreator } from "@/context/CreatorContext";
 import { PlanBadge } from "./PlanBadge";
+import { SubscriptionPaymentModal } from "./SubscriptionPaymentModal";
 import { Card, CardHeader, CardContent } from "@/components/common/Card";
 import {
   CreditCard,
@@ -14,6 +15,8 @@ import {
   Check,
   AlertCircle,
   ExternalLink,
+  QrCode,
+  Zap,
 } from "lucide-react";
 
 export function SubscriptionCard() {
@@ -30,6 +33,7 @@ export function SubscriptionCard() {
   } = useCreator();
 
   const [formattedPeriodEnd, setFormattedPeriodEnd] = useState<string>("Nov 30, 2026");
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
 
   useEffect(() => {
     if (currentSubscription?.currentPeriodEnd) {
@@ -177,25 +181,45 @@ export function SubscriptionCard() {
               </div>
             </div>
 
-            {/* Actions: Upgrade / Manage Subscription */}
-            <div className="pt-2 flex items-center gap-2">
-              <Link
-                href="/subscription"
-                className="btn-tactile flex-1 py-2 px-3.5 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-all text-center"
-              >
-                Manage Billing
-              </Link>
-              <Link
-                href="/pricing"
-                className="btn-tactile flex-1 py-2 px-3.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white text-xs sm:text-sm font-bold transition-all text-center flex items-center justify-center gap-1 shadow-xs"
-              >
-                <span>{currentPlanId === "pro_plus" ? "Pricing" : "Upgrade"}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+            {/* Actions: Upgrade / Manage Subscription / UPI QR */}
+            <div className="pt-2 flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPaymentModalOpen(true)}
+                  className="btn-tactile flex-1 py-2 px-3.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white text-xs sm:text-sm font-bold transition-all text-center flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                >
+                  <QrCode className="w-3.5 h-3.5" />
+                  <span>{currentPlanId === "normal" ? "Pay via UPI / Test Trial" : "Subscription Privileges"}</span>
+                </button>
+                <Link
+                  href="/subscription"
+                  className="btn-tactile py-2 px-3.5 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-all text-center"
+                >
+                  Manage
+                </Link>
+              </div>
+
+              {currentPlanId === "normal" && (
+                <button
+                  type="button"
+                  onClick={() => setPaymentModalOpen(true)}
+                  className="btn-tactile w-full py-1.5 px-3 rounded-full bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
+                >
+                  <Zap className="w-3.5 h-3.5" />
+                  <span>Test Pro with 7-Day Free Trial</span>
+                </button>
+              )}
             </div>
           </>
         )}
       </CardContent>
+
+      <SubscriptionPaymentModal
+        isOpen={paymentModalOpen}
+        onClose={() => setPaymentModalOpen(false)}
+        initialPlanId={currentPlanId === "normal" ? "pro" : currentPlanId}
+      />
     </Card>
   );
 }

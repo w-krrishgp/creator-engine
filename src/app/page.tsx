@@ -39,6 +39,7 @@ export default function OverviewPage() {
     totalActionsCount,
     activePlatformMetrics,
     activeDataState,
+    isDemoMode,
   } = useCreator();
 
   // State for modals on overview page
@@ -113,11 +114,17 @@ export default function OverviewPage() {
 
   return (
     <div className="space-y-6">
-      {/* Editorial Demo Notice */}
-      <DemoDisclaimer text="Metrics, revenue models, and campaign matches adapt dynamically to the selected creator profile." />
+      {/* Dynamic Environment Notice */}
+      <DemoDisclaimer
+        text={
+          isDemoMode
+            ? "Metrics, revenue models, and campaign matches adapt dynamically to the selected demo creator profile."
+            : `Live Cloud Environment: Performance metrics and campaign matches are calibrated from your ${activeCreator.primaryPlatform} account signals.`
+        }
+      />
 
-      {/* Repeatable Hackathon Demo Tour */}
-      <HackathonDemoBar />
+      {/* Repeatable Hackathon Demo Tour (Only shown for demo personas) */}
+      {isDemoMode && <HackathonDemoBar />}
 
       {/* Consistent Persona Switcher Bar */}
       <PersonaSwitcherBar subtitle="Switch active creator to dynamically update executive briefing, analytics, priorities, and deal eligibility." />

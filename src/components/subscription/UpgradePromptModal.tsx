@@ -1,9 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useCreator } from "@/context/CreatorContext";
 import { PlanBadge } from "./PlanBadge";
+import { SubscriptionPaymentModal } from "./SubscriptionPaymentModal";
+import { SUBSCRIPTION_PLANS } from "@/config/subscriptions";
+import { PlanId } from "@/types/subscription";
 import {
   X,
   Sparkles,
@@ -14,6 +17,10 @@ import {
   Briefcase,
   CheckSquare,
   TrendingUp,
+  Zap,
+  QrCode,
+  CheckCircle2,
+  RefreshCw,
 } from "lucide-react";
 
 export type LimitType = "ai" | "applications" | "actions" | "roadmap";
@@ -37,12 +44,16 @@ export function UpgradePromptModal({
   currentUsageCount,
   resetDate,
 }: UpgradePromptModalProps) {
-  const { currentPlanId, currentPlan, currentSubscription } = useCreator();
+  const { currentPlanId, currentPlan, currentSubscription, startFreeTrial } = useCreator();
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [isTrialLoading, setIsTrialLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const nextTierName = currentPlanId === "normal" ? "Pro" : "Pro+";
-  const nextTierPrice = currentPlanId === "normal" ? "₹500/mo" : "₹999/mo";
+  const targetPlanId: PlanId = currentPlanId === "normal" ? "pro" : "pro_plus";
+  const targetPlan = SUBSCRIPTION_PLANS[targetPlanId] || SUBSCRIPTION_PLANS.pro;
+  const nextTierName = targetPlan.name;
+  const nextTierPrice = `${targetPlan.priceFormatted}/mo`;
 
   const getLimitDetails = () => {
     switch (limitType) {
@@ -115,105 +126,174 @@ export function UpgradePromptModal({
       })
     : "Next cycle";
 
+  const handleStartTrial = async () => {
+    setIsTrialLoading(true);
+    try {
+      const res = await fetch("/api/subscription/trial", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          creatorId: currentSubscription?.creatorId || "rahul",
+          planId: targetPlanId,
+        }),
+      });
+      await res.json();
+      if (startFreeTrial) {
+        await startFreeTrial(targetPlanId);
+      }
+      onClose();
+    } catch (err) {
+      console.error(err);
+      if (startFreeTrial) {
+        await startFreeTrial(targetPlanId);
+      }
+      onClose();
+    } finally {
+      setIsTrialLoading(false);
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden text-slate-800">
-        {/* Modal Header */}
-        <div className="p-5 sm:p-6 bg-slate-900 text-white relative">
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors"
-            aria-label="Close modal"
-          >
-            <X className="w-4 h-4" />
-          </button>
+    <>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden text-slate-800">
+          {/* Modal Header */}
+          <div className="p-5 sm:p-6 bg-gradient-to-r from-slate-950 to-slate-900 text-white relative">
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors cursor-pointer"
+              aria-label="Close modal"
+            >
+              <X className="w-4 h-4" />
+            </button>
 
-          <div className="flex items-center gap-2 mb-2">
-            <span className="p-1.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
-              <Lock className="w-4 h-4" />
-            </span>
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-              Plan Limit Reached
-            </span>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="p-1.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                <Lock className="w-4 h-4" />
+              </span>
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                Plan Limit Reached
+              </span>
+            </div>
+
+            <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+              {details.title}
+            </h3>
           </div>
 
-          <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-            {details.title}
-          </h3>
-        </div>
-
-        {/* Modal Body */}
-        <div className="p-5 sm:p-6 space-y-4 text-sm">
-          {/* Explanation Paragraph */}
-          <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-            {details.message}
-          </p>
-
-          {/* Usage Counter Box */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                Current Plan Quota
-              </span>
-              <PlanBadge size="xs" />
-            </div>
-
-            <div className="flex items-baseline justify-between text-slate-800">
-              <span className="text-xs sm:text-sm text-slate-600">Current Consumption:</span>
-              <span className="text-sm sm:text-base font-extrabold font-mono text-amber-700">
-                {details.usedCount} of {details.totalLimit} {details.unit}
-              </span>
-            </div>
-
-            <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
-              <div className="h-full bg-amber-500 w-full rounded-full" />
-            </div>
-
-            <div className="flex items-center gap-1.5 text-xs text-slate-500 pt-1 border-t border-slate-200/60 font-mono">
-              <Calendar className="w-3.5 h-3.5 text-slate-400" />
-              <span>Quota resets on: <strong className="text-slate-700">{resetDateStr}</strong></span>
-            </div>
-          </div>
-
-          {/* Next Tier Upgrade Value Proposition Box */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-blue-50/70 border border-blue-200/80 text-slate-800 space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-[#0870e8]" />
-                <h4 className="font-extrabold text-sm sm:text-base text-[#0870e8]">
-                  Unlock {nextTierName} ({nextTierPrice})
-                </h4>
-              </div>
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-[#0870e8]">
-                Recommended
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Instant access to complete 90-day execution roadmaps, expanded campaign applications,
-              and enhanced Gemini AI strategic generation.
+          {/* Modal Body */}
+          <div className="p-5 sm:p-6 space-y-4 text-sm max-h-[70vh] overflow-y-auto">
+            {/* Explanation Paragraph */}
+            <p className="text-slate-600 leading-relaxed text-sm">
+              {details.message}
             </p>
+
+            {/* Next Tier Upgrade Value Proposition Box with Benefits */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-blue-50/90 to-indigo-50/70 border-2 border-blue-200/80 text-slate-800 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-[#0870e8]" />
+                  <h4 className="font-black text-sm sm:text-base text-[#0870e8]">
+                    Benefits of {nextTierName} ({nextTierPrice})
+                  </h4>
+                </div>
+                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-[#0870e8]">
+                  Recommended
+                </span>
+              </div>
+
+              {/* Key Benefits Checklist */}
+              <div className="space-y-1.5 text-xs text-slate-700">
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>
+                    <strong>Full 90-Day Phased Growth Roadmap:</strong> Unlocks Phase 2 & 3 scaling milestones
+                  </span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>
+                    <strong>Gemini 3.8 Flash AI Synthesis:</strong> {targetPlan.limits.aiRecommendationsPerMonth} strategic runs/month
+                  </span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>
+                    <strong>Brand Deal Applications:</strong> Up to {targetPlan.limits.maxApplicationsPerMonth} monthly campaigns
+                  </span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>
+                    <strong>Dynamic Cold Pitch Generator:</strong> Included with tailored brand hooks
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Trial Feature Callout: Test This Feature Free */}
+            <div className="p-4 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-950 space-y-2.5">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-amber-600 shrink-0" />
+                <h5 className="font-black text-xs sm:text-sm text-amber-950">
+                  Want to test {nextTierName} first?
+                </h5>
+              </div>
+              <p className="text-xs text-amber-800 leading-relaxed">
+                Activate a 7-day free trial right now with no credit card required. Unlocks all {nextTierName} features immediately so you can test roadmaps and AI tools.
+              </p>
+              <button
+                onClick={handleStartTrial}
+                disabled={isTrialLoading}
+                className="btn-tactile w-full py-2.5 px-4 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                {isTrialLoading ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Activating Trial...</span>
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-4 h-4" />
+                    <span>Start 7-Day Free Trial (Test {nextTierName} Now)</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* Modal Footer */}
-        <div className="p-4 sm:p-5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-3">
-          <button
-            onClick={onClose}
-            className="btn-tactile px-4 py-2 rounded-full border border-slate-300 hover:bg-slate-100 font-bold text-xs sm:text-sm text-slate-700 transition-colors"
-          >
-            Dismiss
-          </button>
+          {/* Modal Footer */}
+          <div className="p-4 sm:p-5 bg-slate-50/90 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2.5">
+            <button
+              onClick={onClose}
+              className="btn-tactile px-4 py-2 rounded-full border border-slate-300 hover:bg-slate-100 font-bold text-xs sm:text-sm text-slate-700 transition-colors cursor-pointer"
+            >
+              Dismiss
+            </button>
 
-          <Link
-            href="/pricing"
-            onClick={onClose}
-            className="btn-tactile px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white font-bold text-xs sm:text-sm shadow-xs flex items-center gap-1.5 transition-all"
-          >
-            <span>View Pricing & Upgrade Plans</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPaymentModalOpen(true)}
+                className="btn-tactile px-4 py-2 rounded-full bg-[#0870e8] hover:bg-[#075fca] text-white font-bold text-xs sm:text-sm shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                <QrCode className="w-3.5 h-3.5" />
+                <span>Pay via UPI QR Code / Card</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Subscription Payment & QR Modal */}
+      <SubscriptionPaymentModal
+        isOpen={paymentModalOpen}
+        onClose={() => setPaymentModalOpen(false)}
+        initialPlanId={targetPlanId}
+        onSuccess={() => {
+          setPaymentModalOpen(false);
+          onClose();
+        }}
+      />
+    </>
   );
 }

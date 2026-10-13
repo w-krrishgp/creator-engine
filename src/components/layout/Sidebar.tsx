@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCreator } from "@/context/CreatorContext";
@@ -16,8 +16,10 @@ import {
   CheckCircle2,
   SlidersHorizontal,
   CreditCard,
+  Plus,
 } from "lucide-react";
 import { PlanBadge } from "@/components/subscription/PlanBadge";
+import { ConnectAccountModal } from "@/components/platforms/ConnectAccountModal";
 
 interface SidebarProps {
   onMobileClose?: () => void;
@@ -37,7 +39,10 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
     appliedOpportunitiesCount,
     currentPlanId,
     currentPlan,
+    isDemoMode,
+    importPlatformCreator,
   } = useCreator();
+  const [connectModalOpen, setConnectModalOpen] = useState(false);
 
   const handlePersonaClick = (id: string) => {
     if (activeCreatorId === id) {
@@ -159,34 +164,75 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
           <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
             <SlidersHorizontal className="w-3 h-3 text-[#0870e8]" /> Active Creator
           </span>
-          <span className="text-xs font-medium text-slate-400">Demo</span>
+          {isDemoMode ? (
+            <span className="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/80">
+              Demo
+            </span>
+          ) : (
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/80 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Live
+            </span>
+          )}
         </div>
 
+        {/* Highlight active custom/connected account if not demo Rahul/Priya */}
+        {activeCreatorId !== "rahul" && activeCreatorId !== "priya" && (
+          <div className="mb-2 p-2 rounded-xl bg-emerald-50/90 border border-emerald-200/80 flex items-center justify-between gap-2 shadow-2xs">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+              <div className="min-w-0">
+                <p className="text-xs font-extrabold text-slate-900 truncate">
+                  {activeCreator.name}
+                </p>
+                <p className="text-[11px] text-emerald-700 font-semibold truncate">
+                  {activeCreator.primaryPlatform} • Live Account
+                </p>
+              </div>
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-emerald-100 text-emerald-800 rounded">
+              Active
+            </span>
+          </div>
+        )}
+
+        {/* Demo Presets Switcher */}
         <div className="grid grid-cols-2 gap-1 p-0.5 bg-slate-200/60 rounded-full">
           <button
             onClick={() => handlePersonaClick("rahul")}
-            className={`btn-tactile flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs sm:text-sm transition-all cursor-pointer ${
+            className={`btn-tactile flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs transition-all cursor-pointer ${
               activeCreatorId === "rahul"
                 ? "bg-white text-slate-900 font-bold shadow-[0_1px_2px_rgba(0,0,0,0.06)] border border-slate-200/60"
                 : "text-slate-600 hover:text-slate-900 font-medium"
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
             <span className="truncate">Rahul (IG)</span>
           </button>
 
           <button
             onClick={() => handlePersonaClick("priya")}
-            className={`btn-tactile flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs sm:text-sm transition-all cursor-pointer ${
+            className={`btn-tactile flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs transition-all cursor-pointer ${
               activeCreatorId === "priya"
                 ? "bg-white text-slate-900 font-bold shadow-[0_1px_2px_rgba(0,0,0,0.06)] border border-slate-200/60"
                 : "text-slate-600 hover:text-slate-900 font-medium"
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-[#0870e8] shrink-0" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0870e8] shrink-0" />
             <span className="truncate">Priya (LI)</span>
           </button>
         </div>
+
+        {/* Connect Live Profile Button */}
+        <button
+          type="button"
+          onClick={() => setConnectModalOpen(true)}
+          className="mt-2 w-full py-1.5 px-2.5 rounded-xl border border-dashed border-[#0870e8]/50 bg-blue-50/50 hover:bg-blue-50 hover:border-[#0870e8] text-[#0870e8] text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs btn-tactile"
+          title="Connect real YouTube, Instagram, or LinkedIn profile"
+        >
+          <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+          <span>Connect Live Profile</span>
+        </button>
       </div>
 
       {/* Primary Navigation */}
@@ -298,6 +344,14 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
           <span>Launch Onboarding</span>
         </Link>
       </div>
+
+      <ConnectAccountModal
+        isOpen={connectModalOpen}
+        onClose={() => setConnectModalOpen(false)}
+        onAccountImported={(metrics) => {
+          importPlatformCreator(metrics);
+        }}
+      />
     </aside>
   );
 }

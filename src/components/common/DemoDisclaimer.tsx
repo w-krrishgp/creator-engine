@@ -12,10 +12,17 @@ interface DemoDisclaimerProps {
 
 export function DemoDisclaimer({
   compact = false,
-  text = "Illustrative sample data for demonstration. Earning ranges and deal metrics are models, not financial guarantees.",
+  text,
   className = "",
 }: DemoDisclaimerProps) {
   const { isDemoMode } = useCreator();
+
+  const displayText =
+    text && (!text.includes("Illustrative") || isDemoMode)
+      ? text
+      : isDemoMode
+      ? (text || "Illustrative sample data for demonstration. Earning ranges and deal metrics are models, not financial guarantees.")
+      : "Calibrated from your live account metrics and category benchmarks. Earning ranges and deal metrics are projection models, not financial guarantees.";
 
   if (compact) {
     return (
@@ -25,14 +32,14 @@ export function DemoDisclaimer({
             ? "bg-slate-100 text-slate-700 border-slate-200/80"
             : "bg-emerald-50 text-emerald-800 border-emerald-200/80"
         } border ${className}`}
-        title={text}
+        title={displayText}
       >
         <span
           className={`w-1.5 h-1.5 rounded-full ${
             isDemoMode ? "bg-[#0870e8]" : "bg-emerald-500"
           } shrink-0`}
         />
-        <span>{isDemoMode ? "Demo Data" : "Live Cloud"}</span>
+        <span>{isDemoMode ? "Demo Data" : "Live Account"}</span>
       </div>
     );
   }
@@ -56,9 +63,9 @@ export function DemoDisclaimer({
             isDemoMode ? "text-slate-900" : "text-emerald-900"
           }`}
         >
-          {isDemoMode ? "Demo Environment:" : "Live Cloud Environment:"}
+          {isDemoMode ? "Demo Persona Benchmark:" : "Live Account Calibration:"}
         </span>
-        {text}
+        {displayText}
       </div>
     </div>
   );

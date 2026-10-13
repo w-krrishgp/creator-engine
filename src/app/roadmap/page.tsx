@@ -44,6 +44,7 @@ export default function RoadmapPage() {
     currentPlan,
     currentPlanId,
     subscriptionUsage,
+    isDemoMode,
   } = useCreator();
 
   const [selectedPhaseIndex, setSelectedPhaseIndex] = useState(0);
@@ -55,20 +56,37 @@ export default function RoadmapPage() {
   if (!roadmaps || roadmaps.length === 0) {
     return (
       <div className="max-w-2xl mx-auto py-16 text-center space-y-4">
-        <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#0870e8] flex items-center justify-center mx-auto shadow-xs">
-          <Calendar className="w-6 h-6" />
+        <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#0870e8] flex items-center justify-center mx-auto shadow-xs">
+          <Sparkles className="w-7 h-7" />
         </div>
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">No Growth Roadmap Generated</h2>
-        <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-          Complete the creator onboarding wizard to generate your tailored 30/60/90-day execution blueprint.
+        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Generate Your Growth Roadmap</h2>
+        <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-lg mx-auto">
+          Synthesize a tailored 30 / 60 / 90-day phased execution blueprint, high-impact content gaps, and topic opportunities with Gemini AI.
         </p>
-        <Link
-          href="/onboarding"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white font-bold text-sm shadow-xs btn-tactile"
-        >
-          <span>Launch Onboarding Wizard</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
+        <div className="flex items-center justify-center gap-3 pt-2 flex-wrap">
+          <button
+            onClick={async () => {
+              const res = await refreshAiRecommendations();
+              if (res && res.quotaExceeded) {
+                setModalLimitType("ai");
+                setModalMessage(res.reason);
+                setUpgradeModalOpen(true);
+              }
+            }}
+            disabled={isAiGenerating}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white font-bold text-sm shadow-xs transition-all disabled:opacity-60 cursor-pointer btn-tactile"
+          >
+            <Sparkles className={`w-4 h-4 ${isAiGenerating ? "animate-spin" : ""}`} />
+            <span>{isAiGenerating ? "Synthesizing with Gemini..." : "Generate Growth Roadmap (Gemini AI)"}</span>
+          </button>
+          <Link
+            href="/onboarding"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-slate-900 font-bold text-sm shadow-2xs btn-tactile"
+          >
+            <span>Launch Onboarding Wizard</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     );
   }
@@ -89,11 +107,17 @@ export default function RoadmapPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* 0. HACKATHON DEMO ASSISTANT */}
-      <HackathonDemoBar />
+      {/* 0. HACKATHON DEMO ASSISTANT (Shown only for demo personas) */}
+      {isDemoMode && <HackathonDemoBar />}
 
-      {/* 1. TRANSPARENCY & ILLUSTRATIVE DEMO NOTICE */}
-      <DemoDisclaimer text="Illustrative Demo Recommendations: These growth milestones, topic angles, and benchmarking references are synthesized based on self-reported creator positioning and public category benchmarks. Connect verified social accounts to calibrate live algorithmic signals. Never claiming unauthenticated profile access." />
+      {/* 1. TRANSPARENCY NOTICE (Dynamic based on demo vs verified live mode) */}
+      <DemoDisclaimer
+        text={
+          isDemoMode
+            ? "Illustrative Demo Recommendations: These growth milestones, topic angles, and benchmarking references are synthesized for demo personas based on public category benchmarks."
+            : `Verified Live Recommendations: Calibrated from your ${activeCreator.primaryPlatform} account signals, ${activeCreator.niche} category benchmarks, and ${activeCreator.creatorStage} creator stage. Synthesized with Gemini AI.`
+        }
+      />
 
       {/* 2. CONSISTENT PERSONA SWITCHER BAR */}
       <PersonaSwitcherBar subtitle="Phased milestones, high-impact content gaps, and topic opportunities calibrated to your active persona." />
@@ -139,7 +163,7 @@ export default function RoadmapPage() {
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white text-xs sm:text-sm font-bold transition-all shadow-xs disabled:opacity-60 cursor-pointer btn-tactile"
               >
                 <Sparkles className={`w-4 h-4 ${isAiGenerating ? "animate-spin" : ""}`} />
-                <span>{isAiGenerating ? "Synthesizing with Gemini..." : "Refresh Recommendations (Gemini AI)"}</span>
+                <span>{isAiGenerating ? "Synthesizing with Gemini..." : "Generate / Refresh Roadmap (Gemini AI)"}</span>
               </button>
               <div className="flex items-center gap-2 text-xs flex-wrap">
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-100/90 px-3 py-1 rounded-full border border-slate-200/60 font-mono">
@@ -148,19 +172,17 @@ export default function RoadmapPage() {
                     AI Quota: {subscriptionUsage?.aiUsage ?? 0}/{subscriptionUsage?.aiLimit ?? currentPlan.limits.aiRecommendationsPerMonth} used
                   </span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-slate-100/90 px-3 py-1 rounded-full border border-slate-200/60">
-                  {isGeminiConfigured ? (
-                    <>
-                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                      Gemini 3.8 Flash (Live)
-                    </>
-                  ) : (
-                    <>
-                      <span className="w-2 h-2 rounded-full bg-amber-500" />
-                      Demo Mode (Deterministic Fallback)
-                    </>
-                  )}
-                </span>
+                {isDemoMode ? (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-800 bg-amber-50/90 px-3 py-1 rounded-full border border-amber-200/70">
+                    <span className="w-2 h-2 rounded-full bg-amber-500" />
+                    Demo Benchmark
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50/90 px-3 py-1 rounded-full border border-emerald-200/70">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    {isGeminiConfigured ? "Gemini AI (Live)" : "Tailored Strategy Engine (Live)"}
+                  </span>
+                )}
                 {lastAiGeneratedAt && (
                   <span className="text-xs text-slate-400 font-medium">
                     Generated at {lastAiGeneratedAt}

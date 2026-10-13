@@ -168,3 +168,125 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ========================================================
+   Dark Theme System & Component Tokens
+   ======================================================== */
+html.dark {
+  color-scheme: dark;
+  --background: #090d16;
+  --foreground: #f8fafc;
+  --card-bg: #101726;
+  --card-border: #1e293b;
+  --accent-blue-subtle: #172554;
+}
+
+html.dark body {
+  background-color: #090d16 !important;
+  color: #f1f5f9 !important;
+}
+
+/* Header & Shell Overrides */
+html.dark header {
+  background-color: rgba(9, 13, 22, 0.85) !important;
+  border-color: #1e293b !important;
+}
+
+html.dark aside {
+  background-color: #0b101d !important;
+  border-color: #1e293b !important;
+}
+
+html.dark nav[aria-label="Mobile Navigation"] {
+  background-color: rgba(11, 16, 29, 0.95) !important;
+  border-color: #1e293b !important;
+}
+
+/* Surface & Card Overrides */
+html.dark .bg-white {
+  background-color: #111827 !important;
+}
+
+html.dark .bg-\[\#fafafa\],
+html.dark .bg-\[\#f8fafc\] {
+  background-color: #090d16 !important;
+}
+
+html.dark .bg-slate-50,
+html.dark .bg-slate-50\/30,
+html.dark .bg-slate-50\/40,
+html.dark .bg-slate-50\/50,
+html.dark .bg-slate-50\/70,
+html.dark .bg-slate-50\/80,
+html.dark .bg-slate-50\/90 {
+  background-color: #141c2e !important;
+}
+
+html.dark .bg-slate-100,
+html.dark .bg-slate-100\/80,
+html.dark .bg-slate-200\/60,
+html.dark .bg-slate-200\/70,
+html.dark .bg-slate-200\/80 {
+  background-color: #1b253b !important;
+}
+
+/* Borders */
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-slate-200\/60,
+html.dark .border-slate-200\/70,
+html.dark .border-slate-200\/75,
+html.dark .border-slate-200\/80,
+html.dark .border-slate-200\/90,
+html.dark .border-slate-300 {
+  border-color: #1e293b !important;
+}
+
+/* Typography Overrides */
+html.dark .text-slate-900,
+html.dark .text-slate-800,
+html.dark .font-editorial-heading,
+html.dark .text-display-metric,
+html.dark .text-page-title,
+html.dark .text-section-title,
+html.dark .text-card-title {
+  color: #f8fafc !important;
+}
+
+html.dark .text-slate-700,
+html.dark .text-body-base {
+  color: #cbd5e1 !important;
+}
+
+html.dark .text-slate-600,
+html.dark .text-body-lead {
+  color: #94a3b8 !important;
+}
+
+html.dark .text-slate-500,
+html.dark .text-meta-label,
+html.dark .text-subtle-caption {
+  color: #64748b !important;
+}
+
+/* Modals & Inputs */
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #141c2e !important;
+  color: #f1f5f9 !important;
+  border-color: #27354f !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* Scrollbar in Dark Mode */
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

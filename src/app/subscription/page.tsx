@@ -6,11 +6,12 @@ import { useCreator } from "@/context/CreatorContext";
 import { SUBSCRIPTION_PLANS } from "@/config/subscriptions";
 import { PlanId, SubscriptionPlan } from "@/types/subscription";
 import { PlanBadge } from "@/components/subscription/PlanBadge";
-import { RazorpayCheckoutModal } from "@/components/subscription/RazorpayCheckoutModal";
+import { SubscriptionPaymentModal } from "@/components/subscription/SubscriptionPaymentModal";
 import { Card, CardHeader, CardContent } from "@/components/common/Card";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
 import {
   CreditCard,
+  QrCode,
   ShieldCheck,
   RefreshCw,
   AlertCircle,
@@ -239,8 +240,15 @@ export default function SubscriptionManagePage() {
                       onClick={() => handleOpenUpgrade("pro")}
                       className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#075fca] text-white font-bold text-sm shadow-xs transition-colors cursor-pointer"
                     >
+                      <QrCode className="w-4 h-4" />
+                      <span>Pay via UPI / Card (₹500/mo)</span>
+                    </button>
+                    <button
+                      onClick={() => handleOpenUpgrade("pro")}
+                      className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm shadow-xs transition-colors cursor-pointer"
+                    >
                       <Zap className="w-4 h-4" />
-                      <span>Upgrade to Pro (₹500/mo)</span>
+                      <span>Start 7-Day Free Trial (Test Pro)</span>
                     </button>
                     <button
                       onClick={() => handleOpenUpgrade("pro_plus")}
@@ -427,11 +435,16 @@ export default function SubscriptionManagePage() {
         </div>
       </div>
 
-      {/* Razorpay Interactive Checkout Modal */}
-      <RazorpayCheckoutModal
+      {/* Subscription Benefits, UPI QR Code & Free Trial Modal */}
+      <SubscriptionPaymentModal
         isOpen={checkoutModalOpen}
         onClose={() => setCheckoutModalOpen(false)}
         targetPlan={targetPlanForCheckout}
+        initialPlanId={targetPlanForCheckout?.id || "pro"}
+        onSuccess={() => {
+          refreshSubscription();
+          refreshSubscriptionUsage();
+        }}
       />
     </div>
   );
