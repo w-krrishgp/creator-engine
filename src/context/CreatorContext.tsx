@@ -325,11 +325,25 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
           if (remoteProfile) {
             setCreators((prev) => ({ ...prev, [activeCreatorId]: remoteProfile }));
           }
-          // Load opportunities from Supabase
+          // Load opportunities from Supabase and merge with full catalog
           const remoteOpps = await supabaseService.getOpportunities();
           if (remoteOpps && remoteOpps.length > 0) {
-            setOppsByCreator((prev) => ({ ...prev, [activeCreatorId]: remoteOpps }));
+            setOppsByCreator((prev) => {
+              const currentList = prev[activeCreatorId] || MOCK_OPPORTUNITIES;
+              const remoteMap = new Map(remoteOpps.map((o) => [o.id, o]));
+              const merged = currentList.map((localOpp) => {
+                const remote = remoteMap.get(localOpp.id);
+                return remote ? { ...localOpp, ...remote } : localOpp;
+              });
+              for (const rOpp of remoteOpps) {
+                if (!merged.some((m) => m.id === rOpp.id)) {
+                  merged.push(rOpp);
+                }
+              }
+              return { ...prev, [activeCreatorId]: merged };
+            });
           }
+
           // Load actions from Supabase
           const remoteActions = await supabaseService.getActions(activeCreatorId);
           if (remoteActions && remoteActions.length > 0) {

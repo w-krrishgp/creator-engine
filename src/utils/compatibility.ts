@@ -36,13 +36,29 @@ export function calculateCompatibility(
     creatorNicheLower.includes("invest") ||
     creatorNicheLower.includes("wealth");
 
+  const isTechCreator =
+    creatorNicheLower.includes("tech") ||
+    creatorNicheLower.includes("code") ||
+    creatorNicheLower.includes("developer") ||
+    creatorNicheLower.includes("software") ||
+    creatorNicheLower.includes("ai") ||
+    creatorNicheLower.includes("programming");
+
+  const isHealthCreator =
+    creatorNicheLower.includes("health") ||
+    creatorNicheLower.includes("medical") ||
+    creatorNicheLower.includes("doctor") ||
+    creatorNicheLower.includes("clinical") ||
+    creatorNicheLower.includes("medicine");
+
   const relatedFitnessOpp = oppNichesLower.some(
     (n) =>
       n.includes("wellness") ||
       n.includes("sports") ||
       n.includes("nutrition") ||
       n.includes("lifestyle") ||
-      n.includes("productivity")
+      n.includes("productivity") ||
+      n.includes("health")
   );
 
   const relatedFinanceOpp = oppNichesLower.some(
@@ -54,9 +70,31 @@ export function calculateCompatibility(
       n.includes("productivity")
   );
 
+  const relatedTechOpp = oppNichesLower.some(
+    (n) =>
+      n.includes("tech") ||
+      n.includes("ai") ||
+      n.includes("coding") ||
+      n.includes("engineering") ||
+      n.includes("software") ||
+      n.includes("productivity")
+  );
+
+  const relatedHealthOpp = oppNichesLower.some(
+    (n) =>
+      n.includes("healthcare") ||
+      n.includes("health") ||
+      n.includes("medicine") ||
+      n.includes("wellness") ||
+      n.includes("nutrition") ||
+      n.includes("fitness")
+  );
+
   const isRelatedVertical =
     (isFitnessCreator && relatedFitnessOpp) ||
-    (isFinanceCreator && relatedFinanceOpp);
+    (isFinanceCreator && relatedFinanceOpp) ||
+    (isTechCreator && relatedTechOpp) ||
+    (isHealthCreator && relatedHealthOpp);
 
   if (exactNicheMatch) {
     nicheScore = 35;
@@ -128,7 +166,28 @@ export function calculateCompatibility(
       oppAudienceLower.includes("professional") ||
       oppAudienceLower.includes("investor"));
 
-  if (isYouthOrStudentFit || isCorporateOrSalariedFit) {
+  const isTechOrEngineerFit =
+    (creatorAudienceLower.includes("engineer") ||
+      creatorAudienceLower.includes("developer") ||
+      creatorAudienceLower.includes("coding") ||
+      creatorAudienceLower.includes("tech") ||
+      creatorAudienceLower.includes("software")) &&
+    (oppAudienceLower.includes("engineer") ||
+      oppAudienceLower.includes("developer") ||
+      oppAudienceLower.includes("student") ||
+      oppAudienceLower.includes("tech"));
+
+  const isHealthOrFamilyFit =
+    (creatorAudienceLower.includes("health") ||
+      creatorAudienceLower.includes("family") ||
+      creatorAudienceLower.includes("patient") ||
+      creatorAudienceLower.includes("wellness") ||
+      creatorAudienceLower.includes("fitness")) &&
+    (oppAudienceLower.includes("health") ||
+      oppAudienceLower.includes("wellness") ||
+      oppAudienceLower.includes("family"));
+
+  if (isYouthOrStudentFit || isCorporateOrSalariedFit || isTechOrEngineerFit || isHealthOrFamilyFit) {
     audienceScore = 10;
   } else if (exactNicheMatch) {
     audienceScore = 8;

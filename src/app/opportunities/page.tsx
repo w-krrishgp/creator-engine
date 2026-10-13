@@ -31,6 +31,8 @@ export default function OpportunitiesPage() {
 
   const niches = [
     "All",
+    "Tech & AI",
+    "Healthcare & Medicine",
     "Fitness & Nutrition",
     "Personal Finance & Investing",
     "Fintech",
@@ -40,7 +42,7 @@ export default function OpportunitiesPage() {
     "Lifestyle",
   ];
 
-  const platforms = ["All", "Instagram", "LinkedIn", "Multi-Platform"];
+  const platforms = ["All", "YouTube", "Instagram", "LinkedIn", "Multi-Platform"];
 
   // Filter opportunities
   const filteredOpportunities = opportunities

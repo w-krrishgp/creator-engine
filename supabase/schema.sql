@@ -344,8 +344,33 @@ INSERT INTO public.opportunities (
     '["Published track record in personal finance or quantitative economics", "Minimum 6,000 followers on LinkedIn", "Clean compliance track record with zero misleading financial claims"]'::jsonb,
     '["Varsity Educator badge and official co-distribution on Zerodha Varsity LinkedIn page"]'::jsonb,
     true, true
+),
+(
+    'opp-postman-tech', 'Postman', '🚀', 'Developer Tools & API Infrastructure',
+    'Production APIs & Microservices Architecture Deep-Dive',
+    'Partnering with established technical educators and coding creators on YouTube to build hands-on architectural tutorials, live API debugging sessions, and automated testing workflows with Postman.',
+    '["Tech & AI", "Coding & Engineering", "Productivity"]'::jsonb, 'YouTube', 100000, 3.0,
+    '₹1,50,000 - ₹2,50,000', 150000, 250000, 'Dec 15, 2026',
+    '["1x Dedicated YouTube video (12-18 min) demonstrating real-world API development & testing", "1x YouTube Community Post with GitHub repo & public Postman workspace link", "Pinned top comment with exclusive creator documentation guide & tracking link"]'::jsonb,
+    'Software engineers, backend developers, computer science students, and tech leads (Age 19-35)', 'Pan-India & Global Tech Audience',
+    '["Technical educator or software engineering content creator on YouTube", "Minimum 100,000 verified YouTube subscribers / followers", "Demonstrated hands-on coding, live debugging, or system architecture video style", "Average view-to-subscriber ratio >= 15% on long-form technical video uploads"]'::jsonb,
+    '["Postman Enterprise Organization Team License for 1 year (worth $5,000)", "VIP Guest invitation to Postman PostCon Global Developer Summit"]'::jsonb,
+    true, true
+),
+(
+    'opp-tata-1mg-health', 'Tata 1mg Healthcare', '🩺', 'Digital Healthcare & Preventive Medicine',
+    'Preventive Health & Evidence-Based Diagnostics Awareness',
+    'Collaborating with credible medical professionals, doctors, and healthcare creators on YouTube to debunk medical myths, explain comprehensive preventive health screenings, and promote evidence-based wellness routines.',
+    '["Healthcare & Medicine", "Wellness", "Fitness & Nutrition"]'::jsonb, 'YouTube', 100000, 3.2,
+    '₹1,75,000 - ₹3,00,000', 175000, 300000, 'Dec 20, 2026',
+    '["1x Dedicated YouTube video (10-15 min) breaking down preventive health checkups & routine biomarker metrics", "1x YouTube Shorts companion video focusing on top 3 everyday health red flags", "Pinned comment & description link for complimentary Tata 1mg Comprehensive Health Screening voucher for audience"]'::jsonb,
+    'Health-conscious individuals, families, young professionals, and caretakers seeking verified medical information (Age 22-55)', 'Pan-India (Metros, Tier 1 & Tier 2 cities)',
+    '["Verified healthcare influencer, MBBS/MD doctor, clinical researcher, or health educator on YouTube", "Minimum 100,000 verified YouTube subscribers / followers", "Strictly evidence-based, scientifically referenced medical or health content", "Zero promotion of unverified miracle cures, pseudoscience, or banned supplements"]'::jsonb,
+    '["Comprehensive annual executive full-body diagnostic health checkup package for creator & family (worth ₹35,000)", "Featured expert badge in Tata 1mg Doctor & Health Influencer Network"]'::jsonb,
+    true, true
 )
 ON CONFLICT (id) DO NOTHING;
+
 
 -- ------------------------------------------------------------------------------
 -- 9. CREATOR SUBSCRIPTIONS TABLE (Membership Plans & Quotas)
