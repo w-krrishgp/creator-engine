@@ -307,8 +307,8 @@ export default function OpportunitiesPage() {
                 {opportunities.length} Live Briefs
               </Badge>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/80 shadow-xs">
-                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950/70 text-[#0870e8] dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/80 shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-[#0870e8] animate-pulse" />
                 TinyFish Live Web
               </span>
             )}
@@ -343,11 +343,11 @@ export default function OpportunitiesPage() {
             }}
             className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${
               viewMode === "radar"
-                ? "bg-indigo-600 text-white shadow-xs"
+                ? "bg-[#0870e8] text-white shadow-xs"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
-            <Radio className="w-4 h-4 text-indigo-200" />
+            <Radio className="w-4 h-4 text-blue-200" />
             <span>Opportunity Radar</span>
             <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-white/20 uppercase font-extrabold tracking-wider">
               Live
@@ -515,11 +515,11 @@ export default function OpportunitiesPage() {
       {viewMode === "radar" && (
         <div className="space-y-6 animate-in fade-in duration-150">
           {/* Radar Control & Live Search Panel */}
-          <div className="bg-gradient-to-br from-indigo-50/70 via-white to-slate-50 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20 p-5 sm:p-6 rounded-[22px] border border-indigo-100 dark:border-indigo-950/80 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-[22px] border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="p-1.5 rounded-lg bg-indigo-600 text-white">
+                  <span className="p-1.5 rounded-lg bg-[#0870e8] text-white">
                     <Compass className="w-4 h-4" />
                   </span>
                   <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg tracking-tight">
@@ -533,31 +533,35 @@ export default function OpportunitiesPage() {
 
               {lastSearchedAt && (
                 <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 shrink-0 bg-white dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                  <Clock className="w-3.5 h-3.5 text-indigo-600" />
+                  <Clock className="w-3.5 h-3.5 text-[#0870e8]" />
                   <span>Last Scanned: {new Date(lastSearchedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
                 </div>
               )}
             </div>
 
             {/* Live Search Controls */}
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-              <div className="sm:col-span-6 relative">
-                <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
+              {/* 1. Keyword Search Input with fixed search icon */}
+              <div className="col-span-1 sm:col-span-2 lg:col-span-5 relative flex items-center w-full">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <Search className="w-4 h-4 text-slate-400" />
+                </div>
                 <input
                   type="text"
                   placeholder="e.g. Developer tools ambassador, supplement affiliate, fintech sponsor..."
                   value={radarQuery}
                   onChange={(e) => setRadarQuery(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleRadarScan()}
-                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full h-11 pl-10 pr-4 text-xs sm:text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0870e8]"
                 />
               </div>
 
-              <div className="sm:col-span-3">
+              {/* 2. Niche Select Dropdown */}
+              <div className="col-span-1 sm:col-span-1 lg:col-span-3">
                 <select
                   value={radarNiche}
                   onChange={(e) => setRadarNiche(e.target.value)}
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm font-medium rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                  className="w-full h-11 px-3.5 text-xs sm:text-sm font-medium rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0870e8] cursor-pointer"
                 >
                   {niches.filter((n) => n !== "All").map((n) => (
                     <option key={n} value={n}>
@@ -567,31 +571,35 @@ export default function OpportunitiesPage() {
                 </select>
               </div>
 
-              <div className="sm:col-span-3 flex items-center gap-2">
+              {/* 3. Location Select Dropdown */}
+              <div className="col-span-1 sm:col-span-1 lg:col-span-2">
                 <select
                   value={radarLocation}
                   onChange={(e) => setRadarLocation(e.target.value)}
-                  className="px-3 py-2.5 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer shrink-0"
+                  className="w-full h-11 px-3 text-xs sm:text-sm font-semibold rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0870e8] cursor-pointer truncate"
                 >
                   <option value="IN">🇮🇳 India (IN)</option>
                   <option value="US">🇺🇸 United States (US)</option>
                   <option value="GB">🇬🇧 United Kingdom (GB)</option>
                   <option value="Global">🌐 Worldwide</option>
                 </select>
+              </div>
 
+              {/* 4. Scan Live Web Button */}
+              <div className="col-span-1 sm:col-span-2 lg:col-span-2">
                 <button
                   onClick={() => handleRadarScan()}
                   disabled={radarLoading}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs sm:text-sm transition-all shadow-xs hover:shadow flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+                  className="w-full h-11 px-4 rounded-xl bg-[#0870e8] hover:bg-[#065ec4] active:bg-[#054fa8] text-white font-bold text-xs sm:text-sm transition-all shadow-xs hover:shadow flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer whitespace-nowrap"
                 >
                   {radarLoading ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin shrink-0" />
                       <span>Scanning...</span>
                     </>
                   ) : (
                     <>
-                      <Radio className="w-4 h-4" />
+                      <Radio className="w-4 h-4 shrink-0" />
                       <span>Scan Live Web</span>
                     </>
                   )}
@@ -602,7 +610,7 @@ export default function OpportunitiesPage() {
             {/* Quick Keyword Starter Prompts */}
             <div className="pt-2 border-t border-slate-200/70 dark:border-slate-800 flex items-center gap-2 flex-wrap text-xs">
               <span className="font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-indigo-500" />
+                <Sparkles className="w-3 h-3 text-[#0870e8]" />
                 <span>Suggested Scans:</span>
               </span>
               {[
@@ -618,7 +626,7 @@ export default function OpportunitiesPage() {
                     setRadarNiche(pill.niche);
                     handleRadarScan(pill.q, pill.niche);
                   }}
-                  className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-[11px] font-medium"
+                  className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-blue-400 hover:text-[#0870e8] dark:hover:text-blue-400 transition-colors text-[11px] font-medium"
                 >
                   {pill.label}
                 </button>
@@ -728,7 +736,7 @@ export default function OpportunitiesPage() {
               </div>
             ) : (
               <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-[22px] border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
-                <div className="w-16 h-16 rounded-3xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto shadow-xs">
+                <div className="w-16 h-16 rounded-3xl bg-blue-50 dark:bg-blue-950/50 text-[#0870e8] dark:text-blue-400 flex items-center justify-center mx-auto shadow-xs">
                   <Compass className="w-8 h-8" />
                 </div>
                 <div className="space-y-1">
@@ -741,7 +749,7 @@ export default function OpportunitiesPage() {
                 </div>
                 <button
                   onClick={() => handleRadarScan()}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-indigo-600 text-white text-xs sm:text-sm font-bold hover:bg-indigo-700 transition-colors shadow-xs"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#0870e8] text-white text-xs sm:text-sm font-bold hover:bg-[#065ec4] active:bg-[#054fa8] transition-colors shadow-xs"
                 >
                   <Radio className="w-4 h-4" />
                   <span>Start Live Web Scan</span>
