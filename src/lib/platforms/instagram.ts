@@ -166,7 +166,7 @@ export async function fetchAuthenticatedInstagramMetrics(
 
     // 2. Fetch media items if available
     let recentMedia: any[] = [];
-    let avgEngagementRate: number | null = null;
+    const avgEngagementRate: number | null = null;
     const limitations: string[] = [];
 
     if (isPersonal) {

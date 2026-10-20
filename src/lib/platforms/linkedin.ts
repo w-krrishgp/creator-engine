@@ -29,7 +29,7 @@ export function getLinkedInCredentials(): { clientId?: string; clientSecret?: st
             const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
             if (match) {
               const key = match[1];
-              let val = (match[2] || "").trim().replace(/^['"]|['"]$/g, "");
+              const val = (match[2] || "").trim().replace(/^['"]|['"]$/g, "");
               if (key === "LINKEDIN_CLIENT_ID" && val && val !== "your_client_id" && !clientId) {
                 clientId = val;
               }
