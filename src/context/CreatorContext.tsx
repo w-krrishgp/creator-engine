@@ -82,6 +82,7 @@ interface CreatorContextType {
     requestedFee?: string
   ) => Promise<{ success: boolean; applicationReference?: string; quotaExceeded?: boolean; reason?: string }>;
   saveOpportunity: (oppId: string) => void;
+  addDiscoveredOpportunity: (opp: Opportunity) => void;
   withdrawApplication: (oppId: string) => void;
   resetAllDemoData: () => void;
   showToast: (message: string, type?: "success" | "info" | "warning") => void;
@@ -987,6 +988,29 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const addDiscoveredOpportunity = (newOpp: Opportunity) => {
+    setOppsByCreator((prev) => {
+      const currentList = prev[activeCreatorId] || MOCK_OPPORTUNITIES;
+      if (
+        currentList.some(
+          (o) =>
+            o.id === newOpp.id ||
+            o.title.toLowerCase().trim() === newOpp.title.toLowerCase().trim()
+        )
+      ) {
+        showToast(`Opportunity "${newOpp.title.slice(0, 30)}..." is already in your pipeline.`, "info");
+        return prev;
+      }
+      const updatedList = [newOpp, ...currentList];
+      const next = { ...prev, [activeCreatorId]: updatedList };
+      try {
+        localStorage.setItem("creator_engine_opps_by_creator", JSON.stringify(next));
+      } catch {}
+      showToast(`Added "${newOpp.title.slice(0, 30)}..." to your active opportunities!`, "success");
+      return next;
+    });
+  };
+
   const withdrawApplication = (oppId: string) => {
     const targetOpp = opportunities.find((o) => o.id === oppId);
     setOppsByCreator((prev) => {
@@ -1555,6 +1579,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         toggleMilestone,
         applyOpportunity,
         saveOpportunity,
+        addDiscoveredOpportunity,
         withdrawApplication,
         resetAllDemoData,
         showToast,
