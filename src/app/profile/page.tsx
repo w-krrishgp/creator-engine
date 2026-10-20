@@ -35,6 +35,7 @@ import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
 import { SubscriptionCard } from "@/components/subscription/SubscriptionCard";
 import { PlatformDataStateBadge } from "@/components/platforms/PlatformDataStateBadge";
 import { ConnectAccountModal } from "@/components/platforms/ConnectAccountModal";
+import { ConnectProfilePrompt } from "@/components/common/ConnectProfilePrompt";
 import { YouTubeIcon, InstagramIcon, LinkedInIcon } from "@/components/common/PlatformIcons";
 
 export default function ProfilePage() {
@@ -120,23 +121,39 @@ export default function ProfilePage() {
   }, [importPlatformCreator, showToast]);
 
   // Local form state synced with activeCreator without cascading effect renders
-  const [prevId, setPrevId] = useState(activeCreator.id);
-  const [formData, setFormData] = useState<CreatorProfile>(activeCreator);
+  const [prevId, setPrevId] = useState(activeCreator?.id || "");
+  const [formData, setFormData] = useState<CreatorProfile | null>(activeCreator);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  if (prevId !== activeCreator.id) {
+  if (activeCreator && prevId !== activeCreator.id) {
     setPrevId(activeCreator.id);
     setFormData(activeCreator);
+  }
+
+  // If no active creator is connected, render the connect profile empty state
+  if (!activeCreator || !formData) {
+    return (
+      <div className="space-y-6 max-w-5xl mx-auto py-2">
+        <ConnectProfilePrompt
+          feature="profile"
+          title="Connect Your Live Profile to Access Your Media Kit"
+          subtitle="No active creator profile found. Connect your YouTube, Instagram, or LinkedIn account to generate a verified media kit, real-time engagement stats, and customizable rate cards."
+        />
+      </div>
+    );
   }
 
   const handleChange = (
     field: keyof CreatorProfile,
     value: string | number | string[]
   ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        [field]: value,
+      };
+    });
   };
 
   const handleSave = (e: React.FormEvent) => {
@@ -246,40 +263,13 @@ export default function ProfilePage() {
                 </Badge>
               </div>
               <p className="text-sm sm:text-base font-medium text-slate-600 mt-0.5">
-                @{formData.handle} • {formData.niche} • {formData.location}
+                {formData.handle?.startsWith("@") ? formData.handle : `@${formData.handle}`} • {formData.niche} • {formData.location}
               </p>
             </div>
           </div>
 
           {/* Quick Action Buttons */}
           <div className="flex items-center gap-2 flex-wrap self-start md:self-end">
-            {/* Persona Switchers */}
-            <div className="flex items-center gap-1 p-1 rounded-full bg-slate-100/90 border border-slate-200/60">
-              <span className="text-xs font-bold text-slate-500 pl-2 pr-1 uppercase tracking-wider">Presets:</span>
-              <button
-                type="button"
-                onClick={() => switchCreator("rahul")}
-                className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
-                  activeCreator.id === "rahul"
-                    ? "bg-white text-blue-700 shadow-2xs font-bold"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Rahul (IG)
-              </button>
-              <button
-                type="button"
-                onClick={() => switchCreator("priya")}
-                className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
-                  activeCreator.id === "priya"
-                    ? "bg-white text-indigo-700 shadow-2xs font-bold"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Priya (LI)
-              </button>
-            </div>
-
             <Link
               href="/onboarding"
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-blue-50 hover:bg-blue-100 border border-blue-200/80 text-[#0870e8] text-xs sm:text-sm font-bold transition-all shadow-2xs btn-tactile"
@@ -967,7 +957,7 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <h4 className="font-bold text-slate-900 text-base tracking-tight">{formData.name}</h4>
-                  <p className="text-xs sm:text-sm text-[#0870e8] font-semibold">@{formData.handle}</p>
+                  <p className="text-xs sm:text-sm text-[#0870e8] font-semibold">{formData.handle?.startsWith("@") ? formData.handle : `@${formData.handle}`}</p>
                   <p className="text-xs text-slate-500 font-medium">{formData.niche}</p>
                 </div>
               </div>

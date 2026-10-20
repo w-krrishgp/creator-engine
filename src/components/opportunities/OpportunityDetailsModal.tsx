@@ -107,8 +107,8 @@ export function OpportunityDetailsModal({
                     }`}
                   >
                     {qualifies
-                      ? `${activeCreator.name} satisfies all mandatory brand prerequisites.`
-                      : `${activeCreator.name} does NOT meet ${compatibility?.failedHardRequirements.length} mandatory requirement${
+                      ? `${activeCreator?.name || "Creator"} satisfies all mandatory brand prerequisites.`
+                      : `${activeCreator?.name || "Creator"} does NOT meet ${compatibility?.failedHardRequirements.length} mandatory requirement${
                           (compatibility?.failedHardRequirements.length || 0) > 1 ? "s" : ""
                         }.` }
                   </p>

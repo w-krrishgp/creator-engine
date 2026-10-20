@@ -164,8 +164,8 @@ export default function OnboardingPage() {
     });
   };
 
-  // Hackathon demo profile loaders
-  const loadDemoProfile = (creatorKey: "rahul" | "priya" | "blank") => {
+  // Profile template loader
+  const loadDemoProfile = (creatorKey: "default" | "blank") => {
     if (creatorKey === "blank") {
       setFormData(BLANK_FORM);
       setErrors({});
@@ -173,7 +173,7 @@ export default function OnboardingPage() {
       return;
     }
 
-    const demo = MOCK_CREATORS[creatorKey];
+    const demo = MOCK_CREATORS.creator;
     if (!demo) return;
 
     setFormData({
@@ -441,24 +441,15 @@ export default function OnboardingPage() {
             </p>
           </div>
 
-          {/* Hackathon Preset Buttons */}
+          {/* Template Controls */}
           <div className="flex items-center gap-2 pt-1 flex-wrap">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Demo Presets:</span>
             <button
               type="button"
-              onClick={() => loadDemoProfile("rahul")}
+              onClick={() => loadDemoProfile("default")}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50/80 hover:bg-blue-100/80 text-[#0870e8] text-xs sm:text-sm font-bold border border-blue-200/80 transition-all btn-tactile cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#0870e8]" />
-              <span>⚡ Rahul (IG Fitness)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => loadDemoProfile("priya")}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50/80 hover:bg-indigo-100/80 text-indigo-700 text-xs sm:text-sm font-bold border border-indigo-200/80 transition-all btn-tactile cursor-pointer"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-              <span>⚡ Priya (LinkedIn Wealth)</span>
+              <span>Fill Sample Profile</span>
             </button>
             <button
               type="button"
@@ -575,7 +566,7 @@ export default function OnboardingPage() {
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Rahul Sharma"
+                    placeholder="e.g. Alex Rivera"
                     value={formData.name}
                     onChange={(e) => handleChange("name", e.target.value)}
                     className={`w-full px-3.5 py-2.5 sm:py-3 rounded-xl border text-sm sm:text-base font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
@@ -595,7 +586,7 @@ export default function OnboardingPage() {
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. @rahulfit.india or priya-finance"
+                    placeholder="e.g. @alexcreates"
                     value={formData.handle}
                     onChange={(e) => handleChange("handle", e.target.value)}
                     className={`w-full px-3.5 py-2.5 sm:py-3 rounded-xl border text-sm sm:text-base font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${

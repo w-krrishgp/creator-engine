@@ -4,7 +4,7 @@ export interface ParsedProfileUrl {
   platform: SupportedPlatform;
   rawUrl: string;
   normalizedUrl: string;
-  identifier: string; // e.g. "@mkbhd", "UCbjqE5vH4Yn_mYmK6_fH27Q", "rahulfit.india", "priyapatel"
+  identifier: string; // e.g. "@mkbhd", "UCbjqE5vH4Yn_mYmK6_fH27Q", "alexcreates"
   identifierType: "handle" | "channel_id" | "username" | "vanity_slug";
   isValid: boolean;
   error?: string;

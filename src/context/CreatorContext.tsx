@@ -28,7 +28,8 @@ interface ToastNotification {
 
 interface CreatorContextType {
   activeCreatorId: string;
-  activeCreator: CreatorProfile;
+  activeCreator: CreatorProfile | null;
+  hasActiveCreator: boolean;
   allCreators: Record<string, CreatorProfile>;
   opportunities: Opportunity[];
   roadmaps: RoadmapPhase[];
@@ -91,7 +92,8 @@ interface CreatorContextType {
 
 const CreatorContext = createContext<CreatorContextType | undefined>(undefined);
 
-export function calculateProfileCompletion(profile: Partial<CreatorProfile>): number {
+export function calculateProfileCompletion(profile?: Partial<CreatorProfile> | null): number {
+  if (!profile) return 0;
   const fieldsToCheck: (keyof CreatorProfile)[] = [
     "name",
     "handle",
@@ -120,20 +122,7 @@ export function calculateProfileCompletion(profile: Partial<CreatorProfile>): nu
   return Math.round((filled / fieldsToCheck.length) * 100);
 }
 
-const INITIAL_OPPS_BY_CREATOR: Record<string, Opportunity[]> = {
-  rahul: MOCK_OPPORTUNITIES.map((opp) => {
-    if (opp.id === "opp-decathlon") {
-      return { ...opp, status: "Saved" as const };
-    }
-    return { ...opp, status: "Available" as const };
-  }),
-  priya: MOCK_OPPORTUNITIES.map((opp) => {
-    if (opp.id === "opp-smallcase") {
-      return { ...opp, status: "Saved" as const };
-    }
-    return { ...opp, status: "Available" as const };
-  }),
-};
+const INITIAL_OPPS_BY_CREATOR: Record<string, Opportunity[]> = {};
 
 function convertAiRoadmapToRoadmapPhases(
   creatorId: string,
@@ -178,11 +167,11 @@ function getFallbackRoadmapPhases(creator: CreatorProfile): RoadmapPhase[] {
 }
 
 export function CreatorProvider({ children }: { children: ReactNode }) {
-  const [activeCreatorId, setActiveCreatorId] = useState<string>("rahul");
-  const [creators, setCreators] = useState<Record<string, CreatorProfile>>(MOCK_CREATORS);
-  const [oppsByCreator, setOppsByCreator] = useState<Record<string, Opportunity[]>>(INITIAL_OPPS_BY_CREATOR);
-  const [roadmapsByCreator, setRoadmapsByCreator] = useState<Record<string, RoadmapPhase[]>>(MOCK_ROADMAPS);
-  const [actionsByCreator, setActionsByCreator] = useState<Record<string, ActionItem[]>>(MOCK_ACTIONS);
+  const [activeCreatorId, setActiveCreatorId] = useState<string>("");
+  const [creators, setCreators] = useState<Record<string, CreatorProfile>>({});
+  const [oppsByCreator, setOppsByCreator] = useState<Record<string, Opportunity[]>>({});
+  const [roadmapsByCreator, setRoadmapsByCreator] = useState<Record<string, RoadmapPhase[]>>({});
+  const [actionsByCreator, setActionsByCreator] = useState<Record<string, ActionItem[]>>({});
   const [connectedMetricsByCreator, setConnectedMetricsByCreator] = useState<Record<string, UnifiedPlatformMetrics>>({});
 
   // Connectivity & AI statuses
@@ -201,6 +190,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   const [subscriptionError, setSubscriptionError] = useState<string | null>(null);
 
   const fetchSubscriptionUsage = async (creatorId: string) => {
+    if (!creatorId) return;
     try {
       const res = await fetch(`/api/subscription/usage?creatorId=${encodeURIComponent(creatorId)}`);
       if (res.ok) {
@@ -235,11 +225,15 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   // Sync from localStorage and check Supabase on client hydration
   useEffect(() => {
     try {
-      let loadedProfiles: Record<string, CreatorProfile> = MOCK_CREATORS;
+      let loadedProfiles: Record<string, CreatorProfile> = {};
       const savedProfiles = localStorage.getItem("creator_engine_profiles");
       if (savedProfiles) {
         try {
-          loadedProfiles = { ...MOCK_CREATORS, ...JSON.parse(savedProfiles) };
+          const parsed = JSON.parse(savedProfiles);
+          delete parsed.rahul;
+          delete parsed.priya;
+          delete parsed.creator;
+          loadedProfiles = parsed;
           setCreators(loadedProfiles);
         } catch {}
       }
@@ -251,6 +245,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         } catch {}
       }
 
+      const availableIds = Object.keys(loadedProfiles);
       const searchParams = new URLSearchParams(window.location.search);
       const urlPersona = searchParams.get("persona");
       if (urlPersona && loadedProfiles[urlPersona]) {
@@ -259,6 +254,16 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         const savedId = localStorage.getItem("creator_engine_active_id");
         if (savedId && loadedProfiles[savedId]) {
           setActiveCreatorId(savedId);
+        } else if (availableIds.length > 0) {
+          setActiveCreatorId(availableIds[0]);
+          try {
+            localStorage.setItem("creator_engine_active_id", availableIds[0]);
+          } catch {}
+        } else {
+          setActiveCreatorId("");
+          try {
+            localStorage.removeItem("creator_engine_active_id");
+          } catch {}
         }
       }
 
@@ -470,7 +475,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
 
       return next;
     });
-    showToast(`Reset ${activeCreatorId === "rahul" ? "Rahul" : "Priya"}'s profile to original demo defaults`, "info");
+    showToast(`Reset profile to initial defaults`, "info");
   };
 
   const importPlatformCreator = async (metrics: UnifiedPlatformMetrics) => {
@@ -580,6 +585,61 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
       return next;
     });
 
+    setActionsByCreator((prev) => {
+      if (!prev[profileId] || prev[profileId].length === 0) {
+        const tailoredActions: ActionItem[] = [
+          {
+            id: `act-${profileId}-1`,
+            creatorId: profileId,
+            title: `Publish media kit & verified rate card on ${platformName}`,
+            category: "Brand Pitch",
+            priority: "High",
+            reason: `Directly shares your verified ${followers.toLocaleString()} audience count and engagement rate with prospective sponsors.`,
+            deadline: "In 2 days",
+            estimatedTime: "20 mins",
+            status: "Not started",
+            completed: false,
+            relatedType: "opportunity",
+            relatedLink: "/profile",
+          },
+          {
+            id: `act-${profileId}-2`,
+            creatorId: profileId,
+            title: `Audit top 3 content gaps in ${niche}`,
+            category: "Growth",
+            priority: "High",
+            reason: `Target high-affinity search queries to accelerate follower acquisition on ${platformName}.`,
+            deadline: "In 5 days",
+            estimatedTime: "45 mins",
+            status: "Not started",
+            completed: false,
+            relatedType: "roadmap",
+            relatedLink: "/roadmap",
+          },
+          {
+            id: `act-${profileId}-3`,
+            creatorId: profileId,
+            title: `Review eligible brand sponsorships`,
+            category: "Monetisation",
+            priority: "Medium",
+            reason: `Pitch campaigns with >85% deterministic compatibility based on your ${niche} niche.`,
+            deadline: "In 7 days",
+            estimatedTime: "30 mins",
+            status: "Not started",
+            completed: false,
+            relatedType: "opportunity",
+            relatedLink: "/opportunities",
+          },
+        ];
+        const next = { ...prev, [profileId]: tailoredActions };
+        try {
+          localStorage.setItem("creator_engine_actions", JSON.stringify(next));
+        } catch {}
+        return next;
+      }
+      return prev;
+    });
+
     setActiveCreatorId(profileId);
     try {
       localStorage.setItem("creator_engine_active_id", profileId);
@@ -598,19 +658,26 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   };
 
   const disconnectPlatformCreator = async (creatorId: string) => {
-    if (activeCreatorId === creatorId) {
-      setActiveCreatorId("rahul");
-      try {
-        localStorage.setItem("creator_engine_active_id", "rahul");
-      } catch {}
-    }
-
     setCreators((prev) => {
       const next = { ...prev };
       delete next[creatorId];
       try {
         localStorage.setItem("creator_engine_profiles", JSON.stringify(next));
       } catch {}
+
+      const remainingIds = Object.keys(next);
+      if (activeCreatorId === creatorId) {
+        const nextId = remainingIds.length > 0 ? remainingIds[0] : "";
+        setActiveCreatorId(nextId);
+        try {
+          if (nextId) {
+            localStorage.setItem("creator_engine_active_id", nextId);
+          } else {
+            localStorage.removeItem("creator_engine_active_id");
+          }
+        } catch {}
+      }
+
       return next;
     });
 
@@ -625,12 +692,12 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
 
     if (supabaseService.isConfigured()) {
       const parts = creatorId.split("_");
-      if (parts.length >= 3) {
-        supabaseService.deleteConnectedAccount(parts[1], parts.slice(2).join("_")).catch(() => {});
-      }
+      const platform = parts[1] || "";
+      const handle = parts.slice(2).join("_") || creatorId;
+      supabaseService.deleteConnectedAccount(platform, handle).catch(() => {});
     }
 
-    showToast("Disconnected account and removed platform records.", "info");
+    showToast("Profile disconnected and removed.", "info");
   };
 
   const updateActionStatus = (id: string, status: ActionStatus) => {
@@ -1121,14 +1188,15 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem("creator_engine_opps_by_creator");
       localStorage.removeItem("creator_engine_roadmaps");
       localStorage.removeItem("creator_engine_actions");
+      localStorage.removeItem("creator_engine_platform_metrics");
     } catch {}
 
-    setActiveCreatorId("rahul");
-    setCreators(MOCK_CREATORS);
-    setOppsByCreator(INITIAL_OPPS_BY_CREATOR);
-    setRoadmapsByCreator(MOCK_ROADMAPS);
-    setActionsByCreator(MOCK_ACTIONS);
-    showToast("All demo profiles, roadmap milestones and applications reset to initial defaults.", "info");
+    setActiveCreatorId("");
+    setCreators({});
+    setOppsByCreator({});
+    setRoadmapsByCreator({});
+    setActionsByCreator({});
+    showToast("All profiles cleared. Connect a live profile to get started.", "info");
   };
 
   /**
@@ -1340,14 +1408,15 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const activeCreator = creators[activeCreatorId] || MOCK_CREATORS.rahul;
-  const currentActions = actionsByCreator[activeCreatorId] || MOCK_ACTIONS[activeCreatorId] || [];
+  const activeCreator = (activeCreatorId && creators[activeCreatorId]) || null;
+  const hasActiveCreator = Boolean(activeCreator && activeCreator.id);
+  const currentActions = activeCreatorId ? (actionsByCreator[activeCreatorId] || []) : [];
   const currentRoadmaps: RoadmapPhase[] =
-    (roadmapsByCreator[activeCreatorId] && roadmapsByCreator[activeCreatorId].length > 0)
+    activeCreatorId && roadmapsByCreator[activeCreatorId] && roadmapsByCreator[activeCreatorId].length > 0
       ? roadmapsByCreator[activeCreatorId]
-      : (MOCK_ROADMAPS[activeCreatorId] && MOCK_ROADMAPS[activeCreatorId].length > 0)
-      ? MOCK_ROADMAPS[activeCreatorId]
-      : getFallbackRoadmapPhases(activeCreator);
+      : activeCreator
+      ? getFallbackRoadmapPhases(activeCreator)
+      : [];
 
   // Subscription calculation (using stable baseline dates to ensure pure render and SSR stability)
   const buildFallbackSubscription = (cid: string): SubscriptionRecord => {
@@ -1504,26 +1573,27 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   ).length;
   const totalActionsCount = currentActions.length;
   const appliedOpportunitiesCount = opportunities.filter((o) => o.status === "Applied").length;
-  const profileCompletion = calculateProfileCompletion(activeCreator);
+  const profileCompletion = activeCreator ? calculateProfileCompletion(activeCreator) : 0;
   const isOnboarded = Boolean(activeCreator?.isOnboarded);
 
   // Compute explicit platform data state
-  const isDemoProfile = activeCreatorId === "rahul" || activeCreatorId === "priya";
-  const activePlatformMetrics = connectedMetricsByCreator[activeCreatorId] || null;
-  const activeDataState: AccountDataState = isDemoProfile
-    ? "demo"
+  const isDemoProfile = false;
+  const activePlatformMetrics = (activeCreatorId && connectedMetricsByCreator[activeCreatorId]) || null;
+  const activeDataState: AccountDataState = !activeCreator
+    ? "data_unavailable"
     : activePlatformMetrics
     ? activePlatformMetrics.dataState
     : activeCreator.isManuallyReported
     ? "user_entered"
     : "cached_live";
-  const isDemoMode = isDemoProfile;
+  const isDemoMode = false;
 
   return (
     <CreatorContext.Provider
       value={{
         activeCreatorId,
         activeCreator,
+        hasActiveCreator,
         allCreators: creators,
         opportunities,
         roadmaps: currentRoadmaps,

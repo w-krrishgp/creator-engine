@@ -212,14 +212,9 @@ export const SUBSCRIPTION_PLANS: Record<PlanId, SubscriptionPlan> = {
  * Kept clearly identified as sample configurations.
  */
 export const SAMPLE_DEFAULT_SUBSCRIPTIONS: Record<string, { planId: PlanId; status: "active"; priceInr: number }> = {
-  rahul: {
+  creator: {
     planId: "normal",
     status: "active",
     priceInr: 0,
-  },
-  priya: {
-    planId: "pro",
-    status: "active",
-    priceInr: 500,
   },
 };

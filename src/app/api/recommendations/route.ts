@@ -210,12 +210,9 @@ export async function POST(req: NextRequest) {
 
     if (isApiKeyMissingOrPlaceholder) {
       // Gracefully return deterministic recommendations without crashing
-      const isDemoCreator = creator.id === "rahul" || creator.id === "priya";
       const fallback = generateFallbackRecommendations(
         creator,
-        isDemoCreator
-          ? "Operating in Demo Mode: GEMINI_API_KEY is not configured in .env.local. Showing high-fidelity deterministic recommendations."
-          : `Calibrated with tailored deterministic creator engine for ${creator.name}.`
+        `Calibrated with tailored deterministic creator engine for ${creator.name}.`
       );
       return NextResponse.json(fallback);
     }
@@ -413,9 +410,7 @@ CRITICAL GOVERNANCE REQUIREMENTS:
         monthlyGrowthRate: 5.0,
         avgImpressionsPerPost: 15000,
       },
-      (!requestCreator || requestCreator.id === "rahul" || requestCreator.id === "priya")
-        ? `Gemini service notice: ${message || "Temporarily unavailable"}. Switched to deterministic recommendations.`
-        : `Calibrated with tailored deterministic creator engine for ${requestCreator?.name || "your account"}.`
+      `Calibrated with tailored deterministic creator engine for ${requestCreator?.name || "your account"}.`
     );
 
     return NextResponse.json(fallback, { status: 200 });

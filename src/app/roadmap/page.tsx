@@ -31,6 +31,7 @@ import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
 import { PersonaSwitcherBar } from "@/components/common/PersonaSwitcherBar";
 import { HackathonDemoBar } from "@/components/common/HackathonDemoBar";
 import { UpgradePromptModal, LimitType } from "@/components/subscription/UpgradePromptModal";
+import { ConnectProfilePrompt } from "@/components/common/ConnectProfilePrompt";
 
 export default function RoadmapPage() {
   const {
@@ -51,6 +52,19 @@ export default function RoadmapPage() {
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [modalLimitType, setModalLimitType] = useState<LimitType>("roadmap");
   const [modalMessage, setModalMessage] = useState<string | undefined>(undefined);
+
+  // If no active creator is connected, render the connect profile empty state
+  if (!activeCreator) {
+    return (
+      <div className="space-y-6 max-w-5xl mx-auto py-2">
+        <ConnectProfilePrompt
+          feature="roadmap"
+          title="Connect Your Live Profile to View Your Growth Roadmap"
+          subtitle="No active creator profile connected. Link your YouTube channel, Instagram handle, or LinkedIn profile to synthesize a customized 30 / 60 / 90-day growth plan, detect content gaps, and prioritize skill milestones."
+        />
+      </div>
+    );
+  }
 
   // Fallback if no roadmaps are loaded
   if (!roadmaps || roadmaps.length === 0) {

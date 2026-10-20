@@ -14,11 +14,25 @@ import {
 import { Card, CardHeader, CardContent } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
+import { ConnectProfilePrompt } from "@/components/common/ConnectProfilePrompt";
 
 export default function WorkflowPage() {
   const { activeCreator, showToast } = useCreator();
   const [activeStage, setActiveStage] = useState(1);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  // If no active creator is connected, render the connect profile empty state
+  if (!activeCreator) {
+    return (
+      <div className="space-y-6 max-w-5xl mx-auto py-2">
+        <ConnectProfilePrompt
+          feature="workflow"
+          title="Connect Your Live Profile to Access Deal Workflow"
+          subtitle="No active creator profile connected. Link your YouTube channel, Instagram handle, or LinkedIn profile to generate personalized cold pitch proposals, ASCI compliance checks, and automated invoice deliverables."
+        />
+      </div>
+    );
+  }
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -65,49 +79,27 @@ export default function WorkflowPage() {
     },
   ];
 
-  // Dynamic templates tailored to Rahul vs Priya
-  const coldPitchTemplate =
-    activeCreator.id === "rahul"
-      ? `Subject: Partnership Proposal: ${activeCreator.name} x [Brand Name] - Campus Fitness Integration
+  // Dynamic template tailored to active creator
+  const coldPitchTemplate = `Subject: Partnership Proposal: ${activeCreator.name} x [Brand Name] - ${activeCreator.niche} Integration
 
 Hi [Brand Marketing Team],
 
-I'm Rahul Sharma (@rahulfit.india), creating high-retention fitness and nutrition reels for an engaged community of 15,000+ college students and young gym-goers across India.
+I'm ${activeCreator.name} (${activeCreator.handle}), creating high-retention content in the ${activeCreator.niche} space on ${activeCreator.primaryPlatform} for an engaged community of ${activeCreator.followerCount.toLocaleString()}+ followers across India.
 
 Why this makes sense for [Brand Name]:
-• 4.8% verified engagement rate (3x the industry standard for fitness micro-creators)
-• 29,400 average impressions per reel
-• Core demographic: 18-24 college students seeking budget-friendly wellness solutions
+• ${activeCreator.engagementRate}% verified engagement rate (above industry benchmark)
+• ${(activeCreator.avgImpressionsPerPost || 25000).toLocaleString()} average impressions per post
+• Core demographic: ${activeCreator.audienceDemographic || "Engaged professionals & enthusiasts"}
 
-I'd love to pitch a dedicated reel concept: "Hostel Meal Prep & Routine featuring [Product Name]" where I test and showcase the real daily benefits in a dorm setting.
+I'd love to pitch a dedicated integration concept showcasing how [Product/Brand Name] delivers authentic value to my audience.
 
-You can view my verified metrics and media kit here: ${activeCreator.mediaKitLink || "https://creator-engine.demo/mediakit/rahul"}
+You can view my verified metrics and media kit here: ${activeCreator.mediaKitLink || `https://creator-engine.demo/mediakit/${activeCreator.id}`}
 
 Are you available for a quick 10-minute sync this Thursday or Friday?
 
 Best regards,
 ${activeCreator.name}
-${activeCreator.handle}`
-      : `Subject: Thought Leadership Collaboration: Priya Nair x [Fintech Brand] - Wealth Insights for Tech Employees
-
-Dear [Brand Partnership Lead],
-
-I'm Priya Nair, corporate financial wellness advisor on LinkedIn (ex-Deloitte), reaching 8,000+ senior engineers, product managers, and tech leaders across India.
-
-Why this partnership delivers high-intent ROI:
-• 5.6% LinkedIn engagement rate with a high concentration of affluent earners (₹25L–₹70L+ compensation)
-• Specialization in ESOP taxation, portfolio construction, and corporate wealth frameworks
-• Zero sensationalism: rigorous data-driven educational authority
-
-I propose a collaborative 2-part LinkedIn breakdown: "The Modern Engineer's Blueprint to [Financial Instrument] vs Traditional FDs", dissecting how [Brand Name] provides institutional-grade transparency.
-
-Media kit & demographic breakdown: ${activeCreator.mediaKitLink || "https://creator-engine.demo/mediakit/priya"}
-
-Would you be open to reviewing the outline deck next week?
-
-Warm regards,
-${activeCreator.name}
-LinkedIn: ${activeCreator.handle}`;
+${activeCreator.handle}`;
 
   const invoiceEmailTemplate = `Subject: Invoice #[INV-2026-042]: ${activeCreator.name} x [Brand Name] Campaign Deliverables
 

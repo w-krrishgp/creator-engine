@@ -36,15 +36,12 @@ export function ApplyModal({ opportunity, isOpen, onClose }: ApplyModalProps) {
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [quotaMessage, setQuotaMessage] = useState<string | undefined>(undefined);
 
-  if (!isOpen || !opportunity) return null;
+  if (!isOpen || !opportunity || !activeCreator) return null;
 
   const compatibility = calculateCompatibility(opportunity, activeCreator);
   const qualifies = compatibility.qualifies;
 
-  const defaultPitch =
-    activeCreator.id === "rahul"
-      ? `Hey ${opportunity.brand} team! I'm Rahul (@rahulfit.india), creating high-retention fitness reels for 15k+ college students and gym beginners (4.8% engagement). For "${opportunity.title}", I'll create an authentic dorm workout & daily nutrition integration showcasing your brand in realistic daily use.`
-      : `Dear ${opportunity.brand} Partnership Team, I'm Priya Nair, financial wellness creator on LinkedIn reaching 8,000 corporate professionals & engineers (ex-Deloitte). For "${opportunity.title}", I will structure an educational visual slide framework simplifying your value proposition with transparent disclaimers.`;
+  const defaultPitch = `Hey ${opportunity.brand} team! I'm ${activeCreator.name} (${activeCreator.handle}), creating content in the ${activeCreator.niche} space on ${activeCreator.primaryPlatform} reaching ${activeCreator.followerCount.toLocaleString()} engaged followers (${activeCreator.engagementRate}% engagement). For "${opportunity.title}", I'd love to partner to create authentic, high-impact content showcasing your brand to my community.`;
 
   const currentPitch = pitchNotes || defaultPitch;
   const suggestedBudget = requestedFee || `₹${((opportunity.budgetMin + opportunity.budgetMax) / 2).toLocaleString()}`;

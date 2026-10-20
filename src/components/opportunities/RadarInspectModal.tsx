@@ -66,7 +66,7 @@ export function RadarInspectModal({
     )
   );
 
-  const currentSubject = customSubject !== null ? customSubject : (pitch?.subject || `Partnership Proposal: ${activeCreator.name} x ${campaign?.brandName || item.siteName}`);
+  const currentSubject = customSubject !== null ? customSubject : (pitch?.subject || `Partnership Proposal: ${activeCreator?.name || "Creator"} x ${campaign?.brandName || item.siteName}`);
   const currentPitchText = customPitchText !== null ? customPitchText : (pitch?.fullOutreachMessage || pitch?.elevatorPitch || "");
 
   const handleCopyPitch = () => {
@@ -88,7 +88,7 @@ export function RadarInspectModal({
       brandCategory: item.nicheTag || "Live Web Sponsorship",
       title: campaign.campaignTitle,
       description: campaign.campaignDescription,
-      niche: [item.nicheTag || activeCreator.niche],
+      niche: [item.nicheTag || activeCreator?.niche || "Lifestyle"],
       platform: "Multi-Platform",
       minFollowers: 5000,
       budgetRange: campaign.compensation || "Performance / Negotiated",
@@ -101,8 +101,8 @@ export function RadarInspectModal({
         "Link in Bio for 14 Days",
       ],
       status: "Available",
-      targetAudience: campaign.targetAudience || activeCreator.audienceDemographic,
-      targetLocation: campaign.targetLocation || activeCreator.location,
+      targetAudience: campaign.targetAudience || activeCreator?.audienceDemographic || "Engaged audience",
+      targetLocation: campaign.targetLocation || activeCreator?.location || "India",
       eligibilityRequirements: campaign.eligibilityRequirements,
       sponsoredTag: false,
     };
@@ -353,7 +353,7 @@ export function RadarInspectModal({
                 {/* Pitch Body */}
                 <div>
                   <label className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 block mb-1">
-                    Pitch Body (Tailored for {activeCreator.name})
+                    Pitch Body (Tailored for {activeCreator?.name || "Creator"})
                   </label>
                   <textarea
                     rows={6}

@@ -4,7 +4,7 @@ import { getVerifiedSubscription } from "@/lib/subscription/serverGate";
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const creatorId = searchParams.get("creatorId") || "rahul";
+    const creatorId = searchParams.get("creatorId") || "creator";
 
     const verified = await getVerifiedSubscription(creatorId);
 

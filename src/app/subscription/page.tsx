@@ -81,7 +81,7 @@ export default function SubscriptionManagePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          creatorId: activeCreator.id,
+          creatorId: activeCreator?.id || "guest",
           cancelAtCycleEnd: true,
         }),
       });

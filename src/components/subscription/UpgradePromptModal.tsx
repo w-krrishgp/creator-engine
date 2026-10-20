@@ -133,7 +133,7 @@ export function UpgradePromptModal({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          creatorId: currentSubscription?.creatorId || "rahul",
+          creatorId: currentSubscription?.creatorId || "creator",
           planId: targetPlanId,
         }),
       });

@@ -90,9 +90,9 @@ RAZORPAY_PLAN_ID_PRO_PLUS="plan_ProPlusMonthlySample"`;
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           planId: targetPlan.id,
-          creatorId: activeCreator.id,
-          creatorName: activeCreator.name,
-          creatorEmail: `${activeCreator.id}@creatorengine.app`,
+          creatorId: activeCreator?.id || "guest",
+          creatorName: activeCreator?.name || "Creator",
+          creatorEmail: `${activeCreator?.id || "guest"}@creatorengine.app`,
         }),
       });
 
@@ -125,8 +125,8 @@ RAZORPAY_PLAN_ID_PRO_PLUS="plan_ProPlusMonthlySample"`;
         description: `${targetPlan.name} Membership (${targetPlan.priceFormatted}/mo)`,
         image: "/favicon.ico",
         prefill: {
-          name: activeCreator.name,
-          email: `${activeCreator.id}@creatorengine.app`,
+          name: activeCreator?.name || "Creator",
+          email: `${activeCreator?.id || "guest"}@creatorengine.app`,
           contact: "9999999999",
         },
         theme: {
@@ -149,7 +149,7 @@ RAZORPAY_PLAN_ID_PRO_PLUS="plan_ProPlusMonthlySample"`;
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_subscription_id: response.razorpay_subscription_id,
                 razorpay_signature: response.razorpay_signature,
-                creatorId: activeCreator.id,
+                creatorId: activeCreator?.id || "guest",
                 planId: targetPlan.id,
               }),
             });

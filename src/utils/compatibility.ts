@@ -15,8 +15,25 @@ import {
  */
 export function calculateCompatibility(
   opportunity: Opportunity,
-  creator: CreatorProfile
+  creator?: CreatorProfile | null
 ): CompatibilityBreakdown {
+  if (!creator) {
+    return {
+      score: 50,
+      nicheScore: 0,
+      platformScore: 0,
+      followerScore: 0,
+      audienceScore: 0,
+      goalScore: 0,
+      explanation: "Connect your creator account to evaluate compatibility and eligibility.",
+      reasons: ["Profile connection required to calculate personalized match score."],
+      qualifies: false,
+      eligibilityChecks: [],
+      failedHardRequirements: ["Profile connection required"],
+      passedRequirements: [],
+    };
+  }
+
   const creatorNicheLower = (creator.niche || "").toLowerCase();
   const oppNichesLower = (opportunity.niche || []).map((n) => n.toLowerCase());
 

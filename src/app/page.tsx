@@ -24,6 +24,7 @@ import { PersonaSwitcherBar } from "@/components/common/PersonaSwitcherBar";
 import { HackathonDemoBar } from "@/components/common/HackathonDemoBar";
 import { OpportunityDetailsModal } from "@/components/opportunities/OpportunityDetailsModal";
 import { ApplyModal } from "@/components/opportunities/ApplyModal";
+import { ConnectProfilePrompt } from "@/components/common/ConnectProfilePrompt";
 import { Opportunity, ActionStatus } from "@/types/creator";
 
 export default function OverviewPage() {
@@ -46,6 +47,19 @@ export default function OverviewPage() {
   const [selectedOpp, setSelectedOpp] = useState<Opportunity | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
+
+  // If no active creator is connected, render the connect profile empty state
+  if (!activeCreator) {
+    return (
+      <div className="space-y-6 max-w-5xl mx-auto py-2">
+        <ConnectProfilePrompt
+          feature="overview"
+          title="Connect Your Creator Profile to View Your Dashboard"
+          subtitle="No active creator is connected. Connect your live YouTube channel, Instagram handle, or LinkedIn profile to analyze your performance metrics, calculate dynamic brand rate cards, and unlock tailored execution roadmaps."
+        />
+      </div>
+    );
+  }
 
   // Top prioritized actions (limit to 3 for overview)
   const prioritizedActions = actions.slice(0, 3);
@@ -76,25 +90,11 @@ export default function OverviewPage() {
   const impressionTrend =
     recentViews && recentViews.length >= 2
       ? recentViews.slice(0, 4).reverse().map((v, i) => ({ label: `V${i + 1}`, val: v }))
-      : activeCreator.id === "rahul"
-      ? [
-          { label: "W1", val: 18200 },
-          { label: "W2", val: 21800 },
-          { label: "W3", val: 25400 },
-          { label: "W4", val: 29400 },
-        ]
-      : activeCreator.id === "priya"
-      ? [
-          { label: "W1", val: 9200 },
-          { label: "W2", val: 11400 },
-          { label: "W3", val: 14100 },
-          { label: "W4", val: 16800 },
-        ]
       : [
-          { label: "W1", val: Math.round((activeCreator.avgImpressionsPerPost || 1000) * 0.75) },
-          { label: "W2", val: Math.round((activeCreator.avgImpressionsPerPost || 1000) * 0.88) },
-          { label: "W3", val: Math.round((activeCreator.avgImpressionsPerPost || 1000) * 0.95) },
-          { label: "W4", val: activeCreator.avgImpressionsPerPost || 1000 },
+          { label: "W1", val: Math.round((activeCreator.avgImpressionsPerPost || 25000) * 0.75) },
+          { label: "W2", val: Math.round((activeCreator.avgImpressionsPerPost || 25000) * 0.88) },
+          { label: "W3", val: Math.round((activeCreator.avgImpressionsPerPost || 25000) * 0.95) },
+          { label: "W4", val: activeCreator.avgImpressionsPerPost || 25000 },
         ];
 
   // SVG coordinates for a clean normalized sparkline/chart

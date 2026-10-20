@@ -23,6 +23,7 @@ import { Badge } from "@/components/common/Badge";
 import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
 import { PersonaSwitcherBar } from "@/components/common/PersonaSwitcherBar";
 import { HackathonDemoBar } from "@/components/common/HackathonDemoBar";
+import { ConnectProfilePrompt } from "@/components/common/ConnectProfilePrompt";
 
 export default function MonetisationPage() {
   const {
@@ -52,6 +53,19 @@ export default function MonetisationPage() {
       // Ignore
     }
   }, [activeCreatorId]);
+
+  // If no active creator is connected, render the connect profile empty state
+  if (!activeCreator) {
+    return (
+      <div className="space-y-6 max-w-5xl mx-auto py-2">
+        <ConnectProfilePrompt
+          feature="monetisation"
+          title="Connect Your Live Profile to Unlock Monetisation Channels"
+          subtitle="No active creator profile connected. Link your public channel or profile to calculate dynamic rate cards, assess viability across 5 revenue channels, and review suitability scores."
+        />
+      </div>
+    );
+  }
 
   const toggleSaveChannel = (channelId: string) => {
     setSavedChannelIds((prev) => {
@@ -109,31 +123,29 @@ export default function MonetisationPage() {
 
   const rawChannels =
     MOCK_MONETISATION_CHANNELS[activeCreatorId] ||
-    MOCK_MONETISATION_CHANNELS.rahul ||
+    MOCK_MONETISATION_CHANNELS.creator ||
     [];
 
-  const channels: MonetisationChannel[] = (activeCreatorId !== "rahul" && activeCreatorId !== "priya")
-    ? rawChannels.map((c) => {
-        const followers = activeCreator.followerCount || 0;
-        let suitabilityScore = c.suitabilityScore;
-        let potential = c.estimatedPotential;
+  const channels: MonetisationChannel[] = rawChannels.map((c) => {
+    const followers = activeCreator.followerCount || 0;
+    let suitabilityScore = c.suitabilityScore;
+    let potential = c.estimatedPotential;
 
-        if (c.category === "brand_collaborations") {
-          suitabilityScore = followers >= 50000 ? 94 : followers >= 10000 ? 88 : 72;
-          potential = followers >= 100000 ? "₹75,000 – ₹1,80,000 / month" : "₹25,000 – ₹60,000 / month";
-        } else if (c.category === "affiliate_marketing") {
-          suitabilityScore = 85;
-          potential = followers >= 50000 ? "₹35,000 – ₹80,000 / month" : "₹10,000 – ₹30,000 / month";
-        }
+    if (c.category === "brand_collaborations") {
+      suitabilityScore = followers >= 50000 ? 94 : followers >= 10000 ? 88 : 72;
+      potential = followers >= 100000 ? "₹75,000 – ₹1,80,000 / month" : "₹25,000 – ₹60,000 / month";
+    } else if (c.category === "affiliate_marketing") {
+      suitabilityScore = 85;
+      potential = followers >= 50000 ? "₹35,000 – ₹80,000 / month" : "₹10,000 – ₹30,000 / month";
+    }
 
-        return {
-          ...c,
-          suitabilityScore,
-          estimatedPotential: potential,
-          whyItSuits: `Directly tailored for ${activeCreator.name}'s verified ${activeCreator.primaryPlatform} audience in ${activeCreator.niche}.`,
-        };
-      })
-    : rawChannels;
+    return {
+      ...c,
+      suitabilityScore,
+      estimatedPotential: potential,
+      whyItSuits: `Directly tailored for ${activeCreator.name}'s verified ${activeCreator.primaryPlatform} audience in ${activeCreator.niche}.`,
+    };
+  });
 
   const categories = [
     { id: "all", label: "All 5 Pathways", count: channels.length },

@@ -70,7 +70,7 @@ export default function PricingPage() {
         {/* Current Active Plan Status Banner */}
         <div className="pt-2 flex items-center justify-center gap-2.5 text-sm text-slate-600 flex-wrap">
           <span className="font-medium text-slate-500">Currently managing:</span>
-          <strong className="text-slate-900 font-bold">{activeCreator.name}</strong>
+          <strong className="text-slate-900 font-bold">{activeCreator?.name || "Guest Profile"}</strong>
           <span className="text-slate-300">•</span>
           <span className="font-medium text-slate-500">Active Tier:</span>
           <PlanBadge planId={currentPlanId} showPrice={true} size="sm" />

@@ -113,7 +113,7 @@ export function SubscriptionPaymentModal({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          creatorId: activeCreator.id,
+          creatorId: activeCreator?.id || "guest",
           planId: selectedPlanId,
         }),
       });
@@ -149,7 +149,7 @@ export function SubscriptionPaymentModal({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          creatorId: activeCreator.id,
+          creatorId: activeCreator?.id || "guest",
           planId: selectedPlanId,
         }),
       });
@@ -199,9 +199,9 @@ export function SubscriptionPaymentModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           planId: selectedPlanId,
-          creatorId: activeCreator.id,
-          creatorName: activeCreator.name,
-          creatorEmail: `${activeCreator.id}@creatorengine.app`,
+          creatorId: activeCreator?.id || "guest",
+          creatorName: activeCreator?.name || "Creator",
+          creatorEmail: `${activeCreator?.id || "guest"}@creatorengine.app`,
         }),
       });
 
@@ -237,8 +237,8 @@ export function SubscriptionPaymentModal({
         description: `${plan.name} Membership (${plan.priceFormatted}/mo)`,
         image: "/favicon.ico",
         prefill: {
-          name: activeCreator.name,
-          email: `${activeCreator.id}@creatorengine.app`,
+          name: activeCreator?.name || "Creator",
+          email: `${activeCreator?.id || "guest"}@creatorengine.app`,
           contact: "9999999999",
         },
         theme: {
@@ -256,7 +256,7 @@ export function SubscriptionPaymentModal({
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_subscription_id: response.razorpay_subscription_id,
                 razorpay_signature: response.razorpay_signature,
-                creatorId: activeCreator.id,
+                creatorId: activeCreator?.id || "guest",
                 planId: selectedPlanId,
               }),
             });

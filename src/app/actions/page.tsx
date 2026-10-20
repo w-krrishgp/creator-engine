@@ -27,6 +27,7 @@ import { DemoDisclaimer } from "@/components/common/DemoDisclaimer";
 import { PersonaSwitcherBar } from "@/components/common/PersonaSwitcherBar";
 import { HackathonDemoBar } from "@/components/common/HackathonDemoBar";
 import { UpgradePromptModal } from "@/components/subscription/UpgradePromptModal";
+import { ConnectProfilePrompt } from "@/components/common/ConnectProfilePrompt";
 
 export default function ActionsPage() {
   const {
@@ -62,6 +63,19 @@ export default function ActionsPage() {
   const [newEstimatedTime, setNewEstimatedTime] = useState("30 mins");
   const [newRelatedType, setNewRelatedType] = useState<"roadmap" | "opportunity" | "monetisation" | "goal" | "none">("none");
   const [newRelatedTitle, setNewRelatedTitle] = useState("");
+
+  // If no active creator is connected, render the connect profile empty state
+  if (!activeCreator) {
+    return (
+      <div className="space-y-6 max-w-5xl mx-auto py-2">
+        <ConnectProfilePrompt
+          feature="actions"
+          title="Connect Your Live Profile to Access Your Action Centre"
+          subtitle="No active creator profile connected. Link your YouTube channel, Instagram handle, or LinkedIn profile to receive high-impact next steps, platform growth recommendations, and deal execution tasks."
+        />
+      </div>
+    );
+  }
 
   const notStartedCount = actions.filter((a) => (a.status || (a.completed ? "Completed" : "Not started")) === "Not started").length;
   const inProgressCount = actions.filter((a) => (a.status || (a.completed ? "Completed" : "Not started")) === "In progress").length;

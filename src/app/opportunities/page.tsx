@@ -27,6 +27,7 @@ import { PersonaSwitcherBar } from "@/components/common/PersonaSwitcherBar";
 import { HackathonDemoBar } from "@/components/common/HackathonDemoBar";
 import { RadarDiscoveryCard } from "@/components/opportunities/RadarDiscoveryCard";
 import { RadarInspectModal } from "@/components/opportunities/RadarInspectModal";
+import { ConnectProfilePrompt } from "@/components/common/ConnectProfilePrompt";
 import {
   RadarDiscoveredItem,
   RadarExtractResponse,
@@ -48,7 +49,7 @@ export default function OpportunitiesPage() {
 
   // Radar State (TinyFish Live Web)
   const [radarQuery, setRadarQuery] = useState("");
-  const [radarNiche, setRadarNiche] = useState<string>(activeCreator.niche || "Tech & AI");
+  const [radarNiche, setRadarNiche] = useState<string>(activeCreator?.niche || "Tech & AI");
   const [radarLocation, setRadarLocation] = useState<string>("IN");
   const [radarResults, setRadarResults] = useState<RadarDiscoveredItem[]>([]);
   const [radarLoading, setRadarLoading] = useState(false);
@@ -61,6 +62,19 @@ export default function OpportunitiesPage() {
   const [selectedRadarItem, setSelectedRadarItem] = useState<RadarDiscoveredItem | null>(null);
   const [extractData, setExtractData] = useState<RadarExtractResponse | null>(null);
   const [extractLoading, setExtractLoading] = useState(false);
+
+  // If no active creator is connected, render the connect profile empty state
+  if (!activeCreator) {
+    return (
+      <div className="space-y-6 max-w-5xl mx-auto py-2">
+        <ConnectProfilePrompt
+          feature="opportunities"
+          title="Connect Your Live Profile to Match Brand Sponsorships"
+          subtitle="No active creator profile connected. Link your YouTube channel, Instagram handle, or LinkedIn profile to calculate verified compatibility scores for brand campaign briefs and pitch instantly."
+        />
+      </div>
+    );
+  }
 
   const niches = [
     "All",

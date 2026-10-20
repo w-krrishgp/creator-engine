@@ -10,7 +10,7 @@ export type AccountDataState =
   | "live"                 // Live verified data directly from official API
   | "cached_live"          // Authenticated or public live data served from cache
   | "user_entered"         // Self-reported by user
-  | "demo"                 // Demo/sample persona (Rahul / Priya)
+  | "demo"                 // Sample/simulated data
   | "connection_required"  // Public URL detected, but private/professional OAuth required for analytics
   | "data_unavailable";    // Account private, unresolvable, or platform rate limited
 
@@ -46,7 +46,7 @@ export interface UnifiedPlatformMetrics {
   platform: SupportedPlatform;
   platformAccountId: string | null; // e.g. YouTube Channel ID (UC...), IG Business ID, LinkedIn sub
   profileName: string;
-  handle: string; // e.g. @mkbhd, rahul.fit
+  handle: string; // e.g. @mkbhd, @creator
   profileUrl: string;
   avatarUrl?: string;
   description?: string;

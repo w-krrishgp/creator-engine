@@ -192,7 +192,7 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
               </span>
               <p
                 className={`font-semibold text-xs sm:text-sm ${
-                  activeCreator.followerCount >= opportunity.minFollowers
+                  activeCreator && activeCreator.followerCount >= opportunity.minFollowers
                     ? "text-slate-800"
                     : "text-rose-600 font-bold"
                 }`}

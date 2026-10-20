@@ -5,7 +5,7 @@ export type CreatorStageType = "Nano (1k-10k)" | "Micro (10k-50k)" | "Mid-Tier (
 export type ExperienceLevelType = "Emerging (< 1 yr)" | "Growing (1-3 yrs)" | "Established (3+ yrs)";
 
 export interface CreatorProfile {
-  id: "rahul" | "priya" | string;
+  id: string;
   name: string;
   handle: string;
   avatar: string;
