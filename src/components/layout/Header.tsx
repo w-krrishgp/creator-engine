@@ -190,7 +190,7 @@ export function Header() {
           </button>
 
           {/* Compact Persona Pill Switcher */}
-          <div className="flex items-center bg-slate-200/60 p-0.5 rounded-full border border-slate-200/70 text-xs">
+          <div className="hidden sm:flex items-center bg-slate-200/60 p-0.5 rounded-full border border-slate-200/70 text-xs">
             <span className="text-xs font-semibold text-slate-400 px-2 hidden lg:inline-flex items-center gap-1">
               <SlidersHorizontal className="w-3 h-3 text-[#0870e8]" /> Persona:
             </span>

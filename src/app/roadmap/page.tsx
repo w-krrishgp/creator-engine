@@ -61,7 +61,7 @@ export default function RoadmapPage() {
         </div>
         <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Generate Your Growth Roadmap</h2>
         <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-lg mx-auto">
-          Synthesize a tailored 30 / 60 / 90-day phased execution blueprint, high-impact content gaps, and topic opportunities with Gemini AI.
+          Synthesize a tailored 30 / 60 / 90-day phased execution blueprint, high-impact content gaps, and topic opportunities with AI.
         </p>
         <div className="flex items-center justify-center gap-3 pt-2 flex-wrap">
           <button
@@ -77,7 +77,7 @@ export default function RoadmapPage() {
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white font-bold text-sm shadow-xs transition-all disabled:opacity-60 cursor-pointer btn-tactile"
           >
             <Sparkles className={`w-4 h-4 ${isAiGenerating ? "animate-spin" : ""}`} />
-            <span>{isAiGenerating ? "Synthesizing with Gemini..." : "Generate Growth Roadmap (Gemini AI)"}</span>
+            <span>{isAiGenerating ? "Synthesizing AI Roadmap..." : "Generate Growth Roadmap (AI)"}</span>
           </button>
           <Link
             href="/onboarding"
@@ -115,7 +115,7 @@ export default function RoadmapPage() {
         text={
           isDemoMode
             ? "Illustrative Demo Recommendations: These growth milestones, topic angles, and benchmarking references are synthesized for demo personas based on public category benchmarks."
-            : `Verified Live Recommendations: Calibrated from your ${activeCreator.primaryPlatform} account signals, ${activeCreator.niche} category benchmarks, and ${activeCreator.creatorStage} creator stage. Synthesized with Gemini AI.`
+            : `Verified Live Recommendations: Calibrated from your ${activeCreator.primaryPlatform} account signals, ${activeCreator.niche} category benchmarks, and ${activeCreator.creatorStage} creator stage. Synthesized with AI.`
         }
       />
 
@@ -163,7 +163,7 @@ export default function RoadmapPage() {
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#0870e8] hover:bg-[#0760cb] text-white text-xs sm:text-sm font-bold transition-all shadow-xs disabled:opacity-60 cursor-pointer btn-tactile"
               >
                 <Sparkles className={`w-4 h-4 ${isAiGenerating ? "animate-spin" : ""}`} />
-                <span>{isAiGenerating ? "Synthesizing with Gemini..." : "Generate / Refresh Roadmap (Gemini AI)"}</span>
+                <span>{isAiGenerating ? "Synthesizing AI Roadmap..." : "Generate / Refresh Roadmap (AI)"}</span>
               </button>
               <div className="flex items-center gap-2 text-xs flex-wrap">
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-100/90 px-3 py-1 rounded-full border border-slate-200/60 font-mono">
@@ -180,7 +180,7 @@ export default function RoadmapPage() {
                 ) : (
                   <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50/90 px-3 py-1 rounded-full border border-emerald-200/70">
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                    {isGeminiConfigured ? "Gemini AI (Live)" : "Tailored Strategy Engine (Live)"}
+                    {isGeminiConfigured ? "Strategic AI (Live)" : "Tailored Strategy Engine (Live)"}
                   </span>
                 )}
                 {lastAiGeneratedAt && (
@@ -455,7 +455,7 @@ export default function RoadmapPage() {
                         <h4 className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">{ref.name}</h4>
                         <p className="text-xs text-[#0870e8] font-semibold">{ref.handle}</p>
                       </div>
-                      <Badge variant="purple" size="sm">
+                      <Badge variant="blue" size="sm">
                         {ref.platform}
                       </Badge>
                     </div>

@@ -519,7 +519,7 @@ export default function OverviewPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-bold text-slate-900 text-base">Roadmap Milestones</h3>
-                <Badge variant="violet" size="sm">
+                <Badge variant="indigo" size="sm">
                   {activePhase?.days || "Phase 1"}
                 </Badge>
               </div>

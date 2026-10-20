@@ -1139,7 +1139,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     customMetrics?: UnifiedPlatformMetrics
   ): Promise<{ success: boolean; quotaExceeded?: boolean; reason?: string }> => {
     setIsAiGenerating(true);
-    showToast("Synthesizing creator recommendations via Gemini API...", "info");
+    showToast("Synthesizing creator recommendations via AI...", "info");
 
     try {
       const activeProf = customCreator || creators[activeCreatorId] || MOCK_CREATORS[activeCreatorId] || activeCreator;
@@ -1289,7 +1289,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         } else {
           setIsGeminiConfigured(true);
           setAiModelUsed(data.modelUsed || "gemini-3.8-flash");
-          showToast(`Live recommendations synthesized via ${data.modelUsed || "Gemini"}!`, "success");
+          showToast("Live recommendations synthesized successfully!", "success");
         }
         return { success: true };
       }

@@ -292,7 +292,7 @@ export function OpportunityDetailsModal({
 
             <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/70">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                <MapPin className="w-3.5 h-3.5 text-purple-600" /> Target Location
+                <MapPin className="w-3.5 h-3.5 text-slate-600" /> Target Location
               </span>
               <p className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-1">
                 {opportunity.targetLocation || "Pan-India"}

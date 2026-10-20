@@ -333,7 +333,7 @@ export function RadarInspectModal({
                     </h4>
                   </div>
                   <span className="text-[10px] font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/60 px-2 py-0.5 rounded-md">
-                    {pitch?.isFallback ? "Deterministic Engine" : "Gemini AI Synthesized"}
+                    {pitch?.isFallback ? "Deterministic Engine" : "AI Synthesized"}
                   </span>
                 </div>
 

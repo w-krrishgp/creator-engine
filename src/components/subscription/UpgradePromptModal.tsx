@@ -161,7 +161,7 @@ export function UpgradePromptModal({
           <div className="p-5 sm:p-6 bg-gradient-to-r from-slate-950 to-slate-900 text-white relative">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors cursor-pointer"
+              className="absolute top-4 right-4 z-10 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors cursor-pointer"
               aria-label="Close modal"
             >
               <X className="w-4 h-4" />
@@ -213,7 +213,7 @@ export function UpgradePromptModal({
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Gemini 3.8 Flash AI Synthesis:</strong> {targetPlan.limits.aiRecommendationsPerMonth} strategic runs/month
+                    <strong>Strategic AI Synthesis:</strong> {targetPlan.limits.aiRecommendationsPerMonth} strategic runs/month
                   </span>
                 </div>
                 <div className="flex items-start gap-2">

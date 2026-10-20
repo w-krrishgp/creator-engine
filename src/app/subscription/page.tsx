@@ -254,7 +254,7 @@ export default function SubscriptionManagePage() {
                       onClick={() => handleOpenUpgrade("pro_plus")}
                       className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition-colors cursor-pointer"
                     >
-                      <Sparkles className="w-4 h-4 text-purple-400" />
+                      <Sparkles className="w-4 h-4 text-indigo-400" />
                       <span>Upgrade to Pro+ (₹999/mo)</span>
                     </button>
                   </>
@@ -262,9 +262,9 @@ export default function SubscriptionManagePage() {
                   <>
                     <button
                       onClick={() => handleOpenUpgrade("pro_plus")}
-                      className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-purple-900 hover:bg-purple-800 text-white font-bold text-sm transition-colors cursor-pointer"
+                      className="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition-colors cursor-pointer border border-slate-700"
                     >
-                      <ArrowUpRight className="w-4 h-4 text-purple-300" />
+                      <ArrowUpRight className="w-4 h-4 text-indigo-300" />
                       <span>Upgrade to Pro+ (₹999/mo)</span>
                     </button>
                     {!isCanceled && (

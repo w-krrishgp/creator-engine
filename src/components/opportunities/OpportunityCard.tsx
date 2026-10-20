@@ -149,7 +149,7 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
 
           {/* Tags Row: Platform, Niches, Location */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <Badge variant="purple" size="sm">
+            <Badge variant="blue" size="sm">
               {opportunity.platform}
             </Badge>
             {opportunity.niche.slice(0, 2).map((n, idx) => (

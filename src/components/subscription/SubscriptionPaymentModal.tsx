@@ -302,7 +302,7 @@ export function SubscriptionPaymentModal({
         <div className="p-5 sm:p-6 bg-gradient-to-r from-slate-950 via-slate-900 to-blue-950 text-white relative">
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors cursor-pointer"
+            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors cursor-pointer"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -360,13 +360,13 @@ export function SubscriptionPaymentModal({
                 onClick={() => setSelectedPlanId("pro_plus")}
                 className={`btn-tactile px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   selectedPlanId === "pro_plus"
-                    ? "bg-purple-600 text-white shadow-xs"
+                    ? "bg-indigo-600 text-white shadow-xs"
                     : "bg-white/10 text-slate-300 hover:bg-white/15 hover:text-white"
                 }`}
               >
-                <Crown className="w-3 h-3 text-purple-300" />
+                <Crown className="w-3 h-3 text-indigo-300" />
                 <span>Pro+ (₹999/mo)</span>
-                <span className="px-1.5 py-0.2 rounded-full bg-purple-400/20 text-[10px] text-purple-200">
+                <span className="px-1.5 py-0.2 rounded-full bg-indigo-400/20 text-[10px] text-indigo-200">
                   Elite
                 </span>
               </button>

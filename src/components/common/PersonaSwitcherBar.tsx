@@ -88,7 +88,7 @@ export function PersonaSwitcherBar({ subtitle }: PersonaSwitcherBarProps) {
         </div>
 
         {/* Stable Non-Shifting Button Cluster */}
-        <div className="flex items-center gap-1.5 sm:gap-2 p-1.5 bg-slate-100/75 rounded-2xl border border-slate-200/80 shrink-0 self-start md:self-auto">
+        <div className="flex items-center gap-1.5 sm:gap-2 p-1.5 bg-slate-100/75 rounded-2xl border border-slate-200/80 shrink-0 self-start md:self-auto flex-wrap max-w-full">
           <span className="text-xs font-bold text-slate-400 px-1.5 hidden xl:inline">
             Switch:
           </span>

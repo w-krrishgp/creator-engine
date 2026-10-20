@@ -86,7 +86,7 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
       href: "/workflow",
       icon: Workflow,
       badge: "SOP",
-      badgeColor: "bg-violet-50 text-violet-700 border-violet-200/80",
+      badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
     },
     {
       name: "Actions",
@@ -109,7 +109,7 @@ export function Sidebar({ onMobileClose }: SidebarProps) {
       badge: currentPlan.name,
       badgeColor:
         currentPlanId === "pro_plus"
-          ? "bg-purple-50 text-purple-700 border-purple-200/80 font-bold"
+          ? "bg-indigo-50 text-indigo-700 border-indigo-200/80 font-bold"
           : currentPlanId === "pro"
           ? "bg-blue-50 text-[#0870e8] border-blue-200/80 font-bold"
           : "bg-slate-100 text-slate-700 border-slate-200/80",

@@ -29,9 +29,9 @@ export function Badge({
 }: BadgeProps) {
   const variantStyles: Record<BadgeVariant, string> = {
     blue: "bg-blue-50/90 text-[#0870e8] border-blue-200/70 font-semibold",
-    violet: "bg-violet-50/90 text-violet-700 border-violet-200/70 font-semibold",
+    violet: "bg-indigo-50/90 text-indigo-700 border-indigo-200/70 font-semibold",
     indigo: "bg-indigo-50/90 text-indigo-700 border-indigo-200/70 font-semibold",
-    purple: "bg-purple-50/90 text-purple-700 border-purple-200/70 font-semibold",
+    purple: "bg-indigo-50/90 text-indigo-700 border-indigo-200/70 font-semibold",
     emerald: "bg-emerald-50/90 text-emerald-700 border-emerald-200/70 font-semibold",
     amber: "bg-amber-50/90 text-amber-800 border-amber-200/70 font-semibold",
     rose: "bg-rose-50/90 text-rose-700 border-rose-200/70 font-semibold",

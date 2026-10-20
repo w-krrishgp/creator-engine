@@ -420,7 +420,7 @@ export default function ActionsPage() {
                         </Badge>
 
                         {/* Category Badge */}
-                        <Badge variant="purple" size="sm">
+                        <Badge variant="indigo" size="sm">
                           {action.category}
                         </Badge>
 

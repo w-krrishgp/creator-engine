@@ -389,7 +389,7 @@ export function ConnectAccountModal({
 
                 <div className="p-3 bg-white rounded-xl border border-slate-200/80">
                   <div className="flex items-center gap-1.5 text-2xs uppercase tracking-wider text-slate-400 font-bold mb-1">
-                    <Eye className="w-3 h-3 text-purple-600" />
+                    <Eye className="w-3 h-3 text-[#0870e8]" />
                     <span>Total Views</span>
                   </div>
                   <div className="text-base font-extrabold text-slate-900">

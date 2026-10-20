@@ -61,11 +61,11 @@ export function PlatformDataStateBadge({
     },
     connection_required: {
       label: "Connection Required",
-      bg: "bg-purple-50",
-      text: "text-purple-800",
-      border: "border-purple-200",
-      dot: "bg-purple-500",
-      icon: <Lock className="w-3 h-3 text-purple-600" />,
+      bg: "bg-slate-100",
+      text: "text-slate-800",
+      border: "border-slate-300",
+      dot: "bg-slate-500",
+      icon: <Lock className="w-3 h-3 text-slate-600" />,
     },
     data_unavailable: {
       label: "Data Unavailable",

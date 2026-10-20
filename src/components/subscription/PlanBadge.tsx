@@ -52,11 +52,11 @@ export function PlanBadge({
       dotColor: "bg-[#0870e8]",
     },
     pro_plus: {
-      badgeBg: "bg-purple-50",
-      text: "text-purple-700 font-extrabold",
-      border: "border-purple-200/90",
-      icon: <Crown className="w-3.5 h-3.5 text-purple-600" />,
-      dotColor: "bg-purple-600",
+      badgeBg: "bg-indigo-50",
+      text: "text-indigo-700 font-extrabold",
+      border: "border-indigo-200/90",
+      icon: <Crown className="w-3.5 h-3.5 text-indigo-600" />,
+      dotColor: "bg-indigo-600",
     },
   };
 

@@ -219,7 +219,7 @@ export default function ProfilePage() {
       {/* Profile Hero Header Card */}
       <div className="bg-white rounded-[22px] border border-slate-200/75 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] overflow-hidden">
         {/* Cover Accent Gradient */}
-        <div className="h-28 sm:h-36 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 relative">
+        <div className="h-28 sm:h-36 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800 relative">
           <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
         </div>
 

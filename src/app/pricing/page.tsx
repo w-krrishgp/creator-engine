@@ -131,8 +131,8 @@ export default function PricingPage() {
                     <span>Most Popular</span>
                   </span>
                 ) : isProPlus ? (
-                  <span className="px-3.5 py-1 rounded-full bg-purple-900 text-purple-200 text-xs font-extrabold uppercase tracking-wider shadow-sm flex items-center gap-1 border border-purple-700">
-                    <Crown className="w-3.5 h-3.5 text-purple-400" />
+                  <span className="px-3.5 py-1 rounded-full bg-slate-900 text-amber-300 text-xs font-extrabold uppercase tracking-wider shadow-sm flex items-center gap-1 border border-slate-700 whitespace-nowrap">
+                    <Crown className="w-3.5 h-3.5 text-amber-400" />
                     <span>Enterprise & Agency</span>
                   </span>
                 ) : null}
@@ -283,7 +283,7 @@ export default function PricingPage() {
                     <span className="text-xs font-normal text-slate-500">₹500/mo</span>
                   </th>
                   <th className="p-4 sm:p-5 text-center w-1/5">
-                    <div className="text-purple-700 text-sm sm:text-base">Pro+</div>
+                    <div className="text-indigo-700 dark:text-indigo-400 text-sm sm:text-base font-bold">Pro+</div>
                     <span className="text-xs font-normal text-slate-500">₹999/mo</span>
                   </th>
                 </tr>
@@ -299,13 +299,13 @@ export default function PricingPage() {
                   <td className="p-4 sm:px-5 font-semibold text-slate-800">Growth Roadmap Scope</td>
                   <td className="p-4 text-center text-slate-600">30 Days (Foundation)</td>
                   <td className="p-4 text-center text-slate-800 font-bold bg-blue-50/20">90 Days (Complete)</td>
-                  <td className="p-4 text-center text-purple-900 font-bold">90 Days + Custom</td>
+                  <td className="p-4 text-center text-slate-900 font-bold">90 Days + Custom</td>
                 </tr>
                 <tr>
-                  <td className="p-4 sm:px-5 font-semibold text-slate-800">Gemini 3.8 Flash AI Synthesis</td>
+                  <td className="p-4 sm:px-5 font-semibold text-slate-800">Strategic AI Synthesis</td>
                   <td className="p-4 text-center text-slate-600">2 runs / mo</td>
                   <td className="p-4 text-center text-slate-800 font-bold bg-blue-50/20">50 runs / mo</td>
-                  <td className="p-4 text-center text-purple-900 font-bold">200 runs / mo</td>
+                  <td className="p-4 text-center text-slate-900 font-bold">200 runs / mo</td>
                 </tr>
                 <tr>
                   <td className="p-4 sm:px-5 font-semibold text-slate-800">Content Gap & Topic Discovery</td>
@@ -324,7 +324,7 @@ export default function PricingPage() {
                   <td className="p-4 sm:px-5 font-semibold text-slate-800">Monthly Campaign Applications</td>
                   <td className="p-4 text-center text-slate-600">Max 3 deals</td>
                   <td className="p-4 text-center text-slate-800 font-bold bg-blue-50/20">25 deals</td>
-                  <td className="p-4 text-center text-purple-900 font-bold">100 deals</td>
+                  <td className="p-4 text-center text-slate-900 font-bold">100 deals</td>
                 </tr>
                 <tr>
                   <td className="p-4 sm:px-5 font-semibold text-slate-800">Deterministic Compatibility Matcher</td>
@@ -355,13 +355,13 @@ export default function PricingPage() {
                   <td className="p-4 sm:px-5 font-semibold text-slate-800">Active Action Queue Capacity</td>
                   <td className="p-4 text-center text-slate-600">5 items</td>
                   <td className="p-4 text-center text-slate-800 font-bold bg-blue-50/20">25 items</td>
-                  <td className="p-4 text-center text-purple-900 font-bold">100 items</td>
+                  <td className="p-4 text-center text-slate-900 font-bold">100 items</td>
                 </tr>
                 <tr>
                   <td className="p-4 sm:px-5 font-semibold text-slate-800">Shareable Media Kit Link</td>
                   <td className="p-4 text-center text-slate-600">Standard URL</td>
                   <td className="p-4 text-center text-slate-800 font-bold bg-blue-50/20">Analytics Enabled</td>
-                  <td className="p-4 text-center text-purple-900 font-bold">Custom White-label</td>
+                  <td className="p-4 text-center text-slate-900 font-bold">Custom White-label</td>
                 </tr>
                 <tr>
                   <td className="p-4 sm:px-5 font-semibold text-slate-800">Commercial Deal Invoicing (GST/TDS)</td>
@@ -373,7 +373,7 @@ export default function PricingPage() {
                   <td className="p-4 sm:px-5 font-semibold text-slate-800">Support Level</td>
                   <td className="p-4 text-center text-slate-600">Community</td>
                   <td className="p-4 text-center text-slate-800 font-bold bg-blue-50/20">Priority Email</td>
-                  <td className="p-4 text-center text-purple-900 font-bold">Dedicated Manager</td>
+                  <td className="p-4 text-center text-slate-900 font-bold">Dedicated Manager</td>
                 </tr>
               </tbody>
             </table>

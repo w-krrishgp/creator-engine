@@ -54,7 +54,7 @@ export function ThemeToggle({ className = "", showLabels = false }: ThemeToggleP
         <span
           className={`pointer-events-none inline-flex h-6.5 w-6.5 transform items-center justify-center rounded-full shadow-md transition-all duration-300 ease-in-out ${
             isDark
-              ? "translate-x-7.5 bg-gradient-to-br from-indigo-500 to-purple-600 text-white"
+              ? "translate-x-7.5 bg-gradient-to-br from-[#0870e8] to-indigo-600 text-white"
               : "translate-x-0.5 bg-white text-amber-500 border border-slate-200/80"
           }`}
         >

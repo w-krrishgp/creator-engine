@@ -170,7 +170,7 @@ export default function MonetisationPage() {
               </Badge>
               <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2.5 py-0.5 rounded-full border border-slate-200/60">
                 <span className={`w-1.5 h-1.5 rounded-full ${isGeminiConfigured ? "bg-emerald-500" : "bg-amber-500"}`} />
-                {isGeminiConfigured ? "Gemini Calibrated" : "Deterministic Benchmarks"}
+                {isGeminiConfigured ? "AI Calibrated" : "Deterministic Benchmarks"}
               </span>
               <span className="text-xs text-slate-300">•</span>
               <span className="text-xs sm:text-sm font-semibold text-slate-500">

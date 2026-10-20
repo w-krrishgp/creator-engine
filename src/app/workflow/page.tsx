@@ -141,7 +141,7 @@ ${activeCreator.name}`;
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               Creator Workflow & Deal Automation
             </h2>
-            <Badge variant="purple" size="sm">
+            <Badge variant="indigo" size="sm">
               Standard Operating Procedure
             </Badge>
           </div>
@@ -298,7 +298,7 @@ ${activeCreator.name}`;
                     Never film without a written Statement of Work (SOW) or email brief confirmation
                   </p>
                 </div>
-                <Badge variant="purple" size="sm">
+                <Badge variant="indigo" size="sm">
                   Legal Safeguards
                 </Badge>
               </CardHeader>
@@ -360,8 +360,8 @@ ${activeCreator.name}`;
                       <span className="font-bold text-indigo-900">0s - 3s: Visual Pattern Interrupt: </span>
                       <span className="text-slate-700">Display the shocking number or end result before explaining context.</span>
                     </div>
-                    <div className="p-3.5 rounded-xl bg-purple-50/60 border border-purple-100/90 leading-relaxed">
-                      <span className="font-bold text-purple-900">3s - 25s: The Mechanism / Solution: </span>
+                    <div className="p-3.5 rounded-xl bg-blue-50/60 border border-blue-100/90 leading-relaxed">
+                      <span className="font-bold text-blue-900">3s - 25s: The Mechanism / Solution: </span>
                       <span className="text-slate-700">Integrate brand naturally as the tool that solved the core frustration.</span>
                     </div>
                     <div className="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-100/90 leading-relaxed">
@@ -517,7 +517,7 @@ ${activeCreator.name}`;
                 <span>Export 7-day post-launch insights screenshot report to attach with invoice.</span>
               </div>
               <div className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 text-slate-700 leading-relaxed">
-                <span className="w-2 h-2 rounded-full bg-purple-600 mt-1.5 shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-indigo-600 mt-1.5 shrink-0" />
                 <span>Offer 15% discount if brand converts to a 3-month quarterly retainer commitment.</span>
               </div>
             </CardContent>

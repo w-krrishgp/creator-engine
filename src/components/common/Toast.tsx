@@ -10,7 +10,7 @@ export function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none px-4 sm:px-0">
+    <div className="fixed bottom-20 md:bottom-5 right-5 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none px-4 sm:px-0">
       {toasts.map((toast) => {
         const isSuccess = toast.type === "success";
         const isInfo = toast.type === "info";
