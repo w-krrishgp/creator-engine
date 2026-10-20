@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCreator } from "@/context/CreatorContext";
 import { calculateCompatibility } from "@/utils/compatibility";
 import {
@@ -50,12 +50,33 @@ export default function OpportunitiesPage() {
   // Radar State (TinyFish Live Web)
   const [radarQuery, setRadarQuery] = useState("");
   const [radarNiche, setRadarNiche] = useState<string>(activeCreator?.niche || "Tech & AI");
-  const [radarLocation, setRadarLocation] = useState<string>("IN");
+  const [radarLocation, setRadarLocation] = useState<string>("Global");
   const [radarResults, setRadarResults] = useState<RadarDiscoveredItem[]>([]);
   const [radarLoading, setRadarLoading] = useState(false);
   const [radarError, setRadarError] = useState<string | null>(null);
   const [radarWarning, setRadarWarning] = useState<string | null>(null);
   const [lastSearchedAt, setLastSearchedAt] = useState<string | null>(null);
+
+  // Sync radar niche whenever active creator changes
+  useEffect(() => {
+    if (activeCreator?.niche) {
+      setRadarNiche(activeCreator.niche);
+    }
+  }, [activeCreator?.niche]);
+
+  // Support ?tab=radar or ?mode=radar deep linking from Dashboard
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get("tab") || params.get("mode");
+      if (tab === "radar") {
+        setViewMode("radar");
+        if (radarResults.length === 0 && !radarLoading && activeCreator) {
+          handleRadarScan("", activeCreator.niche);
+        }
+      }
+    }
+  }, [activeCreator]);
 
   // Inspect Modal State
   const [inspectModalOpen, setInspectModalOpen] = useState(false);
@@ -539,6 +560,10 @@ export default function OpportunitiesPage() {
                   <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg tracking-tight">
                     Live Web Discovery Engine
                   </h3>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80 shadow-2xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    TinyFish Active
+                  </span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
                   Powered by <strong>TinyFish</strong> live web search & browser automation. Finds real-time brand calls without relying on static directories.
@@ -562,7 +587,7 @@ export default function OpportunitiesPage() {
                 </div>
                 <input
                   type="text"
-                  placeholder="e.g. Developer tools ambassador, supplement affiliate, fintech sponsor..."
+                  placeholder="e.g. Notion, Razer, Corsair, Best Buy, Gymshark..."
                   value={radarQuery}
                   onChange={(e) => setRadarQuery(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleRadarScan()}
@@ -592,10 +617,10 @@ export default function OpportunitiesPage() {
                   onChange={(e) => setRadarLocation(e.target.value)}
                   className="w-full h-11 px-3 text-xs sm:text-sm font-semibold rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0870e8] cursor-pointer truncate"
                 >
-                  <option value="IN">🇮🇳 India (IN)</option>
+                  <option value="Global">🌐 Worldwide</option>
                   <option value="US">🇺🇸 United States (US)</option>
                   <option value="GB">🇬🇧 United Kingdom (GB)</option>
-                  <option value="Global">🌐 Worldwide</option>
+                  <option value="IN">🇮🇳 India (IN)</option>
                 </select>
               </div>
 
@@ -625,13 +650,15 @@ export default function OpportunitiesPage() {
             <div className="pt-2 border-t border-slate-200/70 dark:border-slate-800 flex items-center gap-2 flex-wrap text-xs">
               <span className="font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-[#0870e8]" />
-                <span>Suggested Scans:</span>
+                <span>Popular Brand Calls:</span>
               </span>
               {[
-                { label: "AsyncAPI & Tech Ambassadors", q: "developer ambassador program", niche: "Tech & AI" },
-                { label: "Arm & AI Software Advocates", q: "AI developer program ambassador", niche: "Tech & AI" },
-                { label: "Fitness Supplement Calls", q: "fitness brand ambassador program apply", niche: "Fitness & Nutrition" },
-                { label: "Personal Finance Sponsorships", q: "fintech creator program sponsor apply", niche: "Personal Finance & Investing" },
+                { label: "Best Buy Creators", q: "Best Buy Creator Program", niche: "Tech & AI" },
+                { label: "Corsair Streamers", q: "Corsair Gaming Creator Program", niche: "Tech & AI" },
+                { label: "Notion Ambassador", q: "Notion", niche: "Productivity" },
+                { label: "Razer Streamers", q: "Razer Creator Program", niche: "Tech & AI" },
+                { label: "The Ridge Creators", q: "The Ridge creators ambassador", niche: "Lifestyle" },
+                { label: "Gymshark Athletes", q: "Gymshark athlete ambassador program", niche: "Fitness & Nutrition" },
               ].map((pill, idx) => (
                 <button
                   key={idx}

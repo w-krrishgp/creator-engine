@@ -9,6 +9,8 @@ import {
   Share2,
   SlidersHorizontal,
   Plus,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { PlanBadge } from "@/components/subscription/PlanBadge";
@@ -22,12 +24,14 @@ export function Header() {
     activeCreator,
     allCreators,
     switchCreator,
+    disconnectPlatformCreator,
     showToast,
     isDemoMode,
     importPlatformCreator,
   } = useCreator();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [connectModalOpen, setConnectModalOpen] = useState(false);
+  const [profileToDelete, setProfileToDelete] = useState<{ id: string; name: string } | null>(null);
 
   const handlePersonaClick = (id: string) => {
     if (activeCreatorId === id) {
@@ -40,6 +44,7 @@ export function Header() {
   const getPageInfo = () => {
     switch (pathname) {
       case "/":
+      case "/dashboard":
         return {
           title: "Executive Overview",
           subtitle: "Performance intelligence & strategic next steps",
@@ -196,18 +201,34 @@ export function Header() {
             return (
               <div className="hidden sm:flex items-center bg-slate-200/60 p-0.5 rounded-full border border-slate-200/70 text-xs">
                 {availableIds.map((id) => (
-                  <button
+                  <div
                     key={id}
-                    onClick={() => handlePersonaClick(id)}
-                    className={`btn-tactile px-3 py-1.5 rounded-full text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
+                    className={`inline-flex items-center rounded-full text-xs transition-all ${
                       activeCreatorId === id
                         ? "bg-white text-slate-900 font-bold shadow-[0_1px_2px_rgba(0,0,0,0.06)] border border-slate-200/60"
                         : "text-slate-600 hover:text-slate-900 font-medium"
                     }`}
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                    <span className="truncate max-w-[100px]">{allCreators[id]?.name || id}</span>
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePersonaClick(id)}
+                      className="px-2.5 py-1.5 flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                      <span className="truncate max-w-[95px]">{allCreators[id]?.name || id}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setProfileToDelete({ id, name: allCreators[id]?.name || id });
+                      }}
+                      className="pr-2 pl-0.5 py-1.5 text-slate-400 hover:text-rose-600 cursor-pointer transition-colors"
+                      title={`Disconnect ${allCreators[id]?.name || "creator"}`}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
                 ))}
               </div>
             );
@@ -247,6 +268,46 @@ export function Header() {
           importPlatformCreator(metrics);
         }}
       />
+
+      {/* Disconnect Profile Confirmation Dialog */}
+      {profileToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white rounded-3xl border border-slate-200 max-w-sm w-full p-6 shadow-2xl space-y-5 text-left">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-lg font-black text-slate-900 tracking-tight">
+                Disconnect Creator Profile?
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Are you sure you want to disconnect <strong className="text-slate-900">{profileToDelete.name}</strong> from Creator Engine? All metrics and tailored opportunities for this persona will be removed.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setProfileToDelete(null)}
+                className="btn-tactile px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  disconnectPlatformCreator(profileToDelete.id);
+                  setProfileToDelete(null);
+                }}
+                className="btn-tactile px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-colors shadow-xs cursor-pointer"
+              >
+                Disconnect Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

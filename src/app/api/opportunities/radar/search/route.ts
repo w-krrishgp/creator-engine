@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
 
     const rawQuery = typeof body.query === "string" ? body.query.trim().slice(0, 200) : "";
     const rawNiche = typeof body.niche === "string" ? body.niche.trim().slice(0, 80) : "";
-    const rawLocation = typeof body.location === "string" ? body.location.trim().toUpperCase().slice(0, 10) : "IN";
+    const rawLocation = typeof body.location === "string" ? body.location.trim().toUpperCase().slice(0, 10) : "GLOBAL";
     const rawPlatform = typeof body.platform === "string" ? body.platform.trim().slice(0, 40) : "";
     const limit = typeof body.limit === "number" && body.limit > 0 && body.limit <= 15 ? Math.floor(body.limit) : 8;
 
@@ -115,20 +115,29 @@ export async function POST(req: NextRequest) {
 
     // 4. Construct high-intent opportunity search query
     // Optimizes discovery of genuine open brand calls, creator programs, and ambassador pages
-    const queryParts: string[] = [];
+    // Avoids internal platform docs (like YouTube Partner Program) and corporate job postings.
+    let finalQuery: string;
+
     if (rawQuery) {
-      queryParts.push(rawQuery);
-    } else if (rawNiche && rawNiche !== "All") {
-      queryParts.push(rawNiche);
+      // User typed a specific brand or keyword (e.g. "Notion", "Gymshark", "NordVPN", "AI tools")
+      finalQuery = `${rawQuery} ("creator program" OR "brand ambassador" OR "sponsorship" OR "affiliate") ("apply" OR "partner" OR "join") -job -hiring -careers`;
+    } else {
+      // Niche-targeted query for real brand programs
+      const nicheQueries: Record<string, string> = {
+        "Tech & AI": 'tech ("creator program" OR "brand ambassador program") ("apply now" OR "join our program") -job -hiring',
+        "Healthcare & Medicine": 'health medical wellness ("ambassador program" OR "creator partnership") ("apply" OR "join") -job -hiring',
+        "Fitness & Nutrition": 'fitness apparel nutrition ("brand ambassador" OR "athlete program" OR "creator program") apply -job -hiring',
+        "Personal Finance & Investing": 'fintech finance investing ("affiliate program" OR "creator partnership" OR "ambassador") apply -job -hiring',
+        "Fintech": 'fintech finance ("creator program" OR "affiliate program" OR "partner") apply -job -hiring',
+        "Productivity": 'productivity software tools ("ambassador program" OR "creator program" OR "affiliate") apply -job -hiring',
+        "Gaming": 'gaming hardware peripherals ("creator program" OR "streamer program" OR "ambassador") apply -job -hiring',
+        "Lifestyle": 'lifestyle apparel travel ("brand ambassador program" OR "creator collaboration") apply -job -hiring',
+      };
+
+      finalQuery = nicheQueries[rawNiche] || `${rawNiche || "brand"} ("creator program" OR "brand ambassador program" OR "sponsorship") ("apply now" OR "partner") -job -hiring`;
     }
 
-    if (rawPlatform && rawPlatform !== "All" && rawPlatform !== "Multi-Platform") {
-      queryParts.push(rawPlatform);
-    }
-
-    queryParts.push("brand ambassador creator program sponsorship apply");
-
-    const finalQuery = queryParts.join(" ").slice(0, 250);
+    finalQuery = finalQuery.slice(0, 250);
     const purpose = `Discover real, active brand sponsorships, creator ambassador programs, and affiliate partnerships for ${rawNiche || "digital"} creators.`;
 
     // 5. Execute TinyFish Search
@@ -141,10 +150,30 @@ export async function POST(req: NextRequest) {
 
     const timestamp = new Date().toISOString();
 
+    // Excluded patterns: platform monetization/help docs, tutorial videos, and corporate jobs
+    const EXCLUDED_PATTERNS = [
+      "youtube.com/creators/earn",
+      "support.google.com",
+      "youtube.com/watch",
+      "linkedin.com/jobs",
+      "indeed.com",
+      "glassdoor.com",
+      "builtin.com/job",
+      "simplify.jobs",
+      "greenhouse.io",
+      "lever.co",
+    ];
+
     // 6. Normalize and score results
-    const rawItems = searchResponse.results.slice(0, limit);
+    const rawItems = searchResponse.results
+      .filter((item) => {
+        if (!item.url || !item.url.startsWith("http")) return false;
+        const lowerUrl = item.url.toLowerCase();
+        return !EXCLUDED_PATTERNS.some((pat) => lowerUrl.includes(pat));
+      })
+      .slice(0, limit);
+
     const results: RadarDiscoveredItem[] = rawItems
-      .filter((item) => item.url && item.url.startsWith("http"))
       .map((item, idx) => {
         const { score, reason } = calculateSnippetMatch(item.title, item.snippet, rawNiche, rawPlatform);
         return {

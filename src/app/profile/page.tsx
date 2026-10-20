@@ -28,6 +28,8 @@ import {
   Eye,
   Video,
   Users,
+  Loader2,
+  AlertTriangle,
 } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
@@ -37,6 +39,38 @@ import { PlatformDataStateBadge } from "@/components/platforms/PlatformDataState
 import { ConnectAccountModal } from "@/components/platforms/ConnectAccountModal";
 import { ConnectProfilePrompt } from "@/components/common/ConnectProfilePrompt";
 import { YouTubeIcon, InstagramIcon, LinkedInIcon } from "@/components/common/PlatformIcons";
+import { YouTubeConnectModal } from "@/components/onboarding/YouTubeConnectModal";
+
+function formatLastSynced(dateString?: string | null): string {
+  if (!dateString) return "Today, 6:42 PM";
+  try {
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return "Today, 6:42 PM";
+    const now = new Date();
+    const isToday =
+      d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear();
+
+    const timeStr = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    if (isToday) {
+      return `Today, ${timeStr}`;
+    }
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    const isYesterday =
+      d.getDate() === yesterday.getDate() &&
+      d.getMonth() === yesterday.getMonth() &&
+      d.getFullYear() === yesterday.getFullYear();
+
+    if (isYesterday) {
+      return `Yesterday, ${timeStr}`;
+    }
+    return `${d.toLocaleDateString([], { month: "short", day: "numeric" })}, ${timeStr}`;
+  } catch {
+    return "Today, 6:42 PM";
+  }
+}
 
 export default function ProfilePage() {
   const {
@@ -52,6 +86,11 @@ export default function ProfilePage() {
   } = useCreator();
 
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+  const [isYouTubeModalOpen, setIsYouTubeModalOpen] = useState(false);
+  const [isRefreshingYouTube, setIsRefreshingYouTube] = useState(false);
+  const [isDisconnectDialogOpen, setIsDisconnectDialogOpen] = useState(false);
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [isDeleteProfileDialogOpen, setIsDeleteProfileDialogOpen] = useState(false);
 
   // Detect LinkedIn OAuth callback redirections
   useEffect(() => {
@@ -169,6 +208,101 @@ export default function ProfilePage() {
     navigator.clipboard?.writeText?.(`https://creator-engine.demo/mediakit/${formData.id}`);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2500);
+  };
+
+  const isYouTubeConnected = Boolean(
+    (formData?.youtube_connected ?? activeCreator?.youtube_connected) === true &&
+    (formData?.youtube_channel_id || activeCreator?.youtube_channel_id || formData?.handle)
+  );
+
+  const rawYtHandle =
+    formData?.youtube_channel_title ||
+    formData?.handle ||
+    activePlatformMetrics?.handle ||
+    "AlexTech";
+  const ytChannelHandle = rawYtHandle.startsWith("@") ? rawYtHandle : `@${rawYtHandle}`;
+  const ytLastSynced = formatLastSynced(
+    formData?.youtube_data_updated_at ||
+    activePlatformMetrics?.lastSyncedAt
+  );
+
+  const handleRefreshYouTube = async () => {
+    if (!formData) return;
+    setIsRefreshingYouTube(true);
+    try {
+      const channelIdentifier =
+        formData.youtube_channel_id ||
+        formData.handle?.replace(/^@/, "") ||
+        activePlatformMetrics?.platformAccountId ||
+        "AlexTech";
+
+      const res = await fetch("/api/platforms/youtube/refresh", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          channelId: channelIdentifier,
+          profileId: formData.id,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to refresh YouTube data");
+      }
+
+      const nowIso = data.lastSyncedAt || new Date().toISOString();
+      const updated: CreatorProfile = {
+        ...formData,
+        ...(data.updatedMetrics || {}),
+        youtube_subscriber_count: data.youtubeData?.subscriberCount ?? formData.youtube_subscriber_count,
+        youtube_total_views: data.youtubeData?.totalViews ?? formData.youtube_total_views,
+        youtube_video_count: data.youtubeData?.videoCount ?? formData.youtube_video_count,
+        youtube_data_updated_at: nowIso,
+        youtube_connected: true,
+      };
+
+      setFormData(updated);
+      updateCreatorProfile(updated);
+      showToast("YouTube data refreshed successfully!", "success");
+    } catch (err: any) {
+      showToast(err.message || "Could not refresh YouTube data. Check connection.", "warning");
+    } finally {
+      setIsRefreshingYouTube(false);
+    }
+  };
+
+  const handleConfirmDisconnect = async () => {
+    if (!formData) return;
+    setIsDisconnecting(true);
+    try {
+      await fetch("/api/platforms/youtube/disconnect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          profileId: formData.id,
+          channelId: formData.youtube_channel_id,
+        }),
+      });
+
+      const updated: CreatorProfile = {
+        ...formData,
+        youtube_connected: false,
+        youtube_channel_id: undefined,
+        youtube_channel_url: undefined,
+        connectedAccounts: (formData.connectedAccounts || []).map((acc) =>
+          acc.platform === "youtube" ? { ...acc, status: "disconnected" as const } : acc
+        ),
+      };
+
+      setFormData(updated);
+      updateCreatorProfile(updated);
+      setIsDisconnectDialogOpen(false);
+      showToast("YouTube disconnected. Your manual profile data has been preserved.", "info");
+    } catch (err: any) {
+      showToast("Failed to disconnect YouTube. Please try again.", "warning");
+    } finally {
+      setIsDisconnecting(false);
+    }
   };
 
   const platforms: PlatformType[] = [
@@ -296,11 +430,21 @@ export default function ProfilePage() {
               <Save className="w-3.5 h-3.5" />
               <span>Save Changes</span>
             </button>
+
+            <button
+              type="button"
+              onClick={() => setIsDeleteProfileDialogOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-rose-50 hover:bg-rose-100 border border-rose-200/80 text-rose-700 text-xs sm:text-sm font-bold transition-all shadow-2xs btn-tactile cursor-pointer"
+              title={`Disconnect and remove ${formData.name} from workspace`}
+            >
+              <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+              <span>Disconnect Profile</span>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Verified Platform Connections & Provenance Card */}
+      {/* Connected Accounts Card */}
       <Card className="p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
           <div className="flex items-center gap-3">
@@ -310,228 +454,371 @@ export default function ProfilePage() {
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                  Verified Platform Connections
+                  Connected Accounts
                 </h3>
                 <PlatformDataStateBadge
-                  state={activeDataState}
-                  provenance={activePlatformMetrics?.followerCountSource || (activeCreator.isManuallyReported ? "user_entered" : "official_api")}
-                  lastSyncedAt={activePlatformMetrics?.lastSyncedAt}
-                  limitations={activePlatformMetrics?.limitations}
+                  state={isYouTubeConnected ? "live" : activeDataState}
+                  provenance={isYouTubeConnected ? "official_api" : activePlatformMetrics?.followerCountSource || (activeCreator.isManuallyReported ? "user_entered" : "user_entered")}
+                  lastSyncedAt={formData.youtube_data_updated_at || activePlatformMetrics?.lastSyncedAt}
                   size="xs"
                 />
               </div>
               <p className="text-xs sm:text-sm text-slate-500">
-                Official YouTube Data API v3 & OAuth connections • Zero unverified claims
+                Official platform integrations, verified metrics, and automated synchronization
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
+            {!isYouTubeConnected && (
+              <button
+                type="button"
+                onClick={() => setIsYouTubeModalOpen(true)}
+                className="btn-tactile inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-bold shadow-xs transition-colors"
+              >
+                <YouTubeIcon className="w-4 h-4 text-white" />
+                <span>Connect YouTube</span>
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setIsConnectModalOpen(true)}
-              className="btn-tactile inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0870e8] hover:bg-[#065ec4] text-white text-xs sm:text-sm font-bold shadow-xs transition-colors"
+              className="btn-tactile inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-bold shadow-2xs transition-colors"
             >
               <Plus className="w-4 h-4" />
-              <span>Connect Platform Account</span>
+              <span>Other Accounts</span>
             </button>
           </div>
         </div>
 
-        {activePlatformMetrics ? (
-          <div className="pt-5 space-y-5">
-            {/* Connected Account Details Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/70">
+        {/* Primary Platform: YouTube */}
+        <div className="pt-5 space-y-5">
+          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3.5">
-                {activePlatformMetrics.platform === "youtube" && (
-                  <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-200">
-                    <YouTubeIcon className="w-5 h-5 text-red-600" />
-                  </div>
-                )}
-                {activePlatformMetrics.platform === "instagram" && (
-                  <div className="w-10 h-10 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center shrink-0 border border-pink-200">
-                    <InstagramIcon className="w-5 h-5 text-pink-600" />
-                  </div>
-                )}
-                {activePlatformMetrics.platform === "linkedin" && (
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 border border-blue-200">
-                    <LinkedInIcon className="w-5 h-5 text-blue-700" />
-                  </div>
-                )}
+                <div className="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <YouTubeIcon className="w-6 h-6 text-white" />
+                </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-extrabold text-slate-900 text-sm sm:text-base">
-                      {activePlatformMetrics.profileName}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-black text-slate-900 text-base sm:text-lg">
+                      YouTube
                     </span>
-                    <span className="text-xs font-semibold text-slate-500">
-                      {activePlatformMetrics.handle}
-                    </span>
-                    <a
-                      href={activePlatformMetrics.profileUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-slate-400 hover:text-slate-700"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                    {isYouTubeConnected ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        Connected ✓
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-200/70 border border-slate-300 text-slate-600 text-xs font-semibold">
+                        Not Connected
+                      </span>
+                    )}
                   </div>
-                  <p className="text-2xs sm:text-xs text-slate-500 mt-0.5">
-                    Account ID: <code className="font-mono text-slate-700">{activePlatformMetrics.platformAccountId || "N/A"}</code> • Last synchronized: {activePlatformMetrics.lastSyncedAt ? new Date(activePlatformMetrics.lastSyncedAt).toLocaleString() : "Never"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setIsConnectModalOpen(true)}
-                  className="btn-tactile px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center gap-1.5"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Re-sync</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => disconnectPlatformCreator(activeCreator.id)}
-                  className="btn-tactile px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 text-xs font-semibold flex items-center gap-1.5"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  <span>Disconnect</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Verified Statistics Breakdown */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
-                <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
-                  Followers / Subs
-                </span>
-                <span className="text-xl font-extrabold text-slate-900">
-                  {activePlatformMetrics.followerCount !== null
-                    ? activePlatformMetrics.followerCount.toLocaleString()
-                    : <span className="text-xs italic text-slate-400">Hidden / Auth required</span>}
-                </span>
-                <span className="text-3xs text-slate-400 block mt-1">
-                  Provenance: {activePlatformMetrics.followerCountSource.replace("_", " ")}
-                </span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
-                <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
-                  Total Views
-                </span>
-                <span className="text-xl font-extrabold text-slate-900">
-                  {activePlatformMetrics.totalViews !== null
-                    ? activePlatformMetrics.totalViews.toLocaleString()
-                    : <span className="text-xs italic text-slate-400">Not exposed</span>}
-                </span>
-                <span className="text-3xs text-slate-400 block mt-1">
-                  Provenance: {activePlatformMetrics.totalViewsSource.replace("_", " ")}
-                </span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
-                <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
-                  Upload Count
-                </span>
-                <span className="text-xl font-extrabold text-slate-900">
-                  {activePlatformMetrics.mediaCount !== null
-                    ? activePlatformMetrics.mediaCount.toLocaleString()
-                    : <span className="text-xs italic text-slate-400">Not exposed</span>}
-                </span>
-                <span className="text-3xs text-slate-400 block mt-1">
-                  Provenance: {activePlatformMetrics.mediaCountSource.replace("_", " ")}
-                </span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
-                <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
-                  Recent Engagement
-                </span>
-                <span className="text-xl font-extrabold text-slate-900">
-                  {activePlatformMetrics.avgEngagementRate !== null
-                    ? `${activePlatformMetrics.avgEngagementRate}%`
-                    : <span className="text-xs italic text-slate-400">Not calculated</span>}
-                </span>
-                <span className="text-3xs text-slate-400 block mt-1">
-                  Provenance: {activePlatformMetrics.avgEngagementRateSource.replace("_", " ")}
-                </span>
-              </div>
-            </div>
-
-            {/* Recent Uploads Preview */}
-            {activePlatformMetrics.recentMedia && activePlatformMetrics.recentMedia.length > 0 && (
-              <div className="space-y-2 pt-2">
-                <span className="text-xs font-bold text-slate-700 block">
-                  Recent Public Uploads ({activePlatformMetrics.recentMedia.length})
-                </span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {activePlatformMetrics.recentMedia.slice(0, 4).map((m) => (
-                    <div
-                      key={m.id}
-                      className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center gap-2.5 text-xs"
-                    >
-                      {m.thumbnailUrl && (
-                        <img
-                          src={m.thumbnailUrl}
-                          alt=""
-                          className="w-10 h-10 rounded-lg object-cover shrink-0"
-                        />
+                  {isYouTubeConnected ? (
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 mt-0.5 flex-wrap">
+                      <span className="font-semibold text-slate-900">
+                        Channel: <code className="font-mono text-[#0870e8] bg-blue-50 px-1.5 py-0.5 rounded-md">{ytChannelHandle}</code>
+                      </span>
+                      <span>•</span>
+                      <span className="text-slate-500">
+                        Last synced: <span className="font-medium text-slate-700">{ytLastSynced}</span>
+                      </span>
+                      {formData.youtube_channel_url && (
+                        <a
+                          href={formData.youtube_channel_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-slate-400 hover:text-slate-700 inline-flex items-center gap-0.5"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
                       )}
-                      <div className="min-w-0 flex-1">
-                        <span className="font-semibold text-slate-800 truncate block">
-                          {m.titleOrCaption}
-                        </span>
-                        <div className="flex items-center gap-2 text-2xs text-slate-500 mt-0.5">
-                          {m.viewCount !== null && (
-                            <span>{m.viewCount.toLocaleString()} views</span>
-                          )}
-                          {m.likeCount !== null && (
-                            <span>• {m.likeCount.toLocaleString()} likes</span>
-                          )}
-                        </div>
-                      </div>
                     </div>
-                  ))}
+                  ) : (
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Connect your YouTube channel and let Creator Engine automatically sync your live metrics, recent uploads, and channel themes.
+                    </p>
+                  )}
                 </div>
               </div>
-            )}
 
-            {/* Disclosures and Limitations */}
-            {activePlatformMetrics.limitations && activePlatformMetrics.limitations.length > 0 && (
-              <div className="p-3 rounded-xl bg-slate-100 border border-slate-200/80 text-2xs text-slate-600 space-y-1">
-                <span className="font-bold uppercase tracking-wider text-slate-500 block">
-                  Platform Disclosures:
-                </span>
-                <ul className="list-disc list-inside space-y-0.5">
-                  {activePlatformMetrics.limitations.map((lim, i) => (
-                    <li key={i}>{lim}</li>
-                  ))}
-                </ul>
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 shrink-0">
+                {isYouTubeConnected ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleRefreshYouTube}
+                      disabled={isRefreshingYouTube}
+                      className="btn-tactile px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs sm:text-sm font-bold flex items-center gap-2 shadow-2xs transition-colors"
+                      title="Sync latest statistics and uploads from YouTube Data API"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${isRefreshingYouTube ? "animate-spin text-[#0870e8]" : ""}`} />
+                      <span>{isRefreshingYouTube ? "Refreshing..." : "Refresh YouTube Data"}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsDisconnectDialogOpen(true)}
+                      className="btn-tactile px-3.5 py-2 rounded-xl bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-2xs transition-colors"
+                      title="Disconnect YouTube integration"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Disconnect</span>
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsYouTubeModalOpen(true)}
+                    className="btn-tactile px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-bold flex items-center gap-2 shadow-xs transition-colors"
+                  >
+                    <YouTubeIcon className="w-4 h-4 text-white" />
+                    <span>Connect YouTube →</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Verified Statistics Breakdown (when connected) */}
+            {isYouTubeConnected && (
+              <div className="pt-2 space-y-4">
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+                  <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
+                    <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
+                      Subscribers
+                    </span>
+                    <span className="text-lg sm:text-xl font-extrabold text-slate-900">
+                      {(formData.youtube_subscriber_count || formData.followerCount || 0).toLocaleString()}
+                    </span>
+                    <span className="text-3xs text-slate-400 block mt-1">
+                      Official YouTube API
+                    </span>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
+                    <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
+                      Total Views
+                    </span>
+                    <span className="text-lg sm:text-xl font-extrabold text-slate-900">
+                      {(formData.youtube_total_views || 0) > 0
+                        ? (formData.youtube_total_views || 0).toLocaleString()
+                        : "Not enough data"}
+                    </span>
+                    <span className="text-3xs text-slate-400 block mt-1">
+                      Official YouTube API
+                    </span>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
+                    <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
+                      Videos
+                    </span>
+                    <span className="text-lg sm:text-xl font-extrabold text-slate-900">
+                      {(formData.youtube_video_count || 0) > 0
+                        ? (formData.youtube_video_count || 0).toLocaleString()
+                        : "Not enough data"}
+                    </span>
+                    <span className="text-3xs text-slate-400 block mt-1">
+                      Channel Uploads
+                    </span>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
+                    <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
+                      Average Views
+                    </span>
+                    <span className="text-lg sm:text-xl font-extrabold text-slate-900">
+                      {(formData.averageViews || formData.avgImpressionsPerPost || 0) > 0
+                        ? (formData.averageViews || formData.avgImpressionsPerPost || 0).toLocaleString()
+                        : "Not enough data"}
+                    </span>
+                    <span className="text-3xs text-[#0870e8] font-semibold block mt-1">
+                      Calculated by Creator Engine
+                    </span>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-white border border-slate-200/80">
+                    <span className="text-2xs uppercase tracking-wider text-slate-400 font-bold block mb-1">
+                      Engagement Rate
+                    </span>
+                    <span className="text-lg sm:text-xl font-extrabold text-emerald-600">
+                      {(formData.engagementRate || 0) > 0
+                        ? `${formData.engagementRate}%`
+                        : "Not enough data"}
+                    </span>
+                    <span className="text-3xs text-[#0870e8] font-semibold block mt-1">
+                      Calculated by Creator Engine
+                    </span>
+                  </div>
+                </div>
+
+                {/* Top Content Themes */}
+                {formData.content_themes && formData.content_themes.length > 0 && (
+                  <div className="p-3.5 rounded-xl bg-white border border-slate-200/80 flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-bold text-slate-700">Top Content Themes:</span>
+                    {formData.content_themes.map((theme, i) => (
+                      <span
+                        key={i}
+                        className="px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold"
+                      >
+                        {theme}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
-        ) : (
-          <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-sm text-slate-600">
-            <div className="flex items-center gap-2">
-              <Info className="w-4 h-4 text-[#0870e8] shrink-0" />
-              <span>
-                Currently operating with <strong>{activeCreator.name}&apos;s</strong> {activeCreator.isManuallyReported ? "user-entered data" : "demo profile"}. Connect a genuine YouTube, Instagram, or LinkedIn account to pull real statistics.
+
+          {/* Multi-Platform Architecture: Upcoming Platforms */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Multi-Platform Architecture (Upcoming Platforms)
+              </span>
+              <span className="text-2xs text-slate-400">
+                Connected account schema prepared for Instagram, TikTok, LinkedIn, X, Twitch
               </span>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsConnectModalOpen(true)}
-              className="text-[#0870e8] hover:underline font-bold shrink-0 flex items-center gap-1"
-            >
-              <span>Connect Channel</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { name: "Instagram", color: "text-pink-600", bg: "bg-pink-50" },
+                { name: "TikTok", color: "text-slate-800", bg: "bg-slate-100" },
+                { name: "LinkedIn", color: "text-blue-700", bg: "bg-blue-50" },
+                { name: "X / Twitter", color: "text-slate-900", bg: "bg-slate-100" },
+              ].map((plat, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 rounded-xl bg-white border border-slate-200/70 flex items-center justify-between gap-2 opacity-80"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className={`w-7 h-7 rounded-lg ${plat.bg} ${plat.color} flex items-center justify-center font-bold text-xs shrink-0`}>
+                      {plat.name[0]}
+                    </div>
+                    <span className="text-xs font-bold text-slate-800 truncate">{plat.name}</span>
+                  </div>
+                  <span className="text-3xs uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 shrink-0">
+                    Coming Soon
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-        )}
+        </div>
       </Card>
 
+      {/* Disconnect Confirmation Dialog */}
+      {isDisconnectDialogOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-3xl border border-slate-200 max-w-md w-full p-6 shadow-2xl space-y-5 animate-scale-up">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl font-black text-slate-900 tracking-tight">
+                Disconnect YouTube Channel Sync?
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Are you sure you want to disconnect live YouTube sync for <strong className="text-slate-900">{ytChannelHandle}</strong>?
+              </p>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1">
+                <p className="font-bold text-slate-700">What happens:</p>
+                <ul className="list-disc list-inside space-y-0.5">
+                  <li>Automatic YouTube metric synchronization will stop.</li>
+                  <li>Your creator profile will switch to manual mode with all data <strong>preserved</strong>.</li>
+                  <li>To remove this creator profile completely from your workspace, use the <strong>Disconnect Profile</strong> button above.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsDisconnectDialogOpen(false)}
+                disabled={isDisconnecting}
+                className="btn-tactile px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDisconnect}
+                disabled={isDisconnecting}
+                className="btn-tactile px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
+              >
+                {isDisconnecting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Disconnecting...</span>
+                  </>
+                ) : (
+                  <span>Disconnect YouTube</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Disconnect Entire Creator Profile Confirmation Dialog */}
+      {isDeleteProfileDialogOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-3xl border border-slate-200 max-w-md w-full p-6 shadow-2xl space-y-5 animate-scale-up text-left">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl font-black text-slate-900 tracking-tight">
+                Disconnect & Remove Creator Profile?
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Are you sure you want to disconnect <strong className="text-slate-900">{formData.name}</strong> ({formData.handle}) from Creator Engine?
+              </p>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1">
+                <p className="font-bold text-slate-700">What happens:</p>
+                <ul className="list-disc list-inside space-y-0.5">
+                  <li>This creator profile will be removed from your connected profiles list.</li>
+                  <li>All associated data and roadmap milestones for this profile will be cleared.</li>
+                  <li>You can reconnect or import this channel again anytime.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsDeleteProfileDialogOpen(false)}
+                className="btn-tactile px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  setIsDeleteProfileDialogOpen(false);
+                  await disconnectPlatformCreator(formData.id);
+                }}
+                className="btn-tactile px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-bold transition-colors shadow-xs cursor-pointer"
+              >
+                Disconnect & Remove Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* YouTube Connect Modal */}
+      <YouTubeConnectModal
+        isOpen={isYouTubeModalOpen}
+        onClose={() => setIsYouTubeModalOpen(false)}
+        onManualClick={() => setIsYouTubeModalOpen(false)}
+      />
+
+      {/* Other Accounts Modal */}
       <ConnectAccountModal
         isOpen={isConnectModalOpen}
         onClose={() => setIsConnectModalOpen(false)}
@@ -583,6 +870,32 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Email */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs sm:text-[13px] font-bold text-slate-700 uppercase tracking-wide">Email Address</label>
+                    <input
+                      type="email"
+                      value={formData.email || ""}
+                      onChange={(e) => handleChange("email", e.target.value)}
+                      placeholder="e.g. alex@creator.dev"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/15 focus:border-[#0870e8] transition-all"
+                    />
+                  </div>
+
+                  {/* Website / Portfolio */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs sm:text-[13px] font-bold text-slate-700 uppercase tracking-wide">Website / Portfolio URL</label>
+                    <input
+                      type="url"
+                      value={formData.website || ""}
+                      onChange={(e) => handleChange("website", e.target.value)}
+                      placeholder="https://yourportfolio.com"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/15 focus:border-[#0870e8] transition-all"
+                    />
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {/* Niche */}
                   <div className="space-y-1.5 sm:col-span-2">
@@ -613,21 +926,33 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {/* Location */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 sm:col-span-1">
                     <label className="text-xs sm:text-[13px] font-bold text-slate-700 uppercase tracking-wide">Base Location *</label>
                     <input
                       type="text"
                       value={formData.location}
                       onChange={(e) => handleChange("location", e.target.value)}
-                      placeholder="e.g. Bengaluru, India"
+                      placeholder="e.g. Bengaluru"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/15 focus:border-[#0870e8] transition-all"
+                    />
+                  </div>
+
+                  {/* Country */}
+                  <div className="space-y-1.5 sm:col-span-1">
+                    <label className="text-xs sm:text-[13px] font-bold text-slate-700 uppercase tracking-wide">Country</label>
+                    <input
+                      type="text"
+                      value={formData.country || "India"}
+                      onChange={(e) => handleChange("country", e.target.value)}
+                      placeholder="e.g. India"
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/15 focus:border-[#0870e8] transition-all"
                     />
                   </div>
 
                   {/* Creator Stage */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 sm:col-span-1">
                     <label className="text-xs sm:text-[13px] font-bold text-slate-700 uppercase tracking-wide">Growth Stage *</label>
                     <select
                       value={formData.creatorStage}
@@ -730,7 +1055,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {/* Engagement Rate */}
                   <div className="space-y-1.5">
                     <label className="text-xs sm:text-[13px] font-bold text-slate-700 uppercase tracking-wide">Estimated Engagement Rate (%)</label>
@@ -739,6 +1064,21 @@ export default function ProfilePage() {
                       step="0.1"
                       value={formData.engagementRate}
                       onChange={(e) => handleChange("engagementRate", parseFloat(e.target.value) || 0)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/15 focus:border-[#0870e8] transition-all"
+                    />
+                  </div>
+
+                  {/* Average Views */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs sm:text-[13px] font-bold text-slate-700 uppercase tracking-wide">Average Views</label>
+                    <input
+                      type="number"
+                      value={formData.averageViews || formData.avgImpressionsPerPost || 0}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value) || 0;
+                        handleChange("averageViews", val);
+                        handleChange("avgImpressionsPerPost", val);
+                      }}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/15 focus:border-[#0870e8] transition-all"
                     />
                   </div>
@@ -797,7 +1137,7 @@ export default function ProfilePage() {
               </CardHeader>
 
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {/* Primary Goal */}
                   <div className="space-y-1.5">
                     <label className="text-xs sm:text-[13px] font-bold text-slate-700 uppercase tracking-wide">Primary Creator Objective *</label>
@@ -820,11 +1160,43 @@ export default function ProfilePage() {
                       <input
                         type="number"
                         value={formData.monthlyIncomeTarget}
-                        onChange={(e) => handleChange("monthlyIncomeTarget", parseInt(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value) || 0;
+                          handleChange("monthlyIncomeTarget", val);
+                          handleChange("monthlyIncomeGoal", val);
+                        }}
                         className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/15 focus:border-[#0870e8] transition-all"
                       />
                     </div>
                   </div>
+
+                  {/* Preferred Collaboration Type */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs sm:text-[13px] font-bold text-slate-700 uppercase tracking-wide">Collaboration Type</label>
+                    <select
+                      value={formData.collaborationType || "Both paid and product"}
+                      onChange={(e) => handleChange("collaborationType", e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#0870e8]/15 focus:border-[#0870e8] transition-all cursor-pointer"
+                    >
+                      <option value="Paid">Paid</option>
+                      <option value="Affiliate">Affiliate</option>
+                      <option value="Product">Product</option>
+                      <option value="Both paid and product">Both paid and product</option>
+                      <option value="Any">Any</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Preferred Brands or Industries */}
+                <div className="space-y-1.5">
+                  <label className="text-xs sm:text-[13px] font-bold text-slate-700 uppercase tracking-wide">Target Brands & Industries</label>
+                  <input
+                    type="text"
+                    value={formData.preferredIndustries || ""}
+                    onChange={(e) => handleChange("preferredIndustries", e.target.value)}
+                    placeholder="e.g. AI SaaS, Developer Tools, Consumer Tech, Productivity Apps"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-base font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0870e8]/15 focus:border-[#0870e8] transition-all"
+                  />
                 </div>
 
                 {/* Monetisation Channels Multi-select */}

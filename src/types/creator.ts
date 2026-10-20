@@ -35,34 +35,156 @@ export interface CreatorProfile {
   isManuallyReported?: boolean;
   isOnboarded?: boolean;
   positioningStatement?: string;
+
+  // Extended onboarding profile fields
+  email?: string;
+  country?: string;
+  website?: string;
+  platforms?: string[];
+  contentTypes?: string[];
+  contentDescription?: string;
+  averageViews?: number;
+  averageLikes?: number;
+  averageComments?: number;
+  audienceAge?: string;
+  audienceLocation?: string;
+  audienceDescription?: string;
+  opportunityPreferences?: string[];
+  collaborationType?: string;
+  monthlyIncomeGoal?: number;
+  preferredIndustries?: string;
+
+  // Derived readiness & compatibility scores
+  creatorScore?: number;
+  nicheFitScore?: number;
+  audienceQualityScore?: number;
+  engagementScore?: number;
+  commercialPotentialScore?: number;
+
+  // YouTube Specific Fields (Database & Architecture)
+  youtube_channel_id?: string;
+  youtube_channel_url?: string;
+  youtube_channel_title?: string;
+  youtube_subscriber_count?: number;
+  youtube_total_views?: number;
+  youtube_video_count?: number;
+  youtube_data_updated_at?: string;
+  youtube_connected?: boolean;
+  youtube_recent_videos?: YouTubeVideoSummary[];
+  content_themes?: string[];
+  creator_intelligence?: CreatorIntelligenceData;
+  connectedAccounts?: ConnectedAccount[];
+}
+
+export interface YouTubeVideoSummary {
+  videoId: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  publishedAt: string;
+  viewCount: number;
+  likeCount: number;
+  commentCount: number;
+  duration?: string;
+}
+
+export interface YouTubeChannelData {
+  channelId: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  channelUrl: string;
+  handle: string;
+  subscriberCount: number;
+  totalViews: number;
+  videoCount: number;
+  country?: string;
+  publishedAt?: string;
+  averageViews: number;
+  averageLikes: number;
+  averageComments: number;
+  engagementRate: number; // calculated by Creator Engine
+  postingFrequency?: string;
+  recentVideos: YouTubeVideoSummary[];
+}
+
+export interface CreatorIntelligenceData {
+  primaryNiche: string;
+  secondaryNiches: string[];
+  contentThemes: string[];
+  audienceIntent?: string;
+  creatorStrengths: string[];
+  potentialMonetizationCategories: string[];
+  brandCategories: string[];
+  opportunityPreferences?: string[];
+  calculatedScore?: number;
+}
+
+export interface ConnectedAccount {
+  id: string;
+  userId?: string;
+  platform: "youtube" | "instagram" | "tiktok" | "linkedin" | "x" | "twitch";
+  platformUserId: string;
+  username: string;
+  profileUrl: string;
+  connectedAt: string;
+  lastSyncedAt: string;
+  status: "active" | "disconnected" | "expired";
+  channelTitle?: string;
+  avatarUrl?: string;
+}
+
+export interface YouTubeImportPreview {
+  youtubeData: YouTubeChannelData;
+  creatorIntelligence: CreatorIntelligenceData;
+  suggestedProfile: Partial<CreatorProfile>;
 }
 
 export interface OnboardingFormData {
-  // Step 1: About you
+  // Step 1: About You
   name: string;
   handle: string;
-  niche: string;
-  creatorStage: CreatorStageType;
-  experienceLevel: ExperienceLevelType;
-  bio?: string;
+  email: string;
+  avatar?: string;
+  location: string;
+  country: string;
+  website?: string;
 
-  // Step 2: Your platforms
+  // Step 2: Your Content
+  niche: string;
+  platforms: string[];
+  contentTypes: string[];
+  contentDescription: string;
+
+  // Step 3: Your Audience
   primaryPlatform: PlatformType;
   followerCount: number;
+  averageViews: number;
+  averageLikes?: number;
+  averageComments?: number;
+  engagementRate: number;
+  audienceAge: string;
+  audienceLocation: string;
+  audienceDescription: string;
+
+  // Step 4: Your Goals
+  opportunityPreferences: string[];
+  collaborationType: "Paid" | "Affiliate" | "Product" | "Both paid and product" | "Any" | string;
+  monthlyIncomeGoal?: number;
+  preferredIndustries?: string;
+
+  // Legacy / compatibility fields
+  creatorStage?: CreatorStageType;
+  experienceLevel?: ExperienceLevelType;
+  bio?: string;
+  contentFormat?: string;
+  contentFrequency?: string;
+  primaryGoal?: string;
+  monetisationGoals?: string[];
+  monthlyIncomeTarget?: number;
   secondaryPlatform?: PlatformType | "";
   secondaryFollowers?: number;
-  engagementRate?: number;
-
-  // Step 3: Your audience
-  audienceDemographic: string;
-  location: string;
-  contentFormat: string;
-  contentFrequency: string;
-
-  // Step 4: Your goals
-  primaryGoal: string;
-  monetisationGoals: string[];
-  monthlyIncomeTarget: number;
+  audienceDemographic?: string;
 }
 
 export interface Opportunity {

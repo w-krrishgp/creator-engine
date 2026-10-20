@@ -8,6 +8,7 @@ import {
   ActionItem,
   ActionStatus,
   OnboardingFormData,
+  CreatorStageType,
 } from "@/types/creator";
 import { MOCK_CREATORS } from "@/data/mockCreators";
 import { MOCK_OPPORTUNITIES } from "@/data/mockOpportunities";
@@ -658,6 +659,8 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   };
 
   const disconnectPlatformCreator = async (creatorId: string) => {
+    const creatorName = creators[creatorId]?.name || "Creator profile";
+
     setCreators((prev) => {
       const next = { ...prev };
       delete next[creatorId];
@@ -665,7 +668,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("creator_engine_profiles", JSON.stringify(next));
       } catch {}
 
-      const remainingIds = Object.keys(next);
+      const remainingIds = Object.keys(next).filter((id) => id !== "rahul" && id !== "priya" && id !== "creator");
       if (activeCreatorId === creatorId) {
         const nextId = remainingIds.length > 0 ? remainingIds[0] : "";
         setActiveCreatorId(nextId);
@@ -690,6 +693,24 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
       return next;
     });
 
+    setRoadmapsByCreator((prev) => {
+      const next = { ...prev };
+      delete next[creatorId];
+      try {
+        localStorage.setItem("creator_engine_roadmaps", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+
+    setActionsByCreator((prev) => {
+      const next = { ...prev };
+      delete next[creatorId];
+      try {
+        localStorage.setItem("creator_engine_actions", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+
     if (supabaseService.isConfigured()) {
       const parts = creatorId.split("_");
       const platform = parts[1] || "";
@@ -697,7 +718,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
       supabaseService.deleteConnectedAccount(platform, handle).catch(() => {});
     }
 
-    showToast("Profile disconnected and removed.", "info");
+    showToast(`Disconnected and removed "${creatorName}" from workspace.`, "info");
   };
 
   const updateActionStatus = (id: string, status: ActionStatus) => {
@@ -1128,33 +1149,126 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   };
 
   const completeOnboarding = (data: OnboardingFormData) => {
+    const targetId =
+      activeCreatorId ||
+      `c_${data.handle.replace(/[^a-zA-Z0-9_-]/g, "").toLowerCase() || Date.now().toString()}`;
+
+    // Derive heuristic baseline scores from entered profile metrics
+    const followers = data.followerCount || 0;
+    const avgViews = data.averageViews || Math.round(followers * 0.2);
+    const engagementRate = data.engagementRate || 3.5;
+    const nicheLower = (data.niche || "").toLowerCase();
+
+    let nicheFitScore = 90;
+    if (nicheLower.includes("tech") || nicheLower.includes("ai") || nicheLower.includes("developer")) {
+      nicheFitScore = 94;
+    } else if (nicheLower.includes("finance") || nicheLower.includes("business")) {
+      nicheFitScore = 92;
+    } else if (nicheLower.includes("fitness") || nicheLower.includes("health")) {
+      nicheFitScore = 91;
+    }
+
+    const viewRatio = followers > 0 ? avgViews / followers : 0.4;
+    const audienceQualityScore = Math.min(95, Math.max(76, Math.round(78 + viewRatio * 25)));
+    const engagementScore = Math.min(96, Math.max(70, Math.round(72 + (engagementRate / 2.5) * 7.5)));
+    let commercialPotentialScore = 84;
+    if (followers >= 50000) commercialPotentialScore += 7;
+    else if (followers >= 15000) commercialPotentialScore += 4;
+    if (data.collaborationType === "Both paid and product" || data.collaborationType === "Paid") commercialPotentialScore += 2;
+    commercialPotentialScore = Math.min(95, commercialPotentialScore);
+
+    const creatorScore = Math.round(
+      nicheFitScore * 0.25 +
+      audienceQualityScore * 0.25 +
+      engagementScore * 0.30 +
+      commercialPotentialScore * 0.20
+    );
+
+    let creatorStage: CreatorStageType = "Nano (1k-10k)";
+    if (followers >= 200000) creatorStage = "Macro (200k+)";
+    else if (followers >= 50000) creatorStage = "Mid-Tier (50k-200k)";
+    else if (followers >= 10000) creatorStage = "Micro (10k-50k)";
+
+    const monthlyTarget = data.monthlyIncomeGoal || data.monthlyIncomeTarget || 50000;
+
     setCreators((prev) => {
-      const current = prev[activeCreatorId] || MOCK_CREATORS[activeCreatorId];
+      const current = prev[targetId] || prev[activeCreatorId] || {};
       const updated: CreatorProfile = {
         ...current,
+        id: targetId,
         name: data.name,
-        handle: data.handle,
+        handle: data.handle.startsWith("@") ? data.handle : `@${data.handle}`,
+        avatar:
+          data.avatar ||
+          current.avatar ||
+          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&fit=crop",
+        title: `${data.primaryPlatform} Content Creator`,
         niche: data.niche,
-        creatorStage: data.creatorStage,
-        experienceLevel: data.experienceLevel,
-        bio: data.bio || current.bio,
         primaryPlatform: data.primaryPlatform,
         followerCount: data.followerCount,
         secondaryPlatform: data.secondaryPlatform || "",
         secondaryFollowers: data.secondaryFollowers || 0,
-        audienceDemographic: data.audienceDemographic,
-        location: data.location,
-        contentFormat: data.contentFormat,
-        contentFrequency: data.contentFrequency,
-        primaryGoal: data.primaryGoal,
-        monetisationGoals: data.monetisationGoals,
-        monthlyIncomeTarget: data.monthlyIncomeTarget,
+        engagementRate: data.engagementRate,
+        audienceDemographic:
+          data.audienceDescription ||
+          data.audienceDemographic ||
+          `Audience following ${data.name} on ${data.primaryPlatform}`,
+        location: data.location || "India",
+        country: data.country || "India",
+        contentFormat:
+          (data.contentTypes && data.contentTypes.length > 0
+            ? data.contentTypes.join(", ")
+            : data.contentFormat) || "Video & Digital Media",
+        contentFrequency: data.contentFrequency || "Consistent (3-5 posts/wk)",
+        creatorStage: data.creatorStage || creatorStage,
+        experienceLevel: data.experienceLevel || "Growing (1-3 yrs)",
+        primaryGoal:
+          data.opportunityPreferences?.[0]
+            ? `${data.opportunityPreferences[0]} & Collaborations`
+            : data.primaryGoal || "Brand Partnerships & Sponsored Deals",
+        monetisationGoals:
+          data.opportunityPreferences && data.opportunityPreferences.length > 0
+            ? data.opportunityPreferences
+            : data.monetisationGoals || ["Brand Deals"],
+        monthlyIncomeTarget: monthlyTarget,
+        bio: data.contentDescription || data.bio || `Creator focused on ${data.niche}.`,
+        topics: [data.niche, ...(data.platforms || [])],
+        activeDealsCount: 2,
+        estimatedPipelineValue: Math.round(monthlyTarget * 0.8),
+        monthlyGrowthRate: 8.5,
+        avgImpressionsPerPost: avgViews,
         isManuallyReported: true,
         isOnboarded: true,
+
+        // Extended fields
+        email: data.email,
+        website: data.website,
+        platforms: data.platforms && data.platforms.length > 0 ? data.platforms : [data.primaryPlatform],
+        contentTypes: data.contentTypes || [],
+        contentDescription: data.contentDescription,
+        averageViews: avgViews,
+        averageLikes: data.averageLikes || Math.round(avgViews * 0.08),
+        averageComments: data.averageComments || Math.round(avgViews * 0.015),
+        audienceAge: data.audienceAge,
+        audienceLocation: data.audienceLocation,
+        audienceDescription: data.audienceDescription,
+        opportunityPreferences: data.opportunityPreferences || [],
+        collaborationType: data.collaborationType,
+        monthlyIncomeGoal: data.monthlyIncomeGoal,
+        preferredIndustries: data.preferredIndustries,
+
+        // Derived Scores
+        creatorScore,
+        nicheFitScore,
+        audienceQualityScore,
+        engagementScore,
+        commercialPotentialScore,
       };
-      const next = { ...prev, [activeCreatorId]: updated };
+
+      const next = { ...prev, [targetId]: updated };
       try {
         localStorage.setItem("creator_engine_profiles", JSON.stringify(next));
+        localStorage.setItem("creator_engine_active_id", targetId);
       } catch {}
 
       if (supabaseService.isConfigured()) {
@@ -1164,7 +1278,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
       // Initialize tailored growth roadmap immediately
       const initialPhases = getFallbackRoadmapPhases(updated);
       setRoadmapsByCreator((prevRoadmaps) => {
-        const nextRoadmaps = { ...prevRoadmaps, [activeCreatorId]: initialPhases };
+        const nextRoadmaps = { ...prevRoadmaps, [targetId]: initialPhases };
         try {
           localStorage.setItem("creator_engine_roadmaps", JSON.stringify(nextRoadmaps));
         } catch {}
@@ -1178,6 +1292,8 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
 
       return next;
     });
+
+    setActiveCreatorId(targetId);
     showToast("Profile setup complete! Welcome to Creator Engine.", "success");
   };
 
